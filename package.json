@@ -4,9 +4,11 @@
   "main": "src/index.js",
   "license": "MIT",
   "devDependencies": {
+    "eslint": "^6.6.0",
     "parcel-bundler": "^1.12.4"
   },
   "scripts": {
+    "lint": "eslint src/**/*.js",
     "dev": "parcel src/index.html --open",
     "prebuild": "rm -rf ./dist",
     "build": "parcel build src/index.html"

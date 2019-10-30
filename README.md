@@ -42,6 +42,11 @@ yarn build
 This disables watch mode and hot module replacement so it will only build once. It also enables the minifier for all output bundles to reduce file size. The minifiers used by Parcel are [terser](https://github.com/terser/terser) for JavaScript, [cssnano](https://cssnano.co/) for CSS, and [htmlnano](https://github.com/posthtml/htmlnano) for HTML.
 After that, you can copy the contents of the `dist` folder to your webservers root directory.
 
+## Linting
+
+This project uses [eslint](https://eslint.org/). You can start the linter by typing `yarn lint`. It it recommended to integrate the linter in the IDE of your choice. See [https://eslint.org/docs/user-guide/integrations](https://eslint.org/docs/user-guide/integrations) for more info.
+Altough it's not integrated in this project, we use [Prettier](https://prettier.io/) in order to format the code. Prettier can be integrated in [various IDE's](https://prettier.io/docs/en/editors.html) and we recommend it very much.
+
 ## Built With
 
 - [YARN](https://yarnpkg.com/) - Package Management
