@@ -13,8 +13,8 @@ const homepageUtil = {
         title: "Jährliche Veränderung",
         subtitle: "Geodaten: Dominique Weber, HAFL",
         description:
-          "Dieser Viewer visualisiert jährliche Veränderungen welche im Wald stattfinden. " +
-          "Man sieht z.B. wo Holzschläge oder Zwangsnutzungen ausgeführt wurden.",
+          "Der Wald verändert sich ständig. Hier können Sie sehen, " +
+          "wo Veränderungen z.B. durch Holzschläge stattgefunden haben.",
         link: "https://test.ch",
         index: 0
       },
