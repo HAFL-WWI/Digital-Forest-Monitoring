@@ -91,7 +91,6 @@ const homepageUtil = {
       cardDescription.innerHTML = description;
       cardSubTitle.innerHTML = subtitle;
       actionButton.addEventListener("click", () => {
-        console.log("button clicked...");
         window.open(link);
       });
       actionButton.innerHTML = "zum Viewer";
@@ -105,6 +104,7 @@ const homepageUtil = {
         "mdc-card__primary-action",
         "homepage-card__primary-action"
       );
+      cardPrimaryAction.addEventListener("click", () => window.open(link));
       cardPrimaryAction.tabIndex = index;
       cardMedia.classList.add(
         "mdc-card__media",
