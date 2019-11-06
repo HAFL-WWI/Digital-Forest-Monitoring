@@ -5,15 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700"
+    />
+    <link
       rel="shortcut icon"
       type="image/x-icon"
       href="./img/favicon-96x96.ico"
     />
+    <link rel="stylesheet" href="./styles/main.scss" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
     <title>parcel vanilla js template</title>
   </head>
   <body>
-    <h1>Hello from the project starter</h1>
-    <div>This is a Template Project</div>
+    <header class="mdc-top-app-bar">
+      <div class="mdc-top-app-bar__row">
+        <section
+          class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start"
+        >
+          <!-- dynamically set based on screen size-->
+          <span class="mdc-top-app-bar__title">Waldmonitoring</span>
+        </section>
+        <section
+          class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end"
+        >
+          <button
+            id="impressum-button"
+            class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
+            aria-label="Impressum"
+          >
+            info
+          </button>
+        </section>
+      </div>
+    </header>
+
+    <div class="mdc-top-app-bar--fixed-adjust">
+      <div class="jumbotron">
+        <div class="jumbotron__text">
+          Auf dieser Seite finden Sie Links zu Kartenviewern und Geodiensten
+          welche verschiedenste Produkte wie Veränderungen oder Störungen im
+          Wald visualisieren. Quelle der Geodaten sind die frei verfügbaren
+          Sentinel Satellitenbilder. Alle angebotenen Karten/Dienste beziehen
+          sich ausschliesslich auf die Schweiz.
+        </div>
+      </div>
+      <div class="mdc-layout-grid">
+        <div class="mdc-layout-grid__inner">
+          <!-- Content is created dynamically via the homepage_util -->
+        </div>
+      </div>
+    </div>
+    <!-- start impressum Dialog -->
+    <div
+      class="mdc-dialog"
+      role="impressum"
+      aria-modal="true"
+      aria-labelledby="dialog-title"
+      aria-describedby="dialog-content"
+    >
+      <div class="mdc-dialog__container">
+        <div class="mdc-dialog__surface">
+          <h2 class="mdc-dialog__title" id="dialog-title">Impressum</h2>
+          <div class="mdc-dialog__content" id="dialog-content">
+            Dies ist ein Forschungsprojekt der BFH-HAFL im Auftrag bzw. mit
+            Unterstützung des BAFU. Im Rahmen dieses Projektes sollen
+            vorhandene, möglichst schweizweit flächendeckende und frei
+            verfügbare Fernerkundungsdaten für konkrete Use-Cases und mit einem
+            klaren Mehrwert für die Praxis eingesetzt werden. Das Hauptziel
+            dieses Projektes ist die Implementierung von Kartenviewern sowie
+            Geodiensten für mindestens 3 konkrete Use-Cases.
+            <br /></br />
+            Ansprechperson BFH-HAFL: Dominique Weber (+41 31 910 29 32,
+            <a href="mailto:dominique.weber@bfh.ch">dominique.weber@bfh.ch</a>)
+          </div>
+          <footer class="mdc-dialog__actions">
+            <button
+              type="button"
+              class="mdc-button mdc-button--outlined mdc-dialog__button mdc-button-primary"
+              data-mdc-dialog-action="yes"
+              data-mdc-dialog-button-default
+            >
+              <span class="mdc-button__label">OK</span>
+            </button>
+          </footer>
+        </div>
+      </div>
+      <div class="mdc-dialog__scrim"></div>
+    </div>
+    <!-- end impressum Dialog -->
     <script src="./index.js"></script>
   </body>
 </html>

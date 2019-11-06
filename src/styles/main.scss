@@ -1,0 +1,41 @@
+// material theme colors
+
+// The theme primary color
+$mdc-theme-primary: #344955;
+$mdc-theme-primary-dark: #0b222c;
+$mdc-theme-primary-light: #5f7481;
+// text color on top of a primary background
+$mdc-theme-on-primary: #ffffff;
+// The theme secondary color
+$mdc-theme-secondary: #f9aa33;
+$mdc-theme-secondary-dark: #c17b00;
+$mdc-theme-secondary-light: #ffdc65;
+// text color on top a secondary background
+$mdc-theme-on-secondary: #000000;
+// The theme surface color
+$mdc-theme-surface: #fffbfa;
+//text color on top of a surface background
+$mdc-theme-on-surface: #000000;
+// The theme background color
+$mdc-theme-background: #ffffff;
+// text color on top of theme background
+$mdc-theme-on-background: #000000;
+
+// material component style imports
+@import "@material/button/mdc-button";
+@import "@material/top-app-bar/mdc-top-app-bar";
+@import "@material/icon-button/mdc-icon-button";
+@import "@material/layout-grid/mdc-layout-grid";
+@import "@material/card/mdc-card";
+@import "@material/typography/mdc-typography";
+@import "@material/dialog/mdc-dialog";
+
+@import "./homepage.scss";
+
+// app styles
+* {
+  font-family: "Roboto", sans-serif;
+}
+body {
+  margin: 0;
+}

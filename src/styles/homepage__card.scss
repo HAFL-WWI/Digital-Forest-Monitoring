@@ -1,0 +1,25 @@
+.homepage-card {
+  margin: 8px 0;
+}
+.homepage-card__primary {
+  padding: 1rem;
+}
+.homepage-card__secondary {
+  padding: 0 1rem 8px;
+  min-height: 88px;
+}
+
+.homepage-card__title,
+.homepage-card__subtitle {
+  margin: 0;
+}
+.homepage-card__subtitle {
+  color: var(--mdc-theme-text-secondary-on-background, rgba(0, 0, 0, 0.54));
+}
+.mdc-card__action-buttons {
+  width: 100%;
+}
+.mdc-card__action--button {
+  @include mdc-button-filled-accessible($mdc-theme-secondary);
+  width: 100%;
+}

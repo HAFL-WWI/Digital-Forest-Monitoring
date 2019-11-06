@@ -1,0 +1,50 @@
+@import "./homepage__card.scss";
+.jumbotron {
+  background-image: (url("../img/jumbotron_background_sw.jpg"));
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin: 0 0 20px 0;
+}
+.jumbotron__text {
+  background-color: rgba(255, 255, 255, 0.5);
+  color: $mdc-theme-secondary-dark;
+  font-size: 0.8em;
+  padding: 28px;
+}
+/*
+ * Media Queries
+ * Extra small devices (portrait phones, less than 576px)
+ * No media query for `xs` since this is the default in Bootstrap
+ */
+
+// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) {
+  .jumbotron__text {
+    font-size: 1em;
+    padding: 32px;
+  }
+}
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) {
+  .jumbotron__text {
+    font-size: 1.2em;
+    padding: 40px;
+  }
+}
+
+// Large devices (desktops, 992px and up)
+@media (min-width: 992px) {
+  .jumbotron__text {
+    font-size: 1.4em;
+    padding: 48px;
+  }
+}
+
+// Extra large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) {
+  .jumbotron__text {
+    font-size: 1.8em;
+    padding: 60px;
+  }
+}
