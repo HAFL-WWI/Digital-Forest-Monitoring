@@ -28,7 +28,8 @@
     "@material/ripple": "^4.0.0",
     "@material/top-app-bar": "^4.0.0",
     "@material/typography": "^4.0.0",
-    "navigo": "^7.1.2"
+    "navigo": "^7.1.2",
+    "ol": "^6.1.1"
   },
   "comments": {
     "sass": {

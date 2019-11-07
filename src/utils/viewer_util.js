@@ -1,3 +1,6 @@
+import { Map, View } from "ol";
+import "ol/ol.css";
+import { orthoBasemap } from "./basemap_util";
 const viewerUtil = {
   model: {
     /*
@@ -11,6 +14,7 @@ const viewerUtil = {
      */
     init: () => {
       viewerUtil.controller.removeContent();
+      viewerUtil.controller.createContainer();
       viewerUtil.controller.showViewer();
     },
     /*
@@ -22,10 +26,25 @@ const viewerUtil = {
     /*
      * displays the ol viewer
      */
+    createContainer: () => {
+      viewerUtil.model.viewerContainer = viewerUtil.view.getViewerContainer();
+      viewerUtil.model.content.appendChild(viewerUtil.model.viewerContainer);
+    },
+    /*
+     * display the ol viewer inside the viewer container
+     */
     showViewer: () => {
-      viewerUtil.model.content.appendChild(
-        viewerUtil.view.getViewerContainer()
-      );
+      viewerUtil.model.map = new Map({
+        view: new View({
+          center: [829300, 5933555], //Bern
+          zoom: 11,
+          minZoom: 9,
+          maxZoom: 21
+        }),
+        layers: [orthoBasemap],
+        target: "map"
+      });
+      viewerUtil.model.map.addEventListener("click", e => console.log(e));
     }
   },
   view: {
@@ -34,9 +53,9 @@ const viewerUtil = {
      */
     getViewerContainer: () => {
       const viewerContainer = document.createElement("div");
+      viewerContainer.id = "map";
       viewerContainer.style.width = "100vw";
       viewerContainer.style.height = "calc(100vh - 64px)";
-      viewerContainer.style.backgroundColor = "yellowgreen";
       return viewerContainer;
     }
   }
