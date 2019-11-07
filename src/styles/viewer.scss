@@ -23,6 +23,14 @@
 .basemapControl:hover {
   background-color: none;
 }
+
 .ol-attribution {
   font-size: 11px;
+}
+
+.ol-zoom {
+  bottom: 2em !important;
+  right: 0.5em !important;
+  top: unset !important;
+  left: unset !important;
 }
