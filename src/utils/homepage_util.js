@@ -1,11 +1,25 @@
 import veraenderungImage from "../img/jaehrl_veraenderung.jpg";
 import sturmschaedenImage from "../img/sturmschaeden.jpg";
 import geoservices from "../img/geoservices.jpg";
+import { router } from "./router";
 const homepageUtil = {
   model: {
     /*
+     * the element with the homepage content.
+     */
+    content: document.getElementsByClassName("content")[0],
+    /*
+     * homepage jumbotron text.
+     */
+    jumbotronText:
+      "Auf dieser Seite finden Sie Links zu Kartenviewern und Geodiensten " +
+      "welche verschiedenste Produkte wie Veränderungen oder Störungen im " +
+      "Wald visualisieren. Quelle der Geodaten sind die frei verfügbaren " +
+      "Sentinel Satellitenbilder. Alle angebotenen Karten/Dienste beziehen " +
+      "sich ausschliesslich auf die Schweiz.",
+    /*
      * content for every card on the hompage.
-     * a single card must have the properties: image, title, subtitle, description, link and index.
+     * a single card must have the properties: image, title, subtitle, description, route and index.
      */
     cards: {
       veraenderung: {
@@ -15,7 +29,7 @@ const homepageUtil = {
         description:
           "Der Wald verändert sich ständig. Hier können Sie sehen, " +
           "wo Veränderungen z.B. durch Holzschläge stattgefunden haben.",
-        link: "https://test.ch",
+        route: "/viewer",
         index: 0
       },
       stoerung: {
@@ -25,7 +39,7 @@ const homepageUtil = {
         description:
           "Hier können Sie sehen, wo der Wald natürlichen Störungen wie z.B. " +
           "Borkenkäferbefall oder Sommersturmschäden ausgesetzt ist.",
-        link: "https://test.ch",
+        route: "/viewer",
         index: 1
       },
       geodienste: {
@@ -35,18 +49,42 @@ const homepageUtil = {
         description:
           "Die WMS, WMTS und WFS Geodienste, können Sie in Ihr GIS " +
           "importieren und mit Ihren eigenen Geodaten kombinieren.",
-        link: "https://test.ch",
+        route: "/services",
         index: 1
       }
     }
   },
   controller: {
     /*
-     * creates all the cards on the homepage.
-     * does not have any parameters, but uses the model.cards object and the view function to get the job done.
-     * @returns {DocumentFragment} - All the cards that were attached to the DOM.
+     * calls the necessary functions to display the hompage.
+     */
+    init: () => {
+      homepageUtil.controller.removeContent();
+      homepageUtil.controller.createJumbotron();
+      homepageUtil.controller.createHomepageCards();
+    },
+    /*
+     * removes 'old' content like viewers, services etc.
+     */
+    removeContent: () => {
+      homepageUtil.model.content.innerHTML = "";
+    },
+    /*
+     * displays the jumbotron.
+     */
+    createJumbotron: () => {
+      const jumbotron = homepageUtil.view.createJumbotron(
+        homepageUtil.model.jumbotronText
+      );
+      homepageUtil.model.content.appendChild(jumbotron);
+    },
+    /*
+     * creates all the grid with the cards on the homepage.
+     * does not have any parameters, but uses the model.cards object and some view functions to get the job done.
+     * @returns {DocumentFragment} - The grid with all the cards that were attached to the DOM.
      */
     createHomepageCards: () => {
+      const grid = homepageUtil.view.createGrid();
       const cards = document.createDocumentFragment();
       for (const card in homepageUtil.model.cards) {
         const cardElement = homepageUtil.view.createCard(
@@ -54,15 +92,38 @@ const homepageUtil = {
         );
         cards.appendChild(cardElement);
       }
-      // attach the cards to the dom
-      const cardContainer = document.getElementsByClassName(
-        "mdc-layout-grid__inner"
-      )[0];
-      cardContainer.appendChild(cards);
-      return cards;
+      grid.firstChild.appendChild(cards);
+      homepageUtil.model.content.appendChild(grid);
+      return grid;
     }
   },
   view: {
+    /*
+     * creates a jumbotron element.
+     * @param {string} text - the text to display inside the jumbotron.
+     * @returns {HTMLElement} jumbotron - div cotaining the jumbotron.
+     */
+    createJumbotron: text => {
+      const jumbotron = document.createElement("div");
+      const jumbotronText = document.createElement("div");
+      jumbotron.classList.add("jumbotron");
+      jumbotronText.classList.add("jumbotron__text");
+      jumbotronText.innerHTML = text;
+      jumbotron.appendChild(jumbotronText);
+      return jumbotron;
+    },
+    /*
+     * creates the grid layout containing the cards.
+     * @returns {HTMLElement} grid - a div with a MDCGrid inside.
+     */
+    createGrid: () => {
+      const grid = document.createElement("div");
+      const gridInner = document.createElement("div");
+      grid.classList.add("mdc-layout-grid");
+      gridInner.classList.add("mdc-layout-grid__inner");
+      grid.appendChild(gridInner);
+      return grid;
+    },
     /*
      creates a html card element.
      @param {object} params - object with function parameters.
@@ -70,11 +131,11 @@ const homepageUtil = {
      @param {string} params.title - card title.
      @param {string} params.subtitle - card subtitle.
      @param {string} params.description - card description.
-     @param {string} params.link - the url to open when the user clicks on the card.
+     @param {string} params.route - the url to open when the user clicks on the card.
      @param {number} params.index - the tabindex for the card.
      @returns {HTMLElement} cell - a single grid cell containing a card Element.
     */
-    createCard: ({ image, title, subtitle, description, link, index }) => {
+    createCard: ({ image, title, subtitle, description, route, index }) => {
       const cell = document.createElement("div");
       const card = document.createElement("div");
       const cardPrimaryAction = document.createElement("div");
@@ -91,7 +152,7 @@ const homepageUtil = {
       cardDescription.innerHTML = description;
       cardSubTitle.innerHTML = subtitle;
       actionButton.addEventListener("click", () => {
-        window.open(link);
+        router.navigate(route);
       });
       actionButton.innerHTML = "zum Viewer";
 
@@ -104,7 +165,7 @@ const homepageUtil = {
         "mdc-card__primary-action",
         "homepage-card__primary-action"
       );
-      cardPrimaryAction.addEventListener("click", () => window.open(link));
+      cardPrimaryAction.addEventListener("click", () => router.navigate(route));
       cardPrimaryAction.tabIndex = index;
       cardMedia.classList.add(
         "mdc-card__media",

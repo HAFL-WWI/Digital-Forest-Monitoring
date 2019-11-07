@@ -1,7 +1,8 @@
-import homepageUtil from "./homepage_util";
 import { MDCDialog } from "@material/dialog";
+import { initRouter } from "./router";
 export const init = () => {
-  homepageUtil.controller.createHomepageCards();
+  //start the router
+  initRouter();
   //set the title based on screen size
   setTitle(getTitle());
   //update the title if screen resizes

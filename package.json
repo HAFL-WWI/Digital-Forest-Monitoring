@@ -27,7 +27,8 @@
     "@material/layout-grid": "^4.0.0",
     "@material/ripple": "^4.0.0",
     "@material/top-app-bar": "^4.0.0",
-    "@material/typography": "^4.0.0"
+    "@material/typography": "^4.0.0",
+    "navigo": "^7.1.2"
   },
   "comments": {
     "sass": {
