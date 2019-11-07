@@ -12,6 +12,17 @@ export const orthoBasemap = new TileLayer({
     attributions: attribution
   })
 });
-orthoBasemap.active = true;
-orthoBasemap.name = "Luftbild";
-orthoBasemap.id = "luftbild";
+orthoBasemap.name = "orthofoto";
+
+/*
+ * Vegetationshoehe basemap from bafu/swisstiopo
+ */
+export const vegetationBasemap = new TileLayer({
+  source: new XYZ({
+    url:
+      "https://wmts.geo.admin.ch/1.0.0/ch.bafu.landesforstinventar-vegetationshoehenmodell/default/current/3857/{z}/{x}/{y}.png",
+    attributions: attribution
+  })
+});
+vegetationBasemap.name = "vegetationshoehe";
+vegetationBasemap.setOpacity(0.6);

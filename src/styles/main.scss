@@ -36,6 +36,7 @@ $mdc-theme-on-background: #000000;
 // app styles
 * {
   font-family: "Roboto", sans-serif;
+  box-sizing: border-box;
 }
 body {
   margin: 0;

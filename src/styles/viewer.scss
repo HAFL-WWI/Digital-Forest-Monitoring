@@ -3,3 +3,23 @@
   background-image: linear-gradient(to right, grey 1px, transparent 1px),
     linear-gradient(to bottom, grey 1px, transparent 1px);
 }
+
+.basemapControl {
+  border: 3px solid $mdc-theme-secondary;
+  box-shadow: 0 2px 4px 0 #4a4a4a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0.5em;
+  right: 0.5em;
+  position: absolute;
+}
+
+.layerIcon {
+  width: 60px;
+  height: 60px;
+}
+
+.basemapControl:hover {
+  background-color: none;
+}

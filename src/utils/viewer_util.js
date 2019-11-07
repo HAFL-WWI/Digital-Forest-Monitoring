@@ -1,6 +1,9 @@
 import { Map, View } from "ol";
+import Control from "ol/control/Control";
 import "ol/ol.css";
-import { orthoBasemap } from "./basemap_util";
+import { orthoBasemap, vegetationBasemap } from "./basemap_util";
+import orthoImage from "../img/basemapOrtho.jpg";
+import vegetationImage from "../img/basemapVegetation.jpg";
 const viewerUtil = {
   model: {
     /*
@@ -44,6 +47,8 @@ const viewerUtil = {
         layers: [orthoBasemap],
         target: "map"
       });
+      const basemapSwitch = new olBasemapSwitch(viewerUtil.model.map);
+      viewerUtil.model.map.addControl(basemapSwitch.createBasemapControl());
       viewerUtil.model.map.addEventListener("click", e => console.log(e));
     }
   },
@@ -61,3 +66,39 @@ const viewerUtil = {
   }
 };
 export default viewerUtil;
+
+class olBasemapSwitch {
+  constructor(map = null) {
+    this.map = map;
+    this.showVegetation = false;
+  }
+
+  createBasemapControl() {
+    const basemapControl = document.createElement("div");
+    const layerImage = document.createElement("img");
+    layerImage.src = this.showVegetation ? orthoImage : vegetationImage;
+    layerImage.alt = "layers";
+    layerImage.className = "layerIcon";
+    basemapControl.appendChild(layerImage);
+    basemapControl.className = "basemapControl";
+    basemapControl.title = "Hintergrundkarten";
+    basemapControl.addEventListener(
+      "click",
+      () => {
+        this.showVegetation = !this.showVegetation;
+        // load the right image inside the basemapControl
+        layerImage.src = this.showVegetation ? orthoImage : vegetationImage;
+        const layers = this.map.getLayers();
+        const vegetationshoehe = layers.item(1);
+        if (vegetationshoehe) {
+          layers.removeAt(1);
+        } else {
+          layers.insertAt(1, vegetationBasemap);
+        }
+      },
+      false
+    );
+    const basemapSwitch = new Control({ element: basemapControl });
+    return basemapSwitch;
+  }
+}
