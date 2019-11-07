@@ -1,5 +1,5 @@
 import { Map, View } from "ol";
-import Control from "ol/control/Control";
+import { Control, defaults as defaultControls } from "ol/control";
 import "ol/ol.css";
 import { orthoBasemap, vegetationBasemap } from "./basemap_util";
 import orthoImage from "../img/basemapOrtho.jpg";
@@ -45,7 +45,10 @@ const viewerUtil = {
           maxZoom: 21
         }),
         layers: [orthoBasemap],
-        target: "map"
+        target: "map",
+        controls: defaultControls({
+          attributionOptions: { collapsible: false }
+        })
       });
       const basemapSwitch = new olBasemapSwitch(viewerUtil.model.map);
       viewerUtil.model.map.addControl(basemapSwitch.createBasemapControl());
