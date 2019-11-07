@@ -84,7 +84,7 @@ class olBasemapSwitch {
     layerImage.className = "layerIcon";
     basemapControl.appendChild(layerImage);
     basemapControl.className = "basemapControl";
-    basemapControl.title = "Hintergrundkarten";
+    basemapControl.title = "Vegetationshöhe anzeigen";
     basemapControl.addEventListener(
       "click",
       () => {
@@ -94,8 +94,10 @@ class olBasemapSwitch {
         const layers = this.map.getLayers();
         const vegetationshoehe = layers.item(1);
         if (vegetationshoehe) {
+          basemapControl.title = "Vegetationshöhe anzeigen";
           layers.removeAt(1);
         } else {
+          basemapControl.title = "Orthofoto anzeigen";
           layers.insertAt(1, vegetationBasemap);
         }
       },
