@@ -29,6 +29,8 @@ $mdc-theme-on-background: #000000;
 @import "@material/card/mdc-card";
 @import "@material/typography/mdc-typography";
 @import "@material/dialog/mdc-dialog";
+@import "@material/switch/mdc-switch";
+@import "@material/slider/mdc-slider";
 
 @import "./homepage.scss";
 @import "./viewer.scss";

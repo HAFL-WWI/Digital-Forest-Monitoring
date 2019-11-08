@@ -1,13 +1,14 @@
 import { Map, View } from "ol";
-import { Control, defaults as defaultControls } from "ol/control";
+import { defaults as defaultControls } from "ol/control";
 import "ol/ol.css";
-import { orthoBasemap, vegetationBasemap } from "./basemap_util";
-import orthoImage from "../img/basemapOrtho.jpg";
-import vegetationImage from "../img/basemapVegetation.jpg";
+import { orthoBasemap } from "./basemap_util";
+import BasemapControl from "./BasemapControl";
+import VeraenderungControl from "./VeraenderungControl";
+
 const viewerUtil = {
   model: {
     /*
-     * the element with the homepage content.
+     * the element with the content below the app bar.
      */
     content: document.getElementsByClassName("content")[0]
   },
@@ -50,8 +51,10 @@ const viewerUtil = {
           attributionOptions: { collapsible: false }
         })
       });
-      const basemapSwitch = new olBasemapSwitch(viewerUtil.model.map);
+      const basemapSwitch = new BasemapControl(viewerUtil.model.map);
+      const layerControl = new VeraenderungControl(viewerUtil.model.map);
       viewerUtil.model.map.addControl(basemapSwitch.createBasemapControl());
+      viewerUtil.model.map.addControl(layerControl.createVeraenderungControl());
       viewerUtil.model.map.addEventListener("click", e => console.log(e));
     }
   },
@@ -69,41 +72,3 @@ const viewerUtil = {
   }
 };
 export default viewerUtil;
-
-class olBasemapSwitch {
-  constructor(map = null) {
-    this.map = map;
-    this.showVegetation = false;
-  }
-
-  createBasemapControl() {
-    const basemapControl = document.createElement("div");
-    const layerImage = document.createElement("img");
-    layerImage.src = this.showVegetation ? orthoImage : vegetationImage;
-    layerImage.alt = "layers";
-    layerImage.className = "layerIcon";
-    basemapControl.appendChild(layerImage);
-    basemapControl.className = "basemapControl";
-    basemapControl.title = "Vegetationshöhe anzeigen";
-    basemapControl.addEventListener(
-      "click",
-      () => {
-        this.showVegetation = !this.showVegetation;
-        // load the right image inside the basemapControl
-        layerImage.src = this.showVegetation ? orthoImage : vegetationImage;
-        const layers = this.map.getLayers();
-        const vegetationshoehe = layers.item(1);
-        if (vegetationshoehe) {
-          basemapControl.title = "Vegetationshöhe anzeigen";
-          layers.removeAt(1);
-        } else {
-          basemapControl.title = "Orthofoto anzeigen";
-          layers.insertAt(1, vegetationBasemap);
-        }
-      },
-      false
-    );
-    const basemapSwitch = new Control({ element: basemapControl });
-    return basemapSwitch;
-  }
-}

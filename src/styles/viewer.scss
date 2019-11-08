@@ -15,9 +15,30 @@
   position: absolute;
 }
 
+.veraenderungControl {
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  box-shadow: 0 2px 4px 0 #4a4a4a;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 250px;
+  top: 0.5em;
+  left: 0.5em;
+  padding: 12px;
+  position: absolute;
+}
+
 .layerIcon {
   width: 60px;
   height: 60px;
+}
+
+.slidercontainer {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  width: 100%;
 }
 
 .basemapControl:hover {
