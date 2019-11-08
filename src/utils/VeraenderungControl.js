@@ -11,16 +11,36 @@ class VeraenderungControl {
    */
   createVeraenderungControl() {
     const veraenderungControlElement = document.createElement("div");
-    const title = document.createElement("h3");
-    title.style.marginTop = 0;
-    title.style.width = "100%";
+    const viewerTitle = document.createElement("div");
+    viewerTitle.classList.add("veraenderungControl__title");
+    viewerTitle.addEventListener("click", () => {
+      const controlDisplay = controls.style.display;
+      if (controlDisplay === "none") {
+        controls.style.display = "flex";
+        titleArrow.innerHTML = "keyboard_arrow_down";
+      } else {
+        controls.style.display = "none";
+        titleArrow.innerHTML = "keyboard_arrow_up";
+      }
+    });
+    const title = document.createElement("span");
+    title.style.flexGrow = 1;
+    title.style.fontSize = "18px";
+    title.innerHTML = "Jährliche Veränderung";
+    const titleArrow = document.createElement("i");
+    titleArrow.classList.add("material-icons");
+    titleArrow.innerHTML = "keyboard_arrow_down";
     veraenderungControlElement.className = "veraenderungControl";
     veraenderungControlElement.title = "Veraenderung control";
-    title.innerHTML = "Jährliche Veränderung";
-    veraenderungControlElement.appendChild(title);
-    veraenderungControlElement.appendChild(this.getSwitch());
-    veraenderungControlElement.appendChild(this.getLayerInfoIcon());
-    veraenderungControlElement.appendChild(this.getSlider());
+    viewerTitle.appendChild(title);
+    viewerTitle.appendChild(titleArrow);
+    veraenderungControlElement.appendChild(viewerTitle);
+    const controls = document.createElement("div");
+    controls.classList.add("veraenderungControl__controls");
+    controls.appendChild(this.getSwitch());
+    controls.appendChild(this.getLayerInfoIcon());
+    controls.appendChild(this.getSlider());
+    veraenderungControlElement.appendChild(controls);
     const veraenderungControl = new Control({
       element: veraenderungControlElement
     });

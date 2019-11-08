@@ -16,17 +16,26 @@
 }
 
 .veraenderungControl {
-  align-items: center;
   background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 12px;
   box-shadow: 0 2px 4px 0 #4a4a4a;
+  min-width: 230px;
+  max-width: 230px;
+  top: 0em;
+  left: 0em;
+  position: absolute;
+}
+.veraenderungControl__title,
+.veraenderungControl__controls {
+  align-items: center;
   display: flex;
   flex-wrap: wrap;
-  max-width: 250px;
-  top: 0.5em;
-  left: 0.5em;
-  padding: 16px 8px 16px 16px;
-  position: absolute;
+  padding: 16px 8px;
+}
+
+.veraenderungControl__title {
+  background-color: $mdc-theme-secondary;
+  cursor: pointer;
+  padding: 8px;
 }
 
 .layerIcon {
