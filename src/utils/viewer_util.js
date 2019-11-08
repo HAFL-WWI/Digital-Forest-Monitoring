@@ -1,5 +1,7 @@
 import { Map, View } from "ol";
 import { defaults as defaultControls } from "ol/control";
+import { MDCSwitch } from "@material/switch";
+import { MDCSlider } from "@material/slider";
 import "ol/ol.css";
 import { orthoBasemap } from "./basemap_util";
 import BasemapControl from "./BasemapControl";
@@ -20,6 +22,12 @@ const viewerUtil = {
       viewerUtil.controller.removeContent();
       viewerUtil.controller.createContainer();
       viewerUtil.controller.showViewer();
+      new MDCSwitch(document.querySelector(".mdc-switch"));
+
+      const slider = new MDCSlider(document.querySelector(".mdc-slider"));
+      slider.listen("MDCSlider:change", () =>
+        console.log(`Value changed to ${slider.value}`)
+      );
     },
     /*
      * removes 'old' content like homepage, services etc.

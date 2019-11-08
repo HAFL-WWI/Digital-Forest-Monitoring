@@ -25,7 +25,7 @@
   max-width: 250px;
   top: 0.5em;
   left: 0.5em;
-  padding: 12px;
+  padding: 16px 8px 16px 16px;
   position: absolute;
 }
 
@@ -34,13 +34,21 @@
   height: 60px;
 }
 
+.layerinfo-button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+}
+
 .slidercontainer {
   display: flex;
   align-items: center;
-  padding: 8px 0;
+  padding: 0;
   width: 100%;
 }
-
+#slider {
+  margin-right: 12px;
+}
 .basemapControl:hover {
   background-color: none;
 }

@@ -21,7 +21,6 @@ class VeraenderungControl {
     veraenderungControlElement.appendChild(this.getSwitch());
     veraenderungControlElement.appendChild(this.getLayerInfoIcon());
     veraenderungControlElement.appendChild(this.getSlider());
-
     const veraenderungControl = new Control({
       element: veraenderungControlElement
     });
@@ -32,8 +31,12 @@ class VeraenderungControl {
    * @returns {HTMLElement} layerInfo - the info icon.
    */
   getLayerInfoIcon() {
-    const layerInfo = document.createElement("i");
-    layerInfo.classList.add("material-icons");
+    const layerInfo = document.createElement("button");
+    layerInfo.classList.add(
+      "layerinfo-button",
+      "mdc-icon-button",
+      "material-icons"
+    );
     layerInfo.innerHTML = "info";
     layerInfo.addEventListener("click", () => console.log("info clicked"));
     return layerInfo;
@@ -58,14 +61,15 @@ class VeraenderungControl {
     input.classList.add("mdc-switch__native-control");
     input.type = "checkbox";
     input.id = "layer-switch";
-    input.role = "switch";
+    input.checked = true;
+    input.setAttribute("role", "switch");
     input.addEventListener("change", e => {
       console.log("switch changed");
       console.log(e.target.checked);
     });
     label.for = "layer-switch";
     label.innerHTML = "Veränderung 2019";
-    label.style.padding = "0 0 0 8px";
+    label.style.padding = "0 0 0 12px";
     label.style.flexGrow = 1;
     thumb.appendChild(input);
     thumbUnderlay.appendChild(thumb);
@@ -82,13 +86,14 @@ class VeraenderungControl {
   getSlider() {
     const sliderContainer = document.createElement("div");
     sliderContainer.classList.add("slidercontainer");
-    const label = document.createElement("label");
-    label.setAttribute("for", "slider");
-    label.innerHTML = "Transparenz";
-    label.style.padding = "0 8px 0 0";
-    label.style.fontSize = "12px";
+    const opacityIcon = document.createElement("i");
+    opacityIcon.classList.add("material-icons");
+    opacityIcon.innerHTML = "opacity";
+    opacityIcon.title = "Transparenz";
+    opacityIcon.style.padding = "0 12px 0 0";
     const slider = document.createElement("div");
     slider.id = "slider";
+    slider.title = "Transparenz";
     const trackContainer = document.createElement("div");
     const track = document.createElement("div");
     const thumbContainer = document.createElement("div");
@@ -109,9 +114,14 @@ class VeraenderungControl {
     trackContainer.appendChild(track);
     slider.appendChild(trackContainer);
     slider.appendChild(thumbContainer);
-    sliderContainer.appendChild(label);
+    sliderContainer.appendChild(opacityIcon);
     sliderContainer.appendChild(slider);
+
     return sliderContainer;
+  }
+
+  getDivider() {
+    return document.createElement("hr");
   }
 }
 export default VeraenderungControl;
