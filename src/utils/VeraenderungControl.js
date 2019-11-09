@@ -10,17 +10,20 @@ class VeraenderungControl {
    * @returns {HTMLElement} veraenderungControlElement - a div with all the necessary children.
    */
   createVeraenderungControl() {
-    const veraenderungControlElement = document.createElement("div");
+    const veraenderungFragment = new DocumentFragment();
+    //title section
     const viewerTitle = document.createElement("div");
     viewerTitle.classList.add("veraenderungControl__title");
     viewerTitle.addEventListener("click", () => {
-      const controlDisplay = controls.style.display;
-      if (controlDisplay === "none") {
-        controls.style.display = "flex";
-        titleArrow.innerHTML = "keyboard_arrow_down";
+      const controlsHeight = controls.getBoundingClientRect().height;
+      if (controlsHeight === 0) {
+        controls.style.transform = "scale(1,1)";
+        controls.style.opacity = 1;
+        titleArrow.style.transform = "rotate(0deg)";
       } else {
-        controls.style.display = "none";
-        titleArrow.innerHTML = "keyboard_arrow_up";
+        controls.style.opacity = 0;
+        controls.style.transform = "scale(1,0)";
+        titleArrow.style.transform = "rotate(-90deg)";
       }
     });
     const title = document.createElement("span");
@@ -28,21 +31,21 @@ class VeraenderungControl {
     title.style.fontSize = "18px";
     title.innerHTML = "Jährliche Veränderung";
     const titleArrow = document.createElement("i");
-    titleArrow.classList.add("material-icons");
+    titleArrow.classList.add("material-icons", "title__arrow");
     titleArrow.innerHTML = "keyboard_arrow_down";
-    veraenderungControlElement.className = "veraenderungControl";
-    veraenderungControlElement.title = "Veraenderung control";
+    title.title = "Schaltflächen anzeigen";
     viewerTitle.appendChild(title);
     viewerTitle.appendChild(titleArrow);
-    veraenderungControlElement.appendChild(viewerTitle);
+    // controls section
     const controls = document.createElement("div");
     controls.classList.add("veraenderungControl__controls");
     controls.appendChild(this.getSwitch());
     controls.appendChild(this.getLayerInfoIcon());
     controls.appendChild(this.getSlider());
-    veraenderungControlElement.appendChild(controls);
+    veraenderungFragment.appendChild(viewerTitle);
+    veraenderungFragment.appendChild(controls);
     const veraenderungControl = new Control({
-      element: veraenderungControlElement
+      element: veraenderungFragment
     });
     return veraenderungControl;
   }

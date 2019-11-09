@@ -15,27 +15,36 @@
   position: absolute;
 }
 
-.veraenderungControl {
-  background-color: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 2px 4px 0 #4a4a4a;
-  min-width: 230px;
-  max-width: 230px;
-  top: 0em;
-  left: 0em;
-  position: absolute;
-}
 .veraenderungControl__title,
 .veraenderungControl__controls {
   align-items: center;
+  box-shadow: 0 2px 4px 0 #4a4a4a;
   display: flex;
   flex-wrap: wrap;
+  min-width: 230px;
+  max-width: 230px;
   padding: 16px 8px;
+  position: absolute;
 }
 
 .veraenderungControl__title {
   background-color: $mdc-theme-secondary;
   cursor: pointer;
+  left: 0em;
+  top: 0em;
   padding: 8px;
+}
+.veraenderungControl__controls {
+  background-color: rgba(255, 255, 255, 0.8);
+  top: 2.5em;
+  left: 0;
+  transform: scale(1, 1);
+  transform-origin: top left;
+  transition: transform, opacity, 0.3s;
+}
+
+.title__arrow {
+  transition: transform 0.3s;
 }
 
 .layerIcon {
