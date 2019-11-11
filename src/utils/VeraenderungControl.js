@@ -29,12 +29,16 @@ class VeraenderungControl {
     const title = document.createElement("span");
     title.style.flexGrow = 1;
     title.style.fontSize = "18px";
-    title.innerHTML = "Jährliche Veränderung";
+    title.innerHTML = "Einstellungen";
+    const titleIcon = document.createElement("i");
+    titleIcon.classList.add("material-icons");
+    titleIcon.innerHTML = "tune";
     const titleArrow = document.createElement("i");
     titleArrow.classList.add("material-icons", "title__arrow");
     titleArrow.innerHTML = "keyboard_arrow_down";
     title.title = "Schaltflächen anzeigen";
     viewerTitle.appendChild(title);
+    viewerTitle.appendChild(titleIcon);
     viewerTitle.appendChild(titleArrow);
     // controls section
     const controls = document.createElement("div");
