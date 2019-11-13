@@ -7,8 +7,14 @@ class VeraenderungControl {
     this.map = map;
     this.overlays = [
       {
-        layername: "karten-werk:result_ndvi_max_ch_forest_diff_2018_2017",
-        displayName: "Veränderung 2017/2018"
+        layername: "karten-werk:ndvi_max_ch_forest_diff_2018_2017",
+        displayName: "Veränderung 2017/2018",
+        visible: true
+      },
+      {
+        layername: "karten-werk:ndvi_max_ch_forest_diff_2018_2017_decrease",
+        displayName: "Vegetationsabnahme 17/18",
+        visible: false
       }
     ];
   }
@@ -64,7 +70,7 @@ class VeraenderungControl {
     const controls = document.createElement("div");
     controls.classList.add("veraenderungControl__controls");
     this.overlays.forEach(overlay => {
-      const wmsLayer = this.createWmsLayer(overlay.layername);
+      const wmsLayer = this.createWmsLayer(overlay);
       this.map.addLayer(wmsLayer);
       const control = document.createElement("div");
       control.classList.add("veraenderungControl__controls-control");
@@ -77,10 +83,10 @@ class VeraenderungControl {
   }
   /*
    * creates a ol wms overlay for a geoserver layer.
-   * @param {string} name - ns:name of the layer.
+   * @param {object} overlay - overlay object like stored in the model.
    * @returns {object} TileLayer - ol.TileLayer instance.
    */
-  createWmsLayer(name) {
+  createWmsLayer(overlay) {
     const url = "https://geoserver.karten-werk.ch/wms";
     const wmsLayer = new TileLayer({
       opacity: 1,
@@ -89,7 +95,7 @@ class VeraenderungControl {
           "© Geodaten: <a href='https://karten-werk.ch'>Karten-Werk</a>",
         url: url,
         params: {
-          LAYERS: `${name}`,
+          LAYERS: `${overlay.layername}`,
           FORMAT: "image/png",
           SRS: "EPSG:3857",
           TILED: true
@@ -99,7 +105,8 @@ class VeraenderungControl {
         transition: 0
       })
     });
-    wmsLayer.name = `${name}`;
+    wmsLayer.name = `${overlay.layername}`;
+    wmsLayer.setVisible(overlay.visible);
     return wmsLayer;
   }
   /*
@@ -137,7 +144,7 @@ class VeraenderungControl {
     input.classList.add("mdc-switch__native-control");
     input.type = "checkbox";
     input.id = `${overlay.layername}_switch`;
-    input.checked = true;
+    input.checked = overlay.visible;
     input.setAttribute("role", "switch");
     if (wmsLayer && overlay.displayName) {
       input.addEventListener("change", e => {

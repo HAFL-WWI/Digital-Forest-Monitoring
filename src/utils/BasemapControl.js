@@ -1,5 +1,4 @@
 import { Control } from "ol/control";
-import { vegetationBasemap } from "./basemap_util";
 import orthoImage from "../img/basemapOrtho.jpg";
 import vegetationImage from "../img/basemapVegetation.jpg";
 class BasemapControl {

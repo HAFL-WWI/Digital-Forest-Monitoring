@@ -22,11 +22,20 @@ const viewerUtil = {
       viewerUtil.controller.removeContent();
       viewerUtil.controller.createContainer();
       viewerUtil.controller.showViewer();
-      new MDCSwitch(document.querySelector(".mdc-switch"));
-      const sliders = document.getElementsByClassName("mdc-slider");
-      for (let i = 0; i < sliders.length; i++) {
-        new MDCSlider(sliders[i]);
-      }
+
+      // instantiating the material components
+      const switches = [].map.call(
+        document.querySelectorAll(".mdc-switch"),
+        el => {
+          return new MDCSwitch(el);
+        }
+      );
+      const sliders = [].map.call(
+        document.querySelectorAll(".mdc-slider"),
+        el => {
+          return new MDCSlider(el);
+        }
+      );
     },
     /*
      * removes 'old' content like homepage, services etc.
