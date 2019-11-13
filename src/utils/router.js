@@ -11,11 +11,17 @@ export const initRouter = () => {
         homepageUtil.controller.init();
         setTitle(getTitle());
       },
-      "/viewer": (params, query) => {
+      "/veraenderung": (params, query) => {
         console.log(params);
         console.log(query);
         viewerUtil.controller.init();
         changeTitle("Jährliche Veränderung");
+      },
+      "/stoerungen": () => {
+        changeTitle("Natürliche Störungen");
+        const content = document.getElementsByClassName("content")[0];
+        content.innerHTML =
+          "<div style='padding:12px'><h1>Dieser Viewer befindet sich in Entwicklung</h1><h3>Vielen Dank für Ihr Verständnis</h3></div>";
       },
       "/services": () => {
         servicesUtil.controller.init();

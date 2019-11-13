@@ -29,7 +29,7 @@ const homepageUtil = {
         description:
           "Der Wald verändert sich ständig. Hier können Sie sehen, " +
           "wo Veränderungen z.B. durch Holzschläge stattgefunden haben.",
-        route: "/viewer",
+        route: "/veraenderung",
         index: 0
       },
       stoerung: {
@@ -39,7 +39,7 @@ const homepageUtil = {
         description:
           "Hier können Sie sehen, wo der Wald natürlichen Störungen wie z.B. " +
           "Borkenkäferbefall oder Sommersturmschäden ausgesetzt ist.",
-        route: "/viewer",
+        route: "/stoerungen",
         index: 1
       },
       geodienste: {
