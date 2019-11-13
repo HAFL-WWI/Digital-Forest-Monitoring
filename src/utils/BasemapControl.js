@@ -6,6 +6,7 @@ class BasemapControl {
   constructor(map = null) {
     this.map = map;
     this.showVegetation = false;
+    this.vegetationshoehe = this.map.getLayers().item(1);
   }
 
   createBasemapControl() {
@@ -23,14 +24,12 @@ class BasemapControl {
         this.showVegetation = !this.showVegetation;
         // load the right image inside the basemapControl
         layerImage.src = this.showVegetation ? orthoImage : vegetationImage;
-        const layers = this.map.getLayers();
-        const vegetationshoehe = layers.item(1);
-        if (vegetationshoehe) {
-          basemapControl.title = "Vegetationshöhe anzeigen";
-          layers.removeAt(1);
-        } else {
+        if (this.showVegetation) {
           basemapControl.title = "Orthofoto anzeigen";
-          layers.insertAt(1, vegetationBasemap);
+          this.vegetationshoehe.setVisible(true);
+        } else {
+          basemapControl.title = "Vegetationshöhe anzeigen";
+          this.vegetationshoehe.setVisible(false);
         }
       },
       false

@@ -26,3 +26,4 @@ export const vegetationBasemap = new TileLayer({
 });
 vegetationBasemap.name = "vegetationshoehe";
 vegetationBasemap.setOpacity(0.6);
+vegetationBasemap.setVisible(false);

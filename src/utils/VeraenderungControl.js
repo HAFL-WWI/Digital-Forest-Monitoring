@@ -91,8 +91,8 @@ class VeraenderungControl {
         params: {
           LAYERS: `${name}`,
           FORMAT: "image/png",
-          SRS: "EPSG:3857"
-          //TILED: true
+          SRS: "EPSG:3857",
+          TILED: true
         },
         serverType: "geoserver",
         //do not fade tiles:

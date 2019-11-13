@@ -3,7 +3,7 @@ import { defaults as defaultControls } from "ol/control";
 import { MDCSwitch } from "@material/switch";
 import { MDCSlider } from "@material/slider";
 import "ol/ol.css";
-import { orthoBasemap } from "./basemap_util";
+import { orthoBasemap, vegetationBasemap } from "./basemap_util";
 import BasemapControl from "./BasemapControl";
 import VeraenderungControl from "./VeraenderungControl";
 
@@ -52,7 +52,7 @@ const viewerUtil = {
           minZoom: 9,
           maxZoom: 21
         }),
-        layers: [orthoBasemap],
+        layers: [orthoBasemap, vegetationBasemap],
         target: "map",
         controls: defaultControls({
           attributionOptions: { collapsible: false }
