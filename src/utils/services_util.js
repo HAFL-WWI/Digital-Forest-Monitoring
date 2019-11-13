@@ -23,33 +23,29 @@ const servicesUtil = {
     cards: {
       veraenderung: {
         image: veraenderungImage,
-        title: "Jährliche Veränderung",
-        subtitle: "Geodaten: Dominique Weber, HAFL",
+        title: "Web Map Service (WMS)",
+        subtitle: "Provided by: karten-werk GmbH",
         description:
-          "Der Wald verändert sich ständig. Hier können Sie sehen, " +
-          "wo Veränderungen z.B. durch Holzschläge stattgefunden haben.",
-        route: "/viewer",
+          "Dieser OGC konforme WMS liefert Kartenbilder- Layer und Legendeninformationen.",
         index: 0
       },
       stoerung: {
         image: sturmschaedenImage,
-        title: "Natürliche Störungen",
-        subtitle: "Geodaten: Dominique Weber, HAFL",
+        title: "Web Map Tile Service (WMTS)",
+        subtitle: "Provided by: karten-werk GmbH",
         description:
-          "Hier können Sie sehen, wo der Wald natürlichen Störungen wie z.B. " +
-          "Borkenkäferbefall oder Sommersturmschäden ausgesetzt ist.",
-        route: "/viewer",
+          "Der WMTS Service liefert vorprozessierte (gecachte) Bilder und ist somit schneller als der WMS Service. " +
+          "Er eignet sich gut zum Einbinden in Web Applikationen wo man nicht immer mit einem schneller Internet rechnen kann.",
         index: 1
       },
       geodienste: {
         image: geoservices,
-        title: "Geodienste",
-        subtitle: "Services: karten-werk GmbH",
+        title: "Web Feature Service (WFS)",
+        subtitle: "Provided by: karten-werk GmbH",
         description:
-          "Die WMS, WMTS und WFS Geodienste, können Sie in Ihr GIS " +
-          "importieren und mit Ihren eigenen Geodaten kombinieren.",
-        route: "/services",
-        index: 1
+          "Der WFS Service lierfert Vektor Geometrien inklusive Attribut Informationen. " +
+          "Er lässt sich in verschiedene GIS Systemen einbinden und bei Bedarf kann man die Daten exportieren und lokal abspeichern.",
+        index: 2
       }
     }
   },
@@ -60,7 +56,7 @@ const servicesUtil = {
     init: () => {
       servicesUtil.controller.removeContent();
       servicesUtil.controller.createJumbotron();
-      servicesUtil.controller.createHomepageCards();
+      servicesUtil.controller.createServiceCards();
     },
     /*
      * removes 'old' content like viewers, services etc.
@@ -82,7 +78,7 @@ const servicesUtil = {
      * does not have any parameters, but uses the model.cards object and some view functions to get the job done.
      * @returns {DocumentFragment} - The grid with all the cards that were attached to the DOM.
      */
-    createHomepageCards: () => {
+    createServiceCards: () => {
       const grid = servicesUtil.view.createGrid();
       const cards = document.createDocumentFragment();
       for (const card in servicesUtil.model.cards) {
@@ -146,6 +142,9 @@ const servicesUtil = {
       const cardActions = document.createElement("div");
       const cardActionButtons = document.createElement("div");
       const actionButton = document.createElement("button");
+      const video = document.createElement("video");
+      video.src = "https://www.youtube.com/embed/EIybe4TqaI0";
+      video.setAttribute("autoplay", false);
 
       cardTitle.innerHTML = title;
       cardDescription.innerHTML = description;
@@ -164,14 +163,19 @@ const servicesUtil = {
         "mdc-card__primary-action",
         "homepage-card__primary-action"
       );
-      cardPrimaryAction.addEventListener("click", () => router.navigate(route));
+      cardPrimaryAction.addEventListener("click", () =>
+        console.log("service card clicked")
+      );
       cardPrimaryAction.tabIndex = index;
       cardMedia.classList.add(
         "mdc-card__media",
         "mdc-card__media--16-9",
         "homepage-card__media"
       );
-      cardMedia.style.backgroundImage = 'url("' + image + '")';
+      cardMedia.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/EIybe4TqaI0" 
+      frameborder="0" allow="accelerometer; autoplay; encrypted-media; 
+      gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+      //cardMedia.style.backgroundImage = 'url("' + image + '")';
       cardTitleContainer.classList.add("homepage-card__primary");
       cardTitle.classList.add(
         "homepage-card__title",

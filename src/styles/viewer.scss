@@ -26,7 +26,11 @@
   padding: 16px 8px;
   position: absolute;
 }
-
+.veraenderungControl__controls-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
 .veraenderungControl__title {
   background-color: $mdc-theme-secondary;
   cursor: pointer;
@@ -64,7 +68,7 @@
   padding: 0;
   width: 100%;
 }
-#slider {
+.mdc-slider {
   margin-right: 12px;
 }
 .basemapControl:hover {

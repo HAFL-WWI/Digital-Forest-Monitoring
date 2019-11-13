@@ -23,11 +23,10 @@ const viewerUtil = {
       viewerUtil.controller.createContainer();
       viewerUtil.controller.showViewer();
       new MDCSwitch(document.querySelector(".mdc-switch"));
-
-      const slider = new MDCSlider(document.querySelector(".mdc-slider"));
-      slider.listen("MDCSlider:change", () =>
-        console.log(`Value changed to ${slider.value}`)
-      );
+      const sliders = document.getElementsByClassName("mdc-slider");
+      for (let i = 0; i < sliders.length; i++) {
+        new MDCSlider(sliders[i]);
+      }
     },
     /*
      * removes 'old' content like homepage, services etc.
@@ -49,7 +48,7 @@ const viewerUtil = {
       viewerUtil.model.map = new Map({
         view: new View({
           center: [829300, 5933555], //Bern
-          zoom: 11,
+          zoom: 13,
           minZoom: 9,
           maxZoom: 21
         }),

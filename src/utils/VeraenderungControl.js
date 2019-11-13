@@ -1,8 +1,16 @@
 import { Control } from "ol/control";
-
+import TileLayer from "ol/layer/Tile";
+import { TileWMS } from "ol/source";
+import { MDCSlider } from "@material/slider";
 class VeraenderungControl {
   constructor(map = null) {
     this.map = map;
+    this.overlays = [
+      {
+        layername: "karten-werk:result_ndvi_max_ch_forest_diff_2018_2017",
+        displayName: "Veränderung 2017/2018"
+      }
+    ];
   }
 
   /*
@@ -15,14 +23,14 @@ class VeraenderungControl {
     const viewerTitle = document.createElement("div");
     viewerTitle.classList.add("veraenderungControl__title");
     viewerTitle.addEventListener("click", () => {
-      const controlsHeight = controls.getBoundingClientRect().height;
+      const controlsHeight = layerControls.getBoundingClientRect().height;
       if (controlsHeight === 0) {
-        controls.style.transform = "scale(1,1)";
-        controls.style.opacity = 1;
+        layerControls.style.transform = "scale(1,1)";
+        layerControls.style.opacity = 1;
         titleArrow.style.transform = "rotate(0deg)";
       } else {
-        controls.style.opacity = 0;
-        controls.style.transform = "scale(1,0)";
+        layerControls.style.opacity = 0;
+        layerControls.style.transform = "scale(1,0)";
         titleArrow.style.transform = "rotate(-90deg)";
       }
     });
@@ -40,18 +48,59 @@ class VeraenderungControl {
     viewerTitle.appendChild(title);
     viewerTitle.appendChild(titleIcon);
     viewerTitle.appendChild(titleArrow);
-    // controls section
-    const controls = document.createElement("div");
-    controls.classList.add("veraenderungControl__controls");
-    controls.appendChild(this.getSwitch());
-    controls.appendChild(this.getLayerInfoIcon());
-    controls.appendChild(this.getSlider());
+
+    // add layers and controls
+    const layerControls = this.getLayerControls();
+
     veraenderungFragment.appendChild(viewerTitle);
-    veraenderungFragment.appendChild(controls);
+    veraenderungFragment.appendChild(layerControls);
     const veraenderungControl = new Control({
       element: veraenderungFragment
     });
     return veraenderungControl;
+  }
+
+  getLayerControls() {
+    const controls = document.createElement("div");
+    controls.classList.add("veraenderungControl__controls");
+    this.overlays.forEach(overlay => {
+      const wmsLayer = this.createWmsLayer(overlay.layername);
+      this.map.addLayer(wmsLayer);
+      const control = document.createElement("div");
+      control.classList.add("veraenderungControl__controls-control");
+      control.appendChild(this.getSwitch({ wmsLayer, overlay }));
+      control.appendChild(this.getLayerInfoIcon());
+      control.appendChild(this.getSlider(wmsLayer));
+      controls.appendChild(control);
+    });
+    return controls;
+  }
+  /*
+   * creates a ol wms overlay for a geoserver layer.
+   * @param {string} name - ns:name of the layer.
+   * @returns {object} TileLayer - ol.TileLayer instance.
+   */
+  createWmsLayer(name) {
+    const url = "https://geoserver.karten-werk.ch/wms";
+    const wmsLayer = new TileLayer({
+      opacity: 1,
+      source: new TileWMS({
+        attributions:
+          "© Geodaten: <a href='https://karten-werk.ch'>Karten-Werk</a>",
+        url: url,
+        params: {
+          LAYERS: `${name}`,
+          FORMAT: "image/png",
+          SRS: "EPSG:3857"
+          //TILED: true
+        },
+        serverType: "geoserver",
+        //do not fade tiles:
+        transition: 0
+      })
+    });
+    wmsLayer.name = `${name}`;
+    return wmsLayer;
   }
   /*
    * creates the layer info (i) icon
@@ -73,7 +122,7 @@ class VeraenderungControl {
    * creates the layer on/off switch
    * @returns {DocumentFragment} switchFragment- the labeled switch.
    */
-  getSwitch() {
+  getSwitch({ wmsLayer, overlay } = {}) {
     const switchFragment = new DocumentFragment();
     const layerSwitch = document.createElement("div");
     const switchTrack = document.createElement("div");
@@ -87,17 +136,20 @@ class VeraenderungControl {
     thumb.classList.add("mdc-switch__thumb");
     input.classList.add("mdc-switch__native-control");
     input.type = "checkbox";
-    input.id = "layer-switch";
+    input.id = `${overlay.layername}_switch`;
     input.checked = true;
     input.setAttribute("role", "switch");
-    input.addEventListener("change", e => {
-      console.log("switch changed");
-      console.log(e.target.checked);
-    });
+    if (wmsLayer && overlay.displayName) {
+      input.addEventListener("change", e => {
+        wmsLayer.setVisible(e.target.checked);
+      });
+    }
+
     label.for = "layer-switch";
-    label.innerHTML = "Veränderung 2019";
+    label.innerHTML = `${overlay.displayName}`;
     label.style.padding = "0 0 0 12px";
     label.style.flexGrow = 1;
+    label.style.fontSize = "12px";
     thumb.appendChild(input);
     thumbUnderlay.appendChild(thumb);
     layerSwitch.appendChild(switchTrack);
@@ -110,7 +162,7 @@ class VeraenderungControl {
    * creates the layer transparency slider
    * @returns {DocumentFragment} slider - transparency slider.
    */
-  getSlider() {
+  getSlider(wmsLayer) {
     const sliderContainer = document.createElement("div");
     sliderContainer.classList.add("slidercontainer");
     const opacityIcon = document.createElement("i");
@@ -119,7 +171,7 @@ class VeraenderungControl {
     opacityIcon.title = "Transparenz";
     opacityIcon.style.padding = "0 12px 0 0";
     const slider = document.createElement("div");
-    slider.id = "slider";
+    slider.id = `${wmsLayer.name}_slider`;
     slider.title = "Transparenz";
     const trackContainer = document.createElement("div");
     const track = document.createElement("div");
@@ -134,16 +186,23 @@ class VeraenderungControl {
     slider.setAttribute("aria-valuemax", "100");
     slider.setAttribute("aria-valuenow", "100");
     slider.setAttribute("ariaLabel", "transparency slider");
+
     trackContainer.classList.add("mdc-slider__track-container");
     track.classList.add("mdc-slider__track");
     thumbContainer.classList.add("mdc-slider__thumb-container");
+
     thumbContainer.innerHTML = thumbContainerContent;
     trackContainer.appendChild(track);
     slider.appendChild(trackContainer);
     slider.appendChild(thumbContainer);
     sliderContainer.appendChild(opacityIcon);
     sliderContainer.appendChild(slider);
+    const mdcslider = new MDCSlider(slider);
 
+    mdcslider.listen("MDCSlider:input", e => {
+      const opacity = parseFloat(e.target.getAttribute("aria-valuenow") / 100);
+      wmsLayer.setOpacity(opacity);
+    });
     return sliderContainer;
   }
 
