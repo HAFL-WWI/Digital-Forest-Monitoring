@@ -2,18 +2,30 @@ import { Control } from "ol/control";
 import TileLayer from "ol/layer/Tile";
 import { TileWMS } from "ol/source";
 import { MDCSlider } from "@material/slider";
+import { dialog } from "./init";
+import { dialogTitle, dialogContent, getLayerInfo } from "./main_util";
 class VeraenderungControl {
   constructor(map = null) {
     this.map = map;
     this.overlays = [
       {
         layername: "karten-werk:ndvi_max_ch_forest_diff_2018_2017",
-        displayName: "Veränderung 2017/2018",
+        displayName: "Veränderung 17/18",
+        description: `Difference between NDVI Maximum of 2018 and 2017, clipped to forest areas, Switzerland (expect small area in SW):
+        Sentinel-2 NDVI maximum June & July for 2017
+        Sentinel-2 NDVI maximum June & July for 2018
+        Difference between 2018-2017`,
+
         visible: true
       },
       {
         layername: "karten-werk:ndvi_max_ch_forest_diff_2018_2017_decrease",
         displayName: "Vegetationsabnahme 17/18",
+        description: `Difference between NDVI Maximum of 2018 and 2017, clipped to forest areas, Switzerland (expect small area in SW):
+        Sentinel-2 NDVI maximum June & July for 2017
+        Sentinel-2 NDVI maximum June & July for 2018
+        This layer displays only areas where the ndvi has decresed e.g. areas of vegetation loss.
+        Difference between 2018-2017`,
         visible: false
       }
     ];
@@ -43,6 +55,7 @@ class VeraenderungControl {
     const title = document.createElement("span");
     title.style.flexGrow = 1;
     title.style.fontSize = "18px";
+    title.style.paddingLeft = "24px";
     title.innerHTML = "Einstellungen";
     const titleIcon = document.createElement("i");
     titleIcon.classList.add("material-icons");
@@ -75,7 +88,7 @@ class VeraenderungControl {
       const control = document.createElement("div");
       control.classList.add("veraenderungControl__controls-control");
       control.appendChild(this.getSwitch({ wmsLayer, overlay }));
-      control.appendChild(this.getLayerInfoIcon());
+      control.appendChild(this.getLayerInfoIcon(overlay));
       control.appendChild(this.getSlider(wmsLayer));
       controls.appendChild(control);
     });
@@ -111,9 +124,10 @@ class VeraenderungControl {
   }
   /*
    * creates the layer info (i) icon
+   * @param {object} overlay - overlay item like stored in this.overlays
    * @returns {HTMLElement} layerInfo - the info icon.
    */
-  getLayerInfoIcon() {
+  getLayerInfoIcon(overlay) {
     const layerInfo = document.createElement("button");
     layerInfo.classList.add(
       "layerinfo-button",
@@ -121,7 +135,11 @@ class VeraenderungControl {
       "material-icons"
     );
     layerInfo.innerHTML = "info";
-    layerInfo.addEventListener("click", () => console.log("info clicked"));
+    layerInfo.addEventListener("click", () => {
+      dialogTitle.innerHTML = `${overlay.displayName}`;
+      dialogContent.innerHTML = getLayerInfo(overlay);
+      dialog.open();
+    });
     return layerInfo;
   }
 
