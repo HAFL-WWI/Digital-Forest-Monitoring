@@ -25,26 +25,35 @@ const servicesUtil = {
         image: veraenderungImage,
         title: "Web Map Service (WMS)",
         subtitle: "Provided by: karten-werk GmbH",
-        description:
-          "Dieser OGC konforme WMS liefert Kartenbilder- Layer und Legendeninformationen.",
+        description: `Dieser OGC konforme WMS liefert Kartenbilder- Layer und Legendeninformationen.
+          <h4 style="margin:8px 0 0 0">URL:</h4>
+          <a href="https://geoserver.karten-werk.ch/wms?request=GetCapabilities">https://geoserver.karten-werk.ch/wms?request=GetCapabilities</a>`,
+        serviceUrl:
+          "https://geoserver.karten-werk.ch/wms?request=GetCapabilities",
         index: 0
       },
       stoerung: {
         image: sturmschaedenImage,
         title: "Web Map Tile Service (WMTS)",
         subtitle: "Provided by: karten-werk GmbH",
-        description:
-          "Der WMTS Service liefert vorprozessierte (gecachte) Bilder und ist somit schneller als der WMS Service. " +
-          "Er eignet sich gut zum Einbinden in Web Applikationen wo man nicht immer mit einem schneller Internet rechnen kann.",
+        description: `Der WMTS Service liefert vorprozessierte (gecachte) Bilder und ist somit schneller als der WMS Service.
+          Er eignet sich gut zum Einbinden in Web Applikationen wo man nicht immer mit einem schneller Internet rechnen kann.
+          <h4 style="margin:8px 0 0 0">URL:</h4>
+          <a href="https://geoserver.karten-werk.ch/wms?request=GetCapabilities">https://geoserver.karten-werk.ch/wms?request=GetCapabilities</a>`,
+        serviceUrl:
+          "https://geoserver.karten-werk.ch/wms?request=GetCapabilities",
         index: 1
       },
       geodienste: {
         image: geoservices,
         title: "Web Feature Service (WFS)",
         subtitle: "Provided by: karten-werk GmbH",
-        description:
-          "Der WFS Service lierfert Vektor Geometrien inklusive Attribut Informationen. " +
-          "Er lässt sich in verschiedene GIS Systemen einbinden und bei Bedarf kann man die Daten exportieren und lokal abspeichern.",
+        description: `Der WFS Service lierfert Vektor Geometrien inklusive Attribut Informationen.
+          Er lässt sich in verschiedene GIS Systemen einbinden und bei Bedarf kann man die Daten exportieren und lokal abspeichern.
+          <h4 style="margin:8px 0 0 0">URL:</h4>
+          <a href="https://geoserver.karten-werk.ch/wms?request=GetCapabilities">https://geoserver.karten-werk.ch/wms?request=GetCapabilities</a>`,
+        serviceUrl:
+          "https://geoserver.karten-werk.ch/wms?request=GetCapabilities",
         index: 2
       }
     }
@@ -167,11 +176,7 @@ const servicesUtil = {
         console.log("service card clicked")
       );
       cardPrimaryAction.tabIndex = index;
-      cardMedia.classList.add(
-        "mdc-card__media",
-        "mdc-card__media--16-9",
-        "homepage-card__media"
-      );
+      cardMedia.classList.add("homepage-card__media");
       cardMedia.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/EIybe4TqaI0" 
       frameborder="0" allow="accelerometer; autoplay; encrypted-media; 
       gyroscope; picture-in-picture" allowfullscreen></iframe>`;
