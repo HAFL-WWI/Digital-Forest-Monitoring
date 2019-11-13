@@ -31,6 +31,11 @@
   flex-wrap: wrap;
   align-items: center;
 }
+
+.veraenderungControl__controls-control:not(:last-child) {
+  margin-bottom: 12px;
+  border-bottom: 1px dotted grey;
+}
 .veraenderungControl__title {
   background-color: $mdc-theme-secondary;
   cursor: pointer;
