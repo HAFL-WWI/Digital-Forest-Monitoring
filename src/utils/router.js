@@ -31,4 +31,8 @@ export const initRouter = () => {
     .resolve();
 
   router.notFound(() => homepageUtil.controller.createHomepageCards());
+  //register the click event listener for the home button
+  document.querySelector("#home-button").addEventListener("click", () => {
+    router.navigate("/");
+  });
 };
