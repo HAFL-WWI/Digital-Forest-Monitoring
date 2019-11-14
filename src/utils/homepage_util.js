@@ -29,6 +29,7 @@ const homepageUtil = {
         description:
           "Der Wald verändert sich ständig. Hier können Sie sehen, " +
           "wo Veränderungen z.B. durch Holzschläge stattgefunden haben.",
+        linktext: "zum viewer",
         route: "/veraenderung",
         index: 0
       },
@@ -40,6 +41,7 @@ const homepageUtil = {
           "Hier können Sie sehen, wo der Wald natürlichen Störungen wie z.B. " +
           "Borkenkäferbefall oder Sommersturmschäden ausgesetzt ist.",
         route: "/stoerungen",
+        linktext: "zum viewer",
         index: 1
       },
       geodienste: {
@@ -50,6 +52,7 @@ const homepageUtil = {
           "Die WMS, WMTS und WFS Geodienste, können Sie in Ihr GIS " +
           "importieren und mit Ihren eigenen Geodaten kombinieren.",
         route: "/services",
+        linktext: "zu den Services",
         index: 1
       }
     }
@@ -135,7 +138,15 @@ const homepageUtil = {
      @param {number} params.index - the tabindex for the card.
      @returns {HTMLElement} cell - a single grid cell containing a card Element.
     */
-    createCard: ({ image, title, subtitle, description, route, index }) => {
+    createCard: ({
+      image,
+      title,
+      subtitle,
+      description,
+      linktext,
+      route,
+      index
+    }) => {
       const cell = document.createElement("div");
       const card = document.createElement("div");
       const cardPrimaryAction = document.createElement("div");
@@ -154,7 +165,7 @@ const homepageUtil = {
       actionButton.addEventListener("click", () => {
         router.navigate(route);
       });
-      actionButton.innerHTML = "zum Viewer";
+      actionButton.innerHTML = linktext;
 
       cell.classList.add(
         "mdc-layout-grid__cell",
