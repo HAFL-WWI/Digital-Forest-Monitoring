@@ -104,8 +104,6 @@ class VeraenderungControl {
     const wmsLayer = new TileLayer({
       opacity: 1,
       source: new TileWMS({
-        attributions:
-          "© Geodaten: <a href='https://karten-werk.ch'>Karten-Werk</a>",
         url: url,
         params: {
           LAYERS: `${overlay.layername}`,
