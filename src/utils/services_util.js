@@ -1,6 +1,3 @@
-import veraenderungImage from "../img/jaehrl_veraenderung.jpg";
-import sturmschaedenImage from "../img/sturmschaeden.jpg";
-import geoservices from "../img/geoservices.jpg";
 import { router } from "./router";
 const servicesUtil = {
   model: {
@@ -22,7 +19,6 @@ const servicesUtil = {
      */
     cards: {
       veraenderung: {
-        image: veraenderungImage,
         title: "Web Map Service (WMS)",
         subtitle: "Provided by: karten-werk GmbH",
         description: `Dieser OGC konforme WMS liefert Kartenbilder- Layer und Legendeninformationen.
@@ -30,10 +26,10 @@ const servicesUtil = {
           <a href="https://geoserver.karten-werk.ch/wms?request=GetCapabilities">https://geoserver.karten-werk.ch/wms?request=GetCapabilities</a>`,
         serviceUrl:
           "https://geoserver.karten-werk.ch/wms?request=GetCapabilities",
+        videoUrl: "https://www.youtube.com/embed/g7t_tz2OJpg",
         index: 0
       },
       stoerung: {
-        image: sturmschaedenImage,
         title: "Web Map Tile Service (WMTS)",
         subtitle: "Provided by: karten-werk GmbH",
         description: `Der WMTS Service liefert vorprozessierte (gecachte) Bilder und ist somit schneller als der WMS Service.
@@ -42,10 +38,10 @@ const servicesUtil = {
           <a href="https://geoserver.karten-werk.ch/wms?request=GetCapabilities">https://geoserver.karten-werk.ch/wms?request=GetCapabilities</a>`,
         serviceUrl:
           "https://geoserver.karten-werk.ch/wms?request=GetCapabilities",
+        videoUrl: "https://www.youtube.com/embed/g7t_tz2OJpg",
         index: 1
       },
       geodienste: {
-        image: geoservices,
         title: "Web Feature Service (WFS)",
         subtitle: "Provided by: karten-werk GmbH",
         description: `Der WFS Service lierfert Vektor Geometrien inklusive Attribut Informationen.
@@ -54,6 +50,7 @@ const servicesUtil = {
           <a href="https://geoserver.karten-werk.ch/wms?request=GetCapabilities">https://geoserver.karten-werk.ch/wms?request=GetCapabilities</a>`,
         serviceUrl:
           "https://geoserver.karten-werk.ch/wms?request=GetCapabilities",
+        videoUrl: "https://www.youtube.com/embed/aZbNjFLe884",
         index: 2
       }
     }
@@ -139,7 +136,7 @@ const servicesUtil = {
      @param {number} params.index - the tabindex for the card.
      @returns {HTMLElement} cell - a single grid cell containing a card Element.
     */
-    createCard: ({ image, title, subtitle, description, route, index }) => {
+    createCard: ({ videoUrl, title, subtitle, description, route, index }) => {
       const cell = document.createElement("div");
       const card = document.createElement("div");
       const cardPrimaryAction = document.createElement("div");
@@ -151,10 +148,6 @@ const servicesUtil = {
       const cardActions = document.createElement("div");
       const cardActionButtons = document.createElement("div");
       const actionButton = document.createElement("button");
-      const video = document.createElement("video");
-      video.src = "https://www.youtube.com/embed/EIybe4TqaI0";
-      video.setAttribute("autoplay", false);
-
       cardTitle.innerHTML = title;
       cardDescription.innerHTML = description;
       cardSubTitle.innerHTML = subtitle;
@@ -177,10 +170,7 @@ const servicesUtil = {
       );
       cardPrimaryAction.tabIndex = index;
       cardMedia.classList.add("homepage-card__media");
-      cardMedia.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/EIybe4TqaI0" 
-      frameborder="0" allow="accelerometer; autoplay; encrypted-media; 
-      gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-      //cardMedia.style.backgroundImage = 'url("' + image + '")';
+      cardMedia.innerHTML = `<iframe width="100%" height="100%" src="${videoUrl}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
       cardTitleContainer.classList.add("homepage-card__primary");
       cardTitle.classList.add(
         "homepage-card__title",
