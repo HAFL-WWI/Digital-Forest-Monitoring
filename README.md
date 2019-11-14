@@ -1,17 +1,17 @@
-# Parcel vanilla JS starter template
+# Digital-Forest-Monitoring
 
-This is a starter template for a simple vanilla javascript app. It uses [parcel](https://parceljs.org/) for module bundling.
+Forest monitoring apps and services based on remote sensing data
 
 ## Getting Started
 
 You can get a local copy of the project by running this command on your console:
 
 ```
-git clone git@github.com:hkfrei/parcelVanillaJs.git
+git clone git@github.com:HAFL-FWI/Digital-Forest-Monitoring.git
 ```
 
-After that, you should have a new directory named "parcelVanillaJs". Enter it by typing...
-`cd parcelVanillaJs`.
+After that, you should have a new directory named "Digital-Forest-Monitoring". Enter it by typing...
+`cd Digital-Forest-Monitoring`.
 
 ### Prerequisites
 
@@ -72,3 +72,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - The awesome [parcel](https://parceljs.org/) Blazing fast, zero configuration web application bundler
+- [Navigo](https://github.com/krasimir/navigo) A simple vanilla JavaScript router with a fallback for older browsers
+- [OpenLayers](https://openlayers.org/) A high-performance, feature-packed library for all your mapping needs.
