@@ -1,6 +1,6 @@
 # Digital-Forest-Monitoring
 
-Forest monitoring apps and services based on remote sensing data
+Forest monitoring apps and services based on remote sensing data.
 
 ## Getting Started
 
@@ -47,10 +47,12 @@ After that, you can copy the contents of the `dist` folder to your webservers ro
 This project uses [eslint](https://eslint.org/). You can start the linter by typing `yarn lint`. It it recommended to integrate the linter in the IDE of your choice. See [https://eslint.org/docs/user-guide/integrations](https://eslint.org/docs/user-guide/integrations) for more info.
 Altough it's not integrated in this project, we use [Prettier](https://prettier.io/) in order to format the code. Prettier can be integrated in [various IDE's](https://prettier.io/docs/en/editors.html) and we recommend it very much.
 
-## Built With
+## Built with
 
 - [YARN](https://yarnpkg.com/) - Package Management
 - [parcel](https://parceljs.org/) - Blazing fast, zero configuration web application bundler
+- [Navigo](https://github.com/krasimir/navigo) A simple vanilla JavaScript router with a fallback for older browsers.
+- [OpenLayers](https://openlayers.org/) A high-performance, feature-packed library for all your mapping needs.
 
 ## Contributing
 
@@ -61,9 +63,13 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
 
 We use [SemVer](http://semver.org/) for versioning.
 
-## Authors
+## Authors (in alphabetical order)
 
-- **Hanskaspar Frei**
+- Alexandra Erbach (HAFL)
+- Christian Rosset (HAFL)
+- Dominique Weber (HAFL)
+- Hanskaspar Frei (karten-werk GmbH)
+- Thomas Bettler (BAFU)
 
 ## License
 
@@ -71,6 +77,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- The awesome [parcel](https://parceljs.org/) Blazing fast, zero configuration web application bundler
-- [Navigo](https://github.com/krasimir/navigo) A simple vanilla JavaScript router with a fallback for older browsers
-- [OpenLayers](https://openlayers.org/) A high-performance, feature-packed library for all your mapping needs.
+- [Bundesamt für Umwelt (BAFU)](https://www.bafu.admin.ch/bafu/de/home/themen/wald.html)
+- [Hochschule für Agrar-, Forst- und Lebensmittelwissenschaften HAFL](https://www.bfh.ch/hafl/de/)
