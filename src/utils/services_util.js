@@ -15,7 +15,6 @@ const servicesUtil = {
       "die Collector App von Esri einbinden.",
     /*
      * content for every card on the hompage.
-     * a single card must have the properties: image, title, subtitle, description, route and index.
      */
     cards: {
       veraenderung: {
@@ -26,8 +25,7 @@ const servicesUtil = {
           <a href="https://geoserver.karten-werk.ch/wms?request=GetCapabilities">https://geoserver.karten-werk.ch/wms?request=GetCapabilities</a>`,
         serviceUrl:
           "https://geoserver.karten-werk.ch/wms?request=GetCapabilities",
-        videoUrl: "https://www.youtube.com/embed/g7t_tz2OJpg",
-        index: 0
+        videoUrl: "https://www.youtube.com/embed/g7t_tz2OJpg"
       },
       stoerung: {
         title: "Web Map Tile Service (WMTS)",
@@ -38,8 +36,7 @@ const servicesUtil = {
           <a href="https://geoserver.karten-werk.ch/wms?request=GetCapabilities">https://geoserver.karten-werk.ch/wms?request=GetCapabilities</a>`,
         serviceUrl:
           "https://geoserver.karten-werk.ch/gwc/service/wmts?request=getCapabilities",
-        videoUrl: "https://www.youtube.com/embed/g7t_tz2OJpg",
-        index: 1
+        videoUrl: "https://www.youtube.com/embed/g7t_tz2OJpg"
       },
       geodienste: {
         title: "Web Feature Service (WFS)",
@@ -50,8 +47,7 @@ const servicesUtil = {
           <a href="https://geoserver.karten-werk.ch/wms?request=GetCapabilities">https://geoserver.karten-werk.ch/wms?request=GetCapabilities</a>`,
         serviceUrl:
           "https://geoserver.karten-werk.ch/wfs?request=GetCapabilities",
-        videoUrl: "https://www.youtube.com/embed/aZbNjFLe884",
-        index: 2
+        videoUrl: "https://www.youtube.com/embed/aZbNjFLe884"
       }
     }
   },
@@ -133,10 +129,9 @@ const servicesUtil = {
      @param {string} params.subtitle - card subtitle.
      @param {string} params.description - card description.
      @param {string} params.route - the url to open when the user clicks on the card.
-     @param {number} params.index - the tabindex for the card.
      @returns {HTMLElement} cell - a single grid cell containing a card Element.
     */
-    createCard: ({ videoUrl, title, subtitle, description, route, index }) => {
+    createCard: ({ videoUrl, title, subtitle, description, route }) => {
       const cell = document.createElement("div");
       const card = document.createElement("div");
       const cardPrimaryAction = document.createElement("div");
@@ -168,7 +163,6 @@ const servicesUtil = {
       cardPrimaryAction.addEventListener("click", () =>
         console.log("service card clicked")
       );
-      cardPrimaryAction.tabIndex = index;
       cardMedia.classList.add("homepage-card__media");
       cardMedia.innerHTML = `<iframe width="100%" height="100%" src="${videoUrl}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
       cardTitleContainer.classList.add("homepage-card__primary");
