@@ -1,6 +1,8 @@
 # Digital-Forest-Monitoring
 
-Forest monitoring apps and services based on remote sensing data.
+### Forest monitoring apps and services based on remote sensing data.
+
+#### An online version of the app can be found here: [https://forestmonitoring.lab.karten-werk.ch/veraenderung](https://forestmonitoring.lab.karten-werk.ch/veraenderung)
 
 ## Getting Started
 
@@ -16,6 +18,7 @@ After that, you should have a new directory named "Digital-Forest-Monitoring". E
 ### Prerequisites
 
 The project needs the package manager [Yarn](https://yarnpkg.com/). You can install it from [here](https://yarnpkg.com/en/docs/install)
+It is recommended to install the version control system [Git](https://git-scm.com/) on your machine.
 
 ### Installing
 
