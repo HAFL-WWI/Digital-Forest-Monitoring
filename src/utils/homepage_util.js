@@ -19,7 +19,6 @@ const homepageUtil = {
       "sich ausschliesslich auf die Schweiz.",
     /*
      * content for every card on the hompage.
-     * a single card must have the properties: image, title, subtitle, description, route and index.
      */
     cards: {
       veraenderung: {
@@ -30,8 +29,7 @@ const homepageUtil = {
           "Der Wald verändert sich ständig. Hier können Sie sehen, " +
           "wo Veränderungen z.B. durch Holzschläge stattgefunden haben.",
         linktext: "zum viewer",
-        route: "/veraenderung",
-        index: 0
+        route: "/veraenderung"
       },
       stoerung: {
         image: sturmschaedenImage,
@@ -41,8 +39,7 @@ const homepageUtil = {
           "Hier können Sie sehen, wo der Wald natürlichen Störungen wie z.B. " +
           "Borkenkäferbefall oder Sommersturmschäden ausgesetzt ist.",
         route: "/stoerungen",
-        linktext: "zum viewer",
-        index: 1
+        linktext: "zum viewer"
       },
       geodienste: {
         image: geoservices,
@@ -52,8 +49,7 @@ const homepageUtil = {
           "Die WMS, WMTS und WFS Geodienste, können Sie in Ihr GIS " +
           "importieren und mit Ihren eigenen Geodaten kombinieren.",
         route: "/services",
-        linktext: "zu den Services",
-        index: 1
+        linktext: "zu den Services"
       }
     }
   },
@@ -135,18 +131,9 @@ const homepageUtil = {
      @param {string} params.subtitle - card subtitle.
      @param {string} params.description - card description.
      @param {string} params.route - the url to open when the user clicks on the card.
-     @param {number} params.index - the tabindex for the card.
      @returns {HTMLElement} cell - a single grid cell containing a card Element.
     */
-    createCard: ({
-      image,
-      title,
-      subtitle,
-      description,
-      linktext,
-      route,
-      index
-    }) => {
+    createCard: ({ image, title, subtitle, description, linktext, route }) => {
       const cell = document.createElement("div");
       const card = document.createElement("div");
       const cardPrimaryAction = document.createElement("div");
@@ -177,7 +164,6 @@ const homepageUtil = {
         "homepage-card__primary-action"
       );
       cardPrimaryAction.addEventListener("click", () => router.navigate(route));
-      cardPrimaryAction.tabIndex = index;
       cardMedia.classList.add(
         "mdc-card__media",
         "mdc-card__media--16-9",
