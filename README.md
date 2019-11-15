@@ -2,7 +2,7 @@
 
 ### Forest monitoring apps and services based on remote sensing data.
 
-#### An online version of the app can be found here: [https://forestmonitoring.lab.karten-werk.ch/veraenderung](https://forestmonitoring.lab.karten-werk.ch)
+#### An online version of the app can be found here: [https://forestmonitoring.lab.karten-werk.ch](https://forestmonitoring.lab.karten-werk.ch)
 
 ## Getting Started
 
