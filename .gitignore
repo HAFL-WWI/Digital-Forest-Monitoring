@@ -29,9 +29,6 @@ bower_components
 # node-waf configuration
 .lock-wscript
 
-# Visual Studio Code configuration
-.vscode
-
 # IDEs and editors
 .idea
 .project

@@ -37,7 +37,7 @@ const servicesUtil = {
           <h4 style="margin:8px 0 0 0">URL:</h4>
           <a href="https://geoserver.karten-werk.ch/wms?request=GetCapabilities">https://geoserver.karten-werk.ch/wms?request=GetCapabilities</a>`,
         serviceUrl:
-          "https://geoserver.karten-werk.ch/wms?request=GetCapabilities",
+          "https://geoserver.karten-werk.ch/gwc/service/wmts?request=getCapabilities",
         videoUrl: "https://www.youtube.com/embed/g7t_tz2OJpg",
         index: 1
       },
@@ -49,7 +49,7 @@ const servicesUtil = {
           <h4 style="margin:8px 0 0 0">URL:</h4>
           <a href="https://geoserver.karten-werk.ch/wms?request=GetCapabilities">https://geoserver.karten-werk.ch/wms?request=GetCapabilities</a>`,
         serviceUrl:
-          "https://geoserver.karten-werk.ch/wms?request=GetCapabilities",
+          "https://geoserver.karten-werk.ch/wfs?request=GetCapabilities",
         videoUrl: "https://www.youtube.com/embed/aZbNjFLe884",
         index: 2
       }
