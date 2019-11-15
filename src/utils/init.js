@@ -22,3 +22,14 @@ document.getElementById("impressum-button").addEventListener("click", () => {
   dialogContent.innerHTML = impressum.content;
   dialog.open();
 });
+
+/* event listener to set the map height when browser gets resized.
+ * neccessary because is possible that the topAppBar change it's height.
+ */
+window.addEventListener("resize", () => {
+  const map = document.getElementById("map");
+  if (map) {
+    const topAppBar = document.querySelector(".mdc-top-app-bar");
+    map.style.height = `calc(100vh - ${topAppBar.offsetHeight}px`;
+  }
+});

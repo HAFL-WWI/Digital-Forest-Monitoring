@@ -82,7 +82,9 @@ const viewerUtil = {
       const viewerContainer = document.createElement("div");
       viewerContainer.id = "map";
       viewerContainer.style.width = "100vw";
-      viewerContainer.style.height = "calc(100vh - 64px)";
+      const topAppBarHeight = document.querySelector(".mdc-top-app-bar")
+        .offsetHeight;
+      viewerContainer.style.height = `calc(100vh - ${topAppBarHeight}px)`;
       return viewerContainer;
     }
   }
