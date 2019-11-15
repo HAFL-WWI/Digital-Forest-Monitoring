@@ -10,11 +10,11 @@ class BasemapControl {
 
   createBasemapControl() {
     const basemapControl = document.createElement("div");
-    const layerImage = document.createElement("img");
-    layerImage.src = this.showVegetation ? orthoImage : vegetationImage;
-    layerImage.alt = "layers";
-    layerImage.className = "layerIcon";
-    basemapControl.appendChild(layerImage);
+    basemapControl.style.backgroundImage = `url(${vegetationImage})`;
+    const basemapTitle = document.createElement("div");
+    basemapTitle.classList.add("basemapControl__title");
+    basemapTitle.innerHTML = "VHM";
+    basemapControl.appendChild(basemapTitle);
     basemapControl.className = "basemapControl";
     basemapControl.title = "Vegetationshöhe anzeigen";
     basemapControl.addEventListener(
@@ -22,13 +22,17 @@ class BasemapControl {
       () => {
         this.showVegetation = !this.showVegetation;
         // load the right image inside the basemapControl
-        layerImage.src = this.showVegetation ? orthoImage : vegetationImage;
+        basemapControl.style.backgroundImage = this.showVegetation
+          ? `url(${orthoImage})`
+          : `url(${vegetationImage})`;
         if (this.showVegetation) {
           basemapControl.title = "Orthofoto anzeigen";
           this.vegetationshoehe.setVisible(true);
+          basemapTitle.innerHTML = "Orthofoto";
         } else {
           basemapControl.title = "Vegetationshöhe anzeigen";
           this.vegetationshoehe.setVisible(false);
+          basemapTitle.innerHTML = "VHM";
         }
       },
       false

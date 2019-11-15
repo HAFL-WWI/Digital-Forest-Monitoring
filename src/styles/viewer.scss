@@ -7,12 +7,16 @@
 .basemapControl {
   border: 3px solid $mdc-theme-secondary;
   box-shadow: 0 2px 4px 0 #4a4a4a;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   top: 0.5em;
   right: 0.5em;
   position: absolute;
+  width: 60px;
+  height: 60px;
+}
+.basemapControl__title {
+  background-color: rgba(255, 255, 255, 0.7);
+  font-size: 11px;
+  text-align: center;
 }
 
 .veraenderungControl__title,
@@ -57,11 +61,6 @@
 
 .title__arrow {
   transition: transform 0.3s;
-}
-
-.layerIcon {
-  width: 60px;
-  height: 60px;
 }
 
 .layerinfo-button {
