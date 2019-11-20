@@ -19,7 +19,14 @@ class BasemapControl {
     basemapControl.title = "Vegetationshöhe anzeigen";
     basemapControl.addEventListener(
       "click",
-      () => {
+      e => {
+        e.preventDefault();
+        basemapControl.classList.remove("animate");
+        /* triggering a reflow after the removing of the animate class,
+         * will make the animation work withou a setTimeout().
+         */
+        void basemapControl.offsetWidth;
+        basemapControl.classList.add("animate");
         this.showVegetation = !this.showVegetation;
         // load the right image inside the basemapControl
         basemapControl.style.backgroundImage = this.showVegetation

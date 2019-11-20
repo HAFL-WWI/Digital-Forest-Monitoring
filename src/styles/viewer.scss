@@ -13,7 +13,21 @@
   background-image: linear-gradient(to right, grey 1px, transparent 1px),
     linear-gradient(to bottom, grey 1px, transparent 1px);
 }
-
+@keyframes basemap {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  33% {
+    transform: translateX(-2px);
+  }
+  66% {
+    transform: translateX(2px);
+  }
+}
+.animate {
+  animation: basemap 0.3s 1 forwards;
+}
 .basemapControl {
   border: 3px solid $mdc-theme-secondary;
   box-shadow: 0 2px 4px 0 #4a4a4a;
