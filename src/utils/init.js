@@ -10,7 +10,8 @@ import {
   impressum,
   removeGeojsonOverlays,
   setTitle,
-  getTitle
+  getTitle,
+  searchResults
 } from "./main_util";
 import viewerUtil from "./viewer_util";
 
@@ -50,6 +51,7 @@ const textFieldIcon = new MDCTextFieldIcon(
   document.querySelector(".text-field-clear__icon")
 );
 textFieldIcon.listen("click", () => {
+  searchResults.style.transform = "scale(1,0)";
   textField.value = "";
   removeGeojsonOverlays(viewerUtil.model.map);
 });
