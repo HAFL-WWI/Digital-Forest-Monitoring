@@ -46,10 +46,6 @@ $mdc-theme-on-background: #000000;
 body {
   margin: 0;
 }
-.mdc-text-field {
-  display: none;
-}
-// remove the blue border on focused text-field icon
 i.mdc-text-field__icon:focus {
   outline-width: 0;
 }

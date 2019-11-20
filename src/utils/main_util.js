@@ -2,6 +2,7 @@ import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import GeoJSON from "ol/format/GeoJSON";
+import { getCenter } from "ol/extent";
 const appBarTitle = document.getElementsByClassName(
   "mdc-top-app-bar__title"
 )[0];
@@ -209,9 +210,7 @@ export const displayGeojson = ({ geojson, map } = {}) => {
   geojsonLayer.type = "geojson";
   map.addLayer(geojsonLayer);
   const extent = vectorSource.getExtent();
-  const view = map.getView();
-  view.fit(extent, { duration: 300, maxZoom: 16 });
-
+  map.getView().setCenter(getCenter(extent));
   return geojsonLayer;
 };
 

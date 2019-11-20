@@ -120,28 +120,34 @@ const viewerUtil = {
       if (searchString.length > 1) {
         searchResults.style.transform = "scale(1)";
         const url = `https://api3.geo.admin.ch/rest/services/api/SearchServer?searchText=${e.target.value}&type=locations&limit=50&sr=3857&geometryFormat=geojson`;
-        fetch(url)
-          .then(response => response.json())
-          .then(featureCollection => {
-            featureCollection.features.forEach((feature, index) => {
-              const listItem = document.createElement("li");
-              // add the geojson as a data attribute
-              listItem.setAttribute("data-geojson", JSON.stringify(feature));
-              const listItemText = document.createElement("span");
-              listItem.classList.add("mdc-list-item");
-              listItemText.classList.add("mdc-list-item__text");
-              if (index === 0) {
-                listItem.tabIndex = index;
-              }
-              listItemText.innerHTML = `${feature.properties.label}`;
-              listItem.appendChild(listItemText);
-              viewerUtil.model.searchResultsList.appendChild(listItem);
-            });
-            viewerUtil.model.searchList.layout();
-          })
-          .catch(error => {
-            viewerUtil.model.searchResultsList.innerHTML = `<div style="padding:12px">Sorry, es konnten keine Resultate gefunden werden....<br />Nachricht:${error}</div>`;
+        const request = new XMLHttpRequest();
+        request.open("GET", url, true);
+        request.onload = () => {
+          if (request.status >= 500) {
+            viewerUtil.model.searchResultsList.innerHTML = `<div style="padding:12px">Sorry, es konnten keine Resultate gefunden werden....</div>`;
+            return;
+          }
+          const featureCollection = JSON.parse(request.responseText);
+          featureCollection.features.forEach((feature, index) => {
+            const listItem = document.createElement("li");
+            // add the geojson as a data attribute
+            listItem.setAttribute("data-geojson", JSON.stringify(feature));
+            const listItemText = document.createElement("span");
+            listItem.classList.add("mdc-list-item");
+            listItemText.classList.add("mdc-list-item__text");
+            if (index === 0) {
+              listItem.tabIndex = index;
+            }
+            listItemText.innerHTML = `${feature.properties.label}`;
+            listItem.appendChild(listItemText);
+            viewerUtil.model.searchResultsList.appendChild(listItem);
           });
+          viewerUtil.model.searchList.layout();
+        };
+        request.onerror = () => {
+          viewerUtil.model.searchResultsList.innerHTML = `<div style="padding:12px">Es gab einen Fehler bei der Suchanfrage....</div>`;
+        };
+        request.send();
       }
     }, 250)
   },

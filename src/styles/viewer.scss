@@ -5,6 +5,7 @@
   @include mdc-text-field-hover-bottom-line-color(white);
   @include mdc-text-field-line-ripple-color(white);
   @include mdc-text-field-height(40px);
+  display: none;
   width: 100%;
 }
 
