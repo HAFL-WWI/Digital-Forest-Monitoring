@@ -5,8 +5,9 @@ import { MDCSlider } from "@material/slider";
 import { dialog } from "./init";
 import { dialogTitle, dialogContent, getLayerInfo } from "./main_util";
 class VeraenderungControl {
-  constructor(map = null) {
+  constructor({ map, title }) {
     this.map = map;
+    this.title = title;
     this.overlays = [
       {
         layername: "karten-werk:ndvi_max_ch_forest_diff_2018_2017",
@@ -54,9 +55,8 @@ class VeraenderungControl {
     });
     const title = document.createElement("span");
     title.style.flexGrow = 1;
-    title.style.fontSize = "18px";
-    title.style.paddingLeft = "24px";
-    title.innerHTML = "Einstellungen";
+    title.style.fontSize = "17px";
+    title.innerHTML = this.title;
     const titleIcon = document.createElement("i");
     titleIcon.classList.add("material-icons");
     titleIcon.innerHTML = "tune";

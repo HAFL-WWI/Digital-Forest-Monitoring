@@ -1,3 +1,13 @@
+.mdc-text-field {
+  @include mdc-text-field-fill-color(rgba(249, 170, 51, 0.9));
+  @include mdc-text-field-shape-radius(4px);
+  @include mdc-text-field-bottom-line-color(white);
+  @include mdc-text-field-hover-bottom-line-color(white);
+  @include mdc-text-field-line-ripple-color(white);
+  @include mdc-text-field-height(40px);
+  width: 100%;
+}
+
 #map {
   background-size: 20px 20px;
   background-image: linear-gradient(to right, grey 1px, transparent 1px),
@@ -91,4 +101,14 @@
   right: 0.5em !important;
   top: unset !important;
   left: unset !important;
+}
+.autocomplete {
+  background-color: white;
+  max-height: 400px;
+  overflow-y: scroll;
+  position: absolute;
+  transform: scale(1, 0);
+  transform-origin: top left;
+  transition: transform, 0.3s;
+  z-index: 100;
 }

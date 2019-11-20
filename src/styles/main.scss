@@ -31,6 +31,9 @@ $mdc-theme-on-background: #000000;
 @import "@material/dialog/mdc-dialog";
 @import "@material/switch/mdc-switch";
 @import "@material/slider/mdc-slider";
+@import "@material/textfield/mdc-text-field";
+@import "@material/textfield/icon/mdc-text-field-icon";
+@import "@material/list/mdc-list";
 
 @import "./homepage.scss";
 @import "./viewer.scss";
@@ -43,7 +46,10 @@ $mdc-theme-on-background: #000000;
 body {
   margin: 0;
 }
-
-.content {
-  position: absolute;
+.mdc-text-field {
+  display: none;
+}
+// remove the blue border on focused text-field icon
+i.mdc-text-field__icon:focus {
+  outline-width: 0;
 }

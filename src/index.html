@@ -32,6 +32,21 @@
         >
           <!-- dynamically set based on screen size-->
           <span class="mdc-top-app-bar__title">Waldmonitoring</span>
+          <!-- search -->
+          <div
+            class="mdc-text-field mdc-text-field--with-trailing-icon mdc-text-field--with-leading-icon"
+          >
+            <i class="material-icons mdc-text-field__icon">search</i>
+            <input type="text" id="suche" class="mdc-text-field__input" />
+            <label class="mdc-floating-label" for="suche">Suche...</label>
+            <i
+              class="material-icons mdc-text-field__icon text-field-clear__icon"
+              tabindex="0"
+              role="button"
+              >cancel</i
+            >
+            <div class="mdc-line-ripple"></div>
+          </div>
         </section>
         <section
           class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end"
@@ -53,7 +68,9 @@
         </section>
       </div>
     </header>
-
+    <div class="autocomplete">
+      <ul class="mdc-list"></ul>
+    </div>
     <div class="content mdc-top-app-bar--fixed-adjust"></div>
     <!-- start impressum Dialog -->
     <div
