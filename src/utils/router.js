@@ -8,7 +8,8 @@ import {
   showTitle,
   hideTitle,
   positionSearchResultContainer,
-  closeSidebar
+  closeSidebar,
+  sidebar
 } from "./main_util";
 export const router = new Navigo(null, false, "#");
 export const initRouter = () => {
@@ -21,10 +22,12 @@ export const initRouter = () => {
         showTitle();
       },
       "/veraenderung": () => {
+        // we dont't want a short sidebar transition on startup
+        // that's why we add it here, after the app has loaded.
+        sidebar.style.transition = "transform 0.3s";
         hideTitle();
         textField.style.display = "inline-flex";
         viewerUtil.controller.init({ title: "Jährliche Veränderung" });
-        // position the search result container
         positionSearchResultContainer();
       },
       "/stoerungen": () => {
