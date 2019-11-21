@@ -69,7 +69,7 @@ body:after {
 }
 
 .sidebar {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: white;
   border: 1px solid $mdc-theme-primary;
   display: flex;
   flex-direction: column;
@@ -84,6 +84,9 @@ body:after {
   transform-origin: top left;
   transition: transform 0.3s;
   z-index: 100;
+  -webkit-box-shadow: 4px 0 4px 0 rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 4px 0 4px 0 rgba(0, 0, 0, 0.75);
+  box-shadow: 4px 0 4px 0 rgba(0, 0, 0, 0.75);
 }
 
 .sidebar__close {
