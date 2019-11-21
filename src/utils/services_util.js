@@ -1,4 +1,3 @@
-import { router } from "./router";
 const servicesUtil = {
   model: {
     /*
@@ -20,9 +19,7 @@ const servicesUtil = {
       veraenderung: {
         title: "Web Map Service (WMS)",
         subtitle: "Provided by: karten-werk GmbH",
-        description: `Dieser OGC konforme WMS liefert Kartenbilder- Layer und Legendeninformationen.
-          <h4 style="margin:8px 0 0 0">URL:</h4>
-          <a href="https://geoserver.karten-werk.ch/wms?request=GetCapabilities">https://geoserver.karten-werk.ch/wms?request=GetCapabilities</a>`,
+        description: `Dieser OGC konforme WMS liefert Kartenbilder- Layer und Legendeninformationen.`,
         serviceUrl:
           "https://geoserver.karten-werk.ch/wms?request=GetCapabilities",
         videoUrl: "https://www.youtube.com/embed/g7t_tz2OJpg"
@@ -31,9 +28,7 @@ const servicesUtil = {
         title: "Web Map Tile Service (WMTS)",
         subtitle: "Provided by: karten-werk GmbH",
         description: `Der WMTS Service liefert vorprozessierte (gecachte) Bilder und ist somit schneller als der WMS Service.
-          Er eignet sich gut zum Einbinden in Web Applikationen wo man nicht immer mit einem schneller Internet rechnen kann.
-          <h4 style="margin:8px 0 0 0">URL:</h4>
-          <a href="https://geoserver.karten-werk.ch/wms?request=GetCapabilities">https://geoserver.karten-werk.ch/wms?request=GetCapabilities</a>`,
+          Er eignet sich gut zum Einbinden in Web Applikationen wo man nicht immer mit einem schneller Internet rechnen kann.`,
         serviceUrl:
           "https://geoserver.karten-werk.ch/gwc/service/wmts?request=getCapabilities",
         videoUrl: "https://www.youtube.com/embed/g7t_tz2OJpg"
@@ -42,9 +37,7 @@ const servicesUtil = {
         title: "Web Feature Service (WFS)",
         subtitle: "Provided by: karten-werk GmbH",
         description: `Der WFS Service lierfert Vektor Geometrien inklusive Attribut Informationen.
-          Er lässt sich in verschiedene GIS Systemen einbinden und bei Bedarf kann man die Daten exportieren und lokal abspeichern.
-          <h4 style="margin:8px 0 0 0">URL:</h4>
-          <a href="https://geoserver.karten-werk.ch/wms?request=GetCapabilities">https://geoserver.karten-werk.ch/wms?request=GetCapabilities</a>`,
+          Er lässt sich in verschiedene GIS Systemen einbinden und bei Bedarf kann man die Daten exportieren und lokal abspeichern.`,
         serviceUrl:
           "https://geoserver.karten-werk.ch/wfs?request=GetCapabilities",
         videoUrl: "https://www.youtube.com/embed/aZbNjFLe884"
@@ -131,7 +124,7 @@ const servicesUtil = {
      @param {string} params.route - the url to open when the user clicks on the card.
      @returns {HTMLElement} cell - a single grid cell containing a card Element.
     */
-    createCard: ({ videoUrl, title, subtitle, description, route }) => {
+    createCard: ({ videoUrl, title, subtitle, description, serviceUrl }) => {
       const cell = document.createElement("div");
       const card = document.createElement("div");
       const cardPrimaryAction = document.createElement("div");
@@ -141,15 +134,21 @@ const servicesUtil = {
       const cardSubTitle = document.createElement("h3");
       const cardDescription = document.createElement("div");
       const cardActions = document.createElement("div");
+      cardActions.style.flexDirection = "column";
+      cardActions.style.alignItems = "flex-start";
+      const serviceTitle = document.createElement("h5");
+      serviceTitle.style.margin = "0 0 8px 0";
+      serviceTitle.innerHTML = "URL:";
+      const serviceLink = document.createElement("textarea");
+      serviceLink.value = serviceUrl;
+      serviceLink.style.fontSize = "14px";
+      serviceLink.style.width = "100%";
+      cardActions.appendChild(serviceTitle);
+      cardActions.appendChild(serviceLink);
       const cardActionButtons = document.createElement("div");
-      const actionButton = document.createElement("button");
       cardTitle.innerHTML = title;
       cardDescription.innerHTML = description;
       cardSubTitle.innerHTML = subtitle;
-      actionButton.addEventListener("click", () => {
-        router.navigate(route);
-      });
-      actionButton.innerHTML = "zum Viewer";
 
       cell.classList.add(
         "mdc-layout-grid__cell",
@@ -161,7 +160,7 @@ const servicesUtil = {
         "homepage-card__primary-action"
       );
       cardPrimaryAction.addEventListener("click", () =>
-        console.log("service card clicked")
+        window.open(serviceUrl, "_top")
       );
       cardMedia.classList.add("homepage-card__media");
       cardMedia.innerHTML = `<iframe width="100%" height="100%" src="${videoUrl}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
@@ -183,13 +182,6 @@ const servicesUtil = {
       );
       cardActions.classList.add("mdc-card__actions");
       cardActionButtons.classList.add("mdc-card__action-buttons");
-      actionButton.classList.add(
-        "mdc-card__action--button-secondary",
-        "mdc-button",
-        "mdc-button--raised",
-        "mdc-card__action",
-        "mdc-card__action--button"
-      );
       cell.appendChild(card);
       card.appendChild(cardPrimaryAction);
       cardPrimaryAction.appendChild(cardMedia);
@@ -199,7 +191,6 @@ const servicesUtil = {
       cardPrimaryAction.appendChild(cardDescription);
       card.appendChild(cardActions);
       cardActions.appendChild(cardActionButtons);
-      cardActionButtons.appendChild(actionButton);
       return cell;
     }
   }
