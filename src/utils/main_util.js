@@ -6,6 +6,8 @@ import { getCenter } from "ol/extent";
 const appBarTitle = document.getElementsByClassName(
   "mdc-top-app-bar__title"
 )[0];
+export const sidebar = document.querySelector(".sidebar");
+const sidebarContent = document.querySelector(".sidebar__content");
 /*
  * changes the top appbar title.
  * @param {string} title - the new title to display.
@@ -239,4 +241,21 @@ const createOlVectorSource = geojson => {
   return new VectorSource({
     features: new GeoJSON().readFeatures(geojson)
   });
+};
+
+/*
+ * opens the sidebar to display legends, infos etc.
+ * @param {object} params
+ * @param {DomElement} params.content - the content to display inside the sidebar.
+ */
+export const openSidebar = ({ content = null } = {}) => {
+  sidebar.style.transform = "scale(1)";
+  if (content) {
+    sidebarContent.appendChild(content);
+  }
+};
+
+export const closeSidebar = () => {
+  sidebarContent.innerHTML = "";
+  sidebar.style.transform = "scale(0,1)";
 };

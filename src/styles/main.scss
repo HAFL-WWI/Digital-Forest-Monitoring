@@ -67,3 +67,32 @@ body:after {
   line-height: 27px;
   transform: rotate(-45deg);
 }
+
+.sidebar {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid $mdc-theme-primary;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-height: 100vh;
+  max-width: 250px;
+  min-width: 250px;
+  overflow: hidden;
+  padding: 8px;
+  position: absolute;
+  transform: scale(0, 1);
+  transform-origin: top left;
+  transition: transform 0.3s;
+  z-index: 100;
+}
+
+.sidebar__close {
+  width: 100%;
+}
+
+.sidebar__content {
+  font-size: 0.9em;
+  max-height: 100vh;
+  overflow-y: auto;
+  padding: 8px;
+}

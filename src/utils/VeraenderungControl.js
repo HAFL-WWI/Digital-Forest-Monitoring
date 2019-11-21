@@ -2,8 +2,7 @@ import { Control } from "ol/control";
 import TileLayer from "ol/layer/Tile";
 import { TileWMS } from "ol/source";
 import { MDCSlider } from "@material/slider";
-import { dialog } from "./init";
-import { dialogTitle, dialogContent, getLayerInfo } from "./main_util";
+import { getLayerInfo, openSidebar } from "./main_util";
 class VeraenderungControl {
   constructor({ map, title }) {
     this.map = map;
@@ -134,9 +133,14 @@ class VeraenderungControl {
     );
     layerInfo.innerHTML = "info";
     layerInfo.addEventListener("click", () => {
-      dialogTitle.innerHTML = `${overlay.displayName}`;
-      dialogContent.innerHTML = getLayerInfo(overlay);
-      dialog.open();
+      const content = new DocumentFragment();
+      const title = document.createElement("h3");
+      title.innerHTML = `${overlay.displayName}`;
+      const description = document.createElement("div");
+      description.innerHTML = getLayerInfo(overlay);
+      content.appendChild(title);
+      content.appendChild(description);
+      openSidebar({ content });
     });
     return layerInfo;
   }

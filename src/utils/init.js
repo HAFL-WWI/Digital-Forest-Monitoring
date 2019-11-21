@@ -11,7 +11,8 @@ import {
   removeGeojsonOverlays,
   setTitle,
   getTitle,
-  searchResults
+  searchResults,
+  closeSidebar
 } from "./main_util";
 import viewerUtil from "./viewer_util";
 
@@ -77,3 +78,9 @@ window.addEventListener("resize", () => {
     map.style.height = `calc(100vh - ${topAppBar.offsetHeight}px`;
   }
 });
+
+/*
+ * event listener to close the sidebar
+ */
+const sidebarClose = document.querySelector(".sidebar__close");
+sidebarClose.addEventListener("click", closeSidebar);

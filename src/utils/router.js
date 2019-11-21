@@ -7,7 +7,8 @@ import {
   getTitle,
   showTitle,
   hideTitle,
-  positionSearchResultContainer
+  positionSearchResultContainer,
+  closeSidebar
 } from "./main_util";
 export const router = new Navigo(null, false, "#");
 export const initRouter = () => {
@@ -41,8 +42,12 @@ export const initRouter = () => {
     .resolve();
 
   router.notFound(() => homepageUtil.controller.createHomepageCards());
-  //register the click event listener for the home button
+  /* register the click event listener for the home button
+   * this event listener is currently in this place, because here it has access to the router.
+   * normally this belongs to init.js and will probably be moved in the future
+   */
   document.querySelector("#home-button").addEventListener("click", () => {
+    closeSidebar();
     router.navigate("/");
   });
 };
