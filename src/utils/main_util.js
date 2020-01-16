@@ -3,9 +3,7 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import GeoJSON from "ol/format/GeoJSON";
 import { getCenter } from "ol/extent";
-const appBarTitle = document.getElementsByClassName(
-  "mdc-top-app-bar__title"
-)[0];
+const appBarTitle = document.getElementsByClassName("top-app-bar__title")[0];
 export const sidebar = document.querySelector(".sidebar");
 const sidebarContent = document.querySelector(".sidebar__content");
 /*
@@ -81,7 +79,6 @@ export const positionSearchResultContainer = () => {
   const searchInput = document.querySelector(".mdc-text-field");
   const searchMetrics = searchInput.getBoundingClientRect();
   searchResults.style.left = `${searchMetrics.left}px`;
-  searchResults.style.top = `${searchMetrics.height + searchMetrics.top + 4}px`;
   searchResults.style.width = `${searchMetrics.width}px`;
 };
 

@@ -37,53 +37,47 @@
       </section>
       <section class="sidebar__content"></section>
     </aside>
-    <header class="mdc-top-app-bar">
-      <div class="mdc-top-app-bar__row">
-        <section
-          class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start"
+    <header class="top-app-bar">
+      <section class="top-app-bar__section top-app-bar__section--align-start">
+        <!-- dynamically set based on screen size-->
+        <span class="top-app-bar__title">Waldmonitoring</span>
+        <!-- search -->
+        <div
+          class="mdc-text-field mdc-text-field--with-trailing-icon mdc-text-field--with-leading-icon"
         >
-          <!-- dynamically set based on screen size-->
-          <span class="mdc-top-app-bar__title">Waldmonitoring</span>
-          <!-- search -->
-          <div
-            class="mdc-text-field mdc-text-field--with-trailing-icon mdc-text-field--with-leading-icon"
+          <i class="material-icons mdc-text-field__icon">search</i>
+          <input type="text" id="suche" class="mdc-text-field__input" />
+          <label class="mdc-floating-label" for="suche">Suche...</label>
+          <i
+            class="material-icons mdc-text-field__icon text-field-clear__icon"
+            tabindex="0"
+            role="button"
+            >cancel</i
           >
-            <i class="material-icons mdc-text-field__icon">search</i>
-            <input type="text" id="suche" class="mdc-text-field__input" />
-            <label class="mdc-floating-label" for="suche">Suche...</label>
-            <i
-              class="material-icons mdc-text-field__icon text-field-clear__icon"
-              tabindex="0"
-              role="button"
-              >cancel</i
-            >
-            <div class="mdc-line-ripple"></div>
-          </div>
-        </section>
-        <section
-          class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end"
+          <div class="mdc-line-ripple"></div>
+        </div>
+      </section>
+      <section class="top-app-bar__section top-app-bar__section--align-end">
+        <button
+          id="home-button"
+          class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
+          aria-label="home"
         >
-          <button
-            id="home-button"
-            class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
-            aria-label="home"
-          >
-            home
-          </button>
-          <button
-            id="impressum-button"
-            class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
-            aria-label="Impressum"
-          >
-            info
-          </button>
-        </section>
-      </div>
+          home
+        </button>
+        <button
+          id="impressum-button"
+          class="material-icons mdc-top-app-bar__action-item mdc-icon-button"
+          aria-label="Impressum"
+        >
+          info
+        </button>
+      </section>
     </header>
     <div class="autocomplete">
       <ul class="mdc-list"></ul>
     </div>
-    <div class="content mdc-top-app-bar--fixed-adjust"></div>
+    <div class="content"></div>
     <!-- start impressum Dialog -->
     <div
       class="mdc-dialog"

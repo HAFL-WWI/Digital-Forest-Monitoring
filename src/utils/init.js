@@ -1,6 +1,5 @@
 import { MDCDialog } from "@material/dialog";
 import { MDCRipple } from "@material/ripple";
-import { MDCTopAppBar } from "@material/top-app-bar";
 import { MDCTextField } from "@material/textfield";
 import { MDCTextFieldIcon } from "@material/textfield/icon";
 import { initRouter } from "./router";
@@ -37,9 +36,6 @@ const ripples = [].map.call(
     return new MDCRipple(el);
   }
 );
-
-const topAppBarElement = document.querySelector(".mdc-top-app-bar");
-new MDCTopAppBar(topAppBarElement);
 
 /*
  * init and handle events for the search input
@@ -84,11 +80,6 @@ document.getElementById("impressum-button").addEventListener("click", () => {
  */
 window.addEventListener("resize", () => {
   setTitle(getTitle());
-  const map = document.getElementById("map");
-  if (map) {
-    const topAppBar = document.querySelector(".mdc-top-app-bar");
-    map.style.height = `calc(100vh - ${topAppBar.offsetHeight}px`;
-  }
 });
 
 /*

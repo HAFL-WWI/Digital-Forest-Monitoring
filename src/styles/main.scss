@@ -23,7 +23,6 @@ $mdc-theme-on-background: #000000;
 
 // material component style imports
 @import "@material/button/mdc-button";
-@import "@material/top-app-bar/mdc-top-app-bar";
 @import "@material/icon-button/mdc-icon-button";
 @import "@material/layout-grid/mdc-layout-grid";
 @import "@material/card/mdc-card";
@@ -66,6 +65,54 @@ body:after {
   color: #fff;
   line-height: 27px;
   transform: rotate(-45deg);
+}
+
+.top-app-bar {
+  align-items: center;
+  background-color: $mdc-theme-primary;
+  display: flex;
+  flex-wrap: nowrap;
+  height: 64px;
+  max-height: 64px;
+  color: white;
+  padding: 8px 12px;
+  position: fixed;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+  z-index: 4;
+}
+.top-app-bar__section {
+  display: inline-flex;
+}
+.top-app-bar__section--align-start {
+  justify-content: flex-start;
+  flex-grow: 1;
+  max-width: 500px;
+}
+.top-app-bar__section--align-end {
+  justify-content: flex-end;
+}
+.top-app-bar__title {
+  font-family: Roboto, sans-serif;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-size: 1.25rem;
+  line-height: 2rem;
+  font-weight: 500;
+  letter-spacing: 0.0125em;
+  text-decoration: inherit;
+  text-transform: inherit;
+  padding-left: 20px;
+  padding-right: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  z-index: 1;
+}
+.content {
+  position: absolute;
+  top: 64px;
 }
 
 .sidebar {
