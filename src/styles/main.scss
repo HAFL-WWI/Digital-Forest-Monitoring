@@ -126,7 +126,7 @@ body:after {
   max-height: calc(var(--vh, 1vh) * 100);
   max-width: 250px;
   min-width: 250px;
-  overflow: hidden;
+  overflow-y: auto;
   padding: 8px;
   position: absolute;
   transform: scale(0, 1);
