@@ -159,10 +159,6 @@ const viewerUtil = {
     getViewerContainer: () => {
       const viewerContainer = document.createElement("div");
       viewerContainer.id = "map";
-      viewerContainer.style.width = "100vw";
-      const topAppBarHeight = document.querySelector(".mdc-top-app-bar")
-        .offsetHeight;
-      viewerContainer.style.height = `calc(100vh - ${topAppBarHeight}px)`;
       return viewerContainer;
     }
   }

@@ -73,8 +73,10 @@ body:after {
   border: 1px solid $mdc-theme-primary;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  max-height: 100vh;
+  min-height: 100vh; /* Fallback for browsers that do not support Custom Properties */
+  max-height: 100vh; /* Fallback for browsers that do not support Custom Properties */
+  min-height: calc(var(--vh, 1vh) * 100);
+  max-height: calc(var(--vh, 1vh) * 100);
   max-width: 250px;
   min-width: 250px;
   overflow: hidden;
