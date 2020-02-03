@@ -131,10 +131,10 @@ body:after {
   position: absolute;
   transform: scale(0, 1);
   transform-origin: top left;
-  z-index: 100;
   -webkit-box-shadow: 4px 0 4px 0 rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 4px 0 4px 0 rgba(0, 0, 0, 0.75);
   box-shadow: 4px 0 4px 0 rgba(0, 0, 0, 0.75);
+  /* the transition property is set under router.js */
 }
 
 .sidebar__close {

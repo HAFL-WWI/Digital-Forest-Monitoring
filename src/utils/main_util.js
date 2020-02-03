@@ -246,6 +246,7 @@ const createOlVectorSource = geojson => {
  * @param {DomElement} params.content - the content to display inside the sidebar.
  */
 export const openSidebar = ({ content = null } = {}) => {
+  sidebar.style.zIndex = 5;
   sidebar.style.transform = "scale(1)";
   if (content) {
     sidebarContent.appendChild(content);
@@ -255,4 +256,7 @@ export const openSidebar = ({ content = null } = {}) => {
 export const closeSidebar = () => {
   sidebarContent.innerHTML = "";
   sidebar.style.transform = "scale(0,1)";
+  window.setTimeout(() => {
+    sidebar.style.zIndex = -1;
+  }, 400);
 };
