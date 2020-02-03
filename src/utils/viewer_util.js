@@ -53,7 +53,7 @@ const viewerUtil = {
       // show the geometry on the map if a list item gets selected
       viewerUtil.model.searchList.listen("MDCList:action", () => {
         viewerUtil.controller.showSearchGeometry();
-        searchResults.style.transform = "scale(1,0)";
+        viewerUtil.controller.closeSearchResults(searchResults);
       });
     },
     /*
@@ -109,15 +109,29 @@ const viewerUtil = {
       viewerUtil.model.map.addEventListener("click", e => console.log(e));
     },
     /*
+     * close the search results and set the correct z-index in order for paning/zooming to work as expected.
+     * @param {domElement} searchResults - the search results container.
+     * @returns {domElement} searchResults - the search results container or false in case of failure.
+     */
+    closeSearchResults: searchResults => {
+      if (searchResults) {
+        searchResults.style.transform = "scale(1,0)";
+        searchResults.style.zIndex = -1;
+        return searchResults;
+      }
+      return false;
+    },
+    /*
      * performs the places search
      * @param {object} event - textfield input event
      * @returns {object} promise - a promise with searchresults
      */
     performSearch: debounce(e => {
-      searchResults.style.transform = "scale(1,0)";
+      viewerUtil.controller.closeSearchResults(searchResults);
       const searchString = e.target.value;
       viewerUtil.model.searchResultsList.innerHTML = "";
       if (searchString.length > 1) {
+        searchResults.style.zIndex = 5;
         searchResults.style.transform = "scale(1)";
         const url = `https://api3.geo.admin.ch/rest/services/api/SearchServer?searchText=${e.target.value}&type=locations&limit=50&sr=3857&geometryFormat=geojson`;
         const request = new XMLHttpRequest();

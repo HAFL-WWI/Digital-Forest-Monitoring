@@ -60,7 +60,7 @@ const textFieldIcon = new MDCTextFieldIcon(
   document.querySelector(".text-field-clear__icon")
 );
 textFieldIcon.listen("click", () => {
-  searchResults.style.transform = "scale(1,0)";
+  viewerUtil.controller.closeSearchResults(searchResults);
   textField.value = "";
   removeGeojsonOverlays(viewerUtil.model.map);
 });
