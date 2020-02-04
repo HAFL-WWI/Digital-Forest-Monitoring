@@ -4,7 +4,7 @@ import { MDCSwitch } from "@material/switch";
 import { MDCSlider } from "@material/slider";
 import { MDCList } from "@material/list";
 import "ol/ol.css";
-import { orthoBasemap, vegetationBasemap } from "./basemap_util";
+import { orthoBasemap, swBasemap, vegetationBasemap } from "./basemap_util";
 import { debounce, searchResults, displayGeojson } from "./main_util";
 import { textField } from "./init";
 import BasemapControl from "./BasemapControl";
@@ -93,7 +93,7 @@ const viewerUtil = {
           minZoom: 9,
           maxZoom: 21
         }),
-        layers: [orthoBasemap, vegetationBasemap],
+        layers: [orthoBasemap, swBasemap, vegetationBasemap],
         target: "map",
         controls: defaultControls({
           attributionOptions: { collapsible: false }

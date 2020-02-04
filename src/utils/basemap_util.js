@@ -6,6 +6,7 @@ export const attribution =
  * Orthophoto basemap from swisstopo
  */
 export const orthoBasemap = new TileLayer({
+  visible: false,
   source: new XYZ({
     url:
       "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg",
@@ -15,9 +16,23 @@ export const orthoBasemap = new TileLayer({
 orthoBasemap.name = "orthofoto";
 
 /*
+ * SW basemap from swisstopo
+ */
+export const swBasemap = new TileLayer({
+  visible: false,
+  source: new XYZ({
+    url:
+      "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-grau/default/current/3857/{z}/{x}/{y}.jpeg",
+    attributions: attribution
+  })
+});
+swBasemap.name = "Karte SW";
+
+/*
  * Vegetationshoehe basemap from bafu/swisstiopo
  */
 export const vegetationBasemap = new TileLayer({
+  visible: false,
   source: new XYZ({
     url:
       "https://wmts.geo.admin.ch/1.0.0/ch.bafu.landesforstinventar-vegetationshoehenmodell/default/current/3857/{z}/{x}/{y}.png",
