@@ -52,6 +52,33 @@
   font-size: 11px;
   text-align: center;
 }
+.vhmControl {
+  align-items: center;
+  box-shadow: 0 2px 4px 0 #4a4a4a;
+  border: 2px solid $mdc-theme-secondary;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  height: 56px;
+  position: absolute;
+  right: 0.5em;
+  top: 80px;
+  width: 56px;
+}
+.vhmControl__title {
+  background-color: rgba(255, 255, 255, 0.9);
+  font-size: 11px;
+  text-align: center;
+  width: 100%;
+}
+.vhm__text {
+  align-items: center;
+  color: $mdc-theme-primary;
+  display: flex;
+  font-size: 12px !important;
+  font-weight: bold;
+  height: 100%;
+}
 
 .veraenderungControl__title,
 .veraenderungControl__controls {

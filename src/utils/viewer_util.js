@@ -8,6 +8,7 @@ import { orthoBasemap, swBasemap, vegetationBasemap } from "./basemap_util";
 import { debounce, searchResults, displayGeojson } from "./main_util";
 import { textField } from "./init";
 import BasemapControl from "./BasemapControl";
+import VHMControl from "./VHMControl";
 import VeraenderungControl from "./VeraenderungControl";
 
 const viewerUtil = {
@@ -100,11 +101,13 @@ const viewerUtil = {
         })
       });
       const basemapSwitch = new BasemapControl(viewerUtil.model.map);
+      const vhmControl = new VHMControl(viewerUtil.model.map);
       const layerControl = new VeraenderungControl({
         map: viewerUtil.model.map,
         title
       });
       viewerUtil.model.map.addControl(basemapSwitch.createBasemapControl());
+      viewerUtil.model.map.addControl(vhmControl.createVHMControl());
       viewerUtil.model.map.addControl(layerControl.createVeraenderungControl());
       viewerUtil.model.map.addEventListener("click", e => console.log(e));
     },

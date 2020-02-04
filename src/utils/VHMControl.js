@@ -1,51 +1,52 @@
 import { Control } from "ol/control";
-import orthoImage from "../img/basemapOrtho.jpg";
 import vegetationImage from "../img/basemapVegetation.jpg";
-class BasemapControl {
+import { vegetationBasemap } from "./basemap_util";
+class VHMControl {
   constructor(map = null) {
     this.map = map;
     this.showVegetation = false;
-    this.vegetationshoehe = this.map.getLayers().item(1);
   }
 
-  createBasemapControl() {
-    const basemapControl = document.createElement("div");
-    basemapControl.style.backgroundImage = `url(${vegetationImage})`;
-    const basemapTitle = document.createElement("div");
-    basemapTitle.classList.add("basemapControl__title");
-    basemapTitle.innerHTML = "VHM";
-    basemapControl.appendChild(basemapTitle);
-    basemapControl.className = "basemapControl";
-    basemapControl.title = "Vegetationshöhe anzeigen";
-    basemapControl.addEventListener(
+  createVHMControl() {
+    const vhmFragment = new DocumentFragment();
+    const vhmControl = document.createElement("div");
+    vhmFragment.appendChild(vhmControl);
+    vhmControl.className = "vhmControl";
+    vhmControl.style.backgroundImage = `url(${vegetationImage})`;
+    const vhmTitle = document.createElement("div");
+    vhmTitle.classList.add("vhmControl__title");
+    vhmTitle.innerHTML = "VHM";
+    const vhmText = document.createElement("div");
+    vhmText.classList.add("vhm__text");
+    vhmText.innerHTML = "Turn on";
+    vhmControl.appendChild(vhmTitle);
+    vhmControl.appendChild(vhmText);
+    vhmControl.title = "Vegetationshöhe anzeigen";
+    vhmControl.addEventListener(
       "click",
       e => {
         e.preventDefault();
-        basemapControl.classList.remove("animate");
+        vhmControl.classList.remove("animate");
         /* triggering a reflow after the removing of the animate class,
          * will make the animation work withou a setTimeout().
          */
-        void basemapControl.offsetWidth;
-        basemapControl.classList.add("animate");
+        void vhmControl.offsetWidth;
+        vhmControl.classList.add("animate");
         this.showVegetation = !this.showVegetation;
-        // load the right image inside the basemapControl
-        basemapControl.style.backgroundImage = this.showVegetation
-          ? `url(${orthoImage})`
-          : `url(${vegetationImage})`;
         if (this.showVegetation) {
-          basemapControl.title = "Orthofoto anzeigen";
-          this.vegetationshoehe.setVisible(true);
-          basemapTitle.innerHTML = "Orthofoto";
+          vhmControl.title = "Vegetationshöhe ausblenden";
+          vegetationBasemap.setVisible(true);
+          vhmText.innerHTML = "Turn off";
         } else {
-          basemapControl.title = "Vegetationshöhe anzeigen";
-          this.vegetationshoehe.setVisible(false);
-          basemapTitle.innerHTML = "VHM";
+          vhmControl.Text = "Vegetationshöhe anzeigen";
+          vegetationBasemap.setVisible(false);
+          vhmText.innerHTML = "Turn on";
         }
       },
       false
     );
-    const basemapSwitch = new Control({ element: basemapControl });
-    return basemapSwitch;
+    const vhmSwitch = new Control({ element: vhmFragment });
+    return vhmSwitch;
   }
 }
-export default BasemapControl;
+export default VHMControl;
