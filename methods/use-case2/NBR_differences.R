@@ -25,7 +25,8 @@ diff_path = "//home/eaa2/nbr_test/nbr_diff/"
 
 # forest mask
 #forest_mask = raster("Z_Wald_wgs84.tif")
-forestmask_recl = raster("forest_mask_T32TMT.tif")
+forestmask_recl = raster("//home/eaa2/forest_mask_T32TMT.tif")
+difftest = raster(raster("//home/eaa2/nbr_test/nbr_diff_proj/T32TMT_NBR_diff_20170726_20170719_99.tif"))
 
 # filter files and dates
 B8Names = list.files(stack_path, pattern="B08_10m", recursive=T)
@@ -101,8 +102,11 @@ if (length(dates_todo)>0){
       ras_name = paste(tile,"_NBR_diff_",substr(names(vi_stk[[i]]),2,9),"_",substr(names(vi_stk[[j]]),2,9),sep="")
       cloud_perc = round(100*ncell(nbr_diff[nbr_diff==-999])/(ncell(nbr_diff[!is.na(nbr_diff)])))
      
-      # save as 16 Bit Integer
-      writeRaster(nbr_diff, paste(diff_path, ras_name,"_",cloud_perc,".tif",sep=""), overwrite=T, datatype='INT2S')
+      # projekt to EPSG:3857 and save as 16 Bit Integer
+      #nbr_diff_3857 = projectRaster(nbr_diff, res=res(nbr_diff), crs=CRS("+init=EPSG:3857"))
+      NAvalue(nbr_diff) = -999
+      nbr_diff_3857 = projectRaster(nbr_diff, crs=crs(difftest), method='ngb')
+      writeRaster(nbr_diff_3857, paste(diff_path, ras_name,"_",cloud_perc,".tif",sep=""), overwrite=T, datatype='INT2S')
       }
   }
 
