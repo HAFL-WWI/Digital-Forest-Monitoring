@@ -16,7 +16,7 @@ class VeraenderungControl {
         Sentinel-2 NDVI maximum June & July for 2018
         This layer displays only areas where the ndvi has decresed e.g. areas of vegetation loss.
         Difference between 2018-2017`,
-        visible: false
+        visible: true
       }
     ];
   }
