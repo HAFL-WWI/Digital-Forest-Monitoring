@@ -9,16 +9,6 @@ class VeraenderungControl {
     this.title = title;
     this.overlays = [
       {
-        layername: "karten-werk:ndvi_max_ch_forest_diff_2018_2017",
-        displayName: "Veränderung 17/18",
-        description: `Difference between NDVI Maximum of 2018 and 2017, clipped to forest areas, Switzerland (expect small area in SW):
-        Sentinel-2 NDVI maximum June & July for 2017
-        Sentinel-2 NDVI maximum June & July for 2018
-        Difference between 2018-2017`,
-
-        visible: true
-      },
-      {
         layername: "karten-werk:ndvi_max_ch_forest_diff_2018_2017_decrease",
         displayName: "Vegetationsabnahme 17/18",
         description: `Difference between NDVI Maximum of 2018 and 2017, clipped to forest areas, Switzerland (expect small area in SW):
