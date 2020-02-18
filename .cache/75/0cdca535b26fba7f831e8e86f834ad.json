@@ -1,0 +1,1 @@
+{"id":"viewer.js","dependencies":[{"name":"/Users/hk/Sites/digital-forest-monitoring/package.json","includedInParent":true,"mtime":1573050346763}],"generated":{"js":"var initViewer = function initViewer() {\n  console.log(\"init viewer finished\");\n};\n\ninitViewer();"},"sourceMaps":null,"error":null,"hash":"39ab8488ae9298523e61d506e04b84cd","cacheData":{"env":{}}}
