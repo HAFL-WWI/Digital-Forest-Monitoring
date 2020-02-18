@@ -13,7 +13,7 @@ git clone git@github.com:HAFL-FWI/Digital-Forest-Monitoring.git
 ```
 
 After that, you should have a new directory named "Digital-Forest-Monitoring". Enter it by typing...
-`cd Digital-Forest-Monitoring`.
+`cd Digital-Forest-Monitoring/webapp`.
 
 ### Prerequisites
 
