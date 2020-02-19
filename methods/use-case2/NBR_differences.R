@@ -4,10 +4,10 @@
 # by Alexandra Erbach, HAFL, BFH
 ############################################################
 
-
 start_time <- Sys.time()
 
 library(raster)
+library(rgdal)
 library(foreach)
 library(doParallel)
 
@@ -103,9 +103,8 @@ if (length(dates_todo)>0){
       cloud_perc = round(100*ncell(nbr_diff[nbr_diff==-999])/(ncell(nbr_diff[!is.na(nbr_diff)])))
      
       # projekt to EPSG:3857 and save as 16 Bit Integer
-      #nbr_diff_3857 = projectRaster(nbr_diff, res=res(nbr_diff), crs=CRS("+init=EPSG:3857"))
       NAvalue(nbr_diff) = -999
-      nbr_diff_3857 = projectRaster(nbr_diff, crs=crs(difftest), method='ngb')
+      nbr_diff_3857 = projectRaster(nbr_diff, crs=CRS("+init=epsg:3857"), method='ngb')
       writeRaster(nbr_diff_3857, paste(diff_path, ras_name,"_",cloud_perc,".tif",sep=""), overwrite=T, datatype='INT2S')
       }
   }
