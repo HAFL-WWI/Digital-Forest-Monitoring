@@ -3,7 +3,7 @@ import TileLayer from "ol/layer/Tile";
 import { TileWMS } from "ol/source";
 import { MDCSlider } from "@material/slider";
 import { getLayerInfo, openSidebar } from "./main_util";
-class VeraenderungControl {
+class ViewerControl {
   constructor({ map, title }) {
     this.map = map;
     this.title = title;
@@ -25,20 +25,20 @@ class VeraenderungControl {
    * creates the whole layer control for the "jaehrliche veränderung" viewer.
    * @returns {HTMLElement} veraenderungControlElement - a div with all the necessary children.
    */
-  createVeraenderungControl() {
+  createControl({ type }) {
     const veraenderungFragment = new DocumentFragment();
     //title section
     const viewerTitle = document.createElement("div");
-    viewerTitle.classList.add("veraenderungControl__title");
+    viewerTitle.classList.add("viewerControl__title");
     viewerTitle.addEventListener("click", () => {
-      const controlsHeight = layerControls.getBoundingClientRect().height;
+      const controlsHeight = this.viewerControls.getBoundingClientRect().height;
       if (controlsHeight === 0) {
-        layerControls.style.transform = "scale(1,1)";
-        layerControls.style.opacity = 1;
+        this.viewerControls.style.transform = "scale(1,1)";
+        this.viewerControls.style.opacity = 1;
         titleArrow.style.transform = "rotate(0deg)";
       } else {
-        layerControls.style.opacity = 0;
-        layerControls.style.transform = "scale(1,0)";
+        this.viewerControls.style.opacity = 0;
+        this.viewerControls.style.transform = "scale(1,0)";
         titleArrow.style.transform = "rotate(-90deg)";
       }
     });
@@ -57,30 +57,47 @@ class VeraenderungControl {
     viewerTitle.appendChild(titleIcon);
     viewerTitle.appendChild(titleArrow);
 
-    // add layers and controls
-    const layerControls = this.getLayerControls();
+    // add the necessary controls for every viewer.
+    switch (type) {
+      case "Natürliche Störungen":
+        this.viewerControls = this.getStoerungControls();
+        break;
+      case "Jährliche Veränderung":
+        this.viewerControls = this.getVeraenderungControls();
+        break;
+      default:
+        return;
+    }
 
     veraenderungFragment.appendChild(viewerTitle);
-    veraenderungFragment.appendChild(layerControls);
+    if (this.viewerControls) {
+      veraenderungFragment.appendChild(this.viewerControls);
+    }
     const veraenderungControl = new Control({
       element: veraenderungFragment
     });
     return veraenderungControl;
   }
 
-  getLayerControls() {
+  getVeraenderungControls() {
     const controls = document.createElement("div");
-    controls.classList.add("veraenderungControl__controls");
+    controls.classList.add("viewerControl__controls");
     this.overlays.forEach(overlay => {
       const wmsLayer = this.createWmsLayer(overlay);
       this.map.addLayer(wmsLayer);
       const control = document.createElement("div");
-      control.classList.add("veraenderungControl__controls-control");
+      control.classList.add("viewerControl__controls-control");
       control.appendChild(this.getSwitch({ wmsLayer, overlay }));
       control.appendChild(this.getLayerInfoIcon(overlay));
       control.appendChild(this.getSlider(wmsLayer));
       controls.appendChild(control);
     });
+    return controls;
+  }
+
+  getStoerungControls() {
+    const controls = document.createElement("div");
+    controls.classList.add("viewerControl__controls");
     return controls;
   }
   /*
@@ -227,4 +244,4 @@ class VeraenderungControl {
     return document.createElement("hr");
   }
 }
-export default VeraenderungControl;
+export default ViewerControl;

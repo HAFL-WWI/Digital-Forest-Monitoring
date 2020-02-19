@@ -80,8 +80,8 @@
   height: 100%;
 }
 
-.veraenderungControl__title,
-.veraenderungControl__controls {
+.viewerControl__title,
+.viewerControl__controls {
   align-items: center;
   box-shadow: 0 2px 4px 0 #4a4a4a;
   display: flex;
@@ -92,18 +92,18 @@
   position: absolute;
 }
 
-.veraenderungControl__controls-control {
+.viewerControl__controls-control {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
 }
 
-.veraenderungControl__controls-control:not(:last-child) {
+.viewerControl__controls-control:not(:last-child) {
   margin-bottom: 12px;
   border-bottom: 1px dotted grey;
 }
 
-.veraenderungControl__title {
+.viewerControl__title {
   background-color: $mdc-theme-secondary;
   cursor: pointer;
   left: 0em;
@@ -111,7 +111,7 @@
   padding: 8px;
 }
 
-.veraenderungControl__controls {
+.viewerControl__controls {
   background-color: rgba(255, 255, 255, 0.8);
   top: 2.5em;
   left: 0;

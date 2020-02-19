@@ -31,11 +31,13 @@ export const initRouter = () => {
         positionSearchResultContainer();
       },
       "/stoerungen": () => {
-        textField.style.display = "none";
-        setTitle("Natürliche Störungen");
-        const content = document.getElementsByClassName("content")[0];
-        content.innerHTML =
-          "<div style='padding:12px'><h1>Dieser Viewer befindet sich in Entwicklung</h1><h3>Vielen Dank für Ihr Verständnis</h3></div>";
+        // we dont't want a short sidebar transition on startup
+        // that's why we add it here, after the app has loaded.
+        sidebar.style.transition = "transform 0.3s";
+        hideTitle();
+        textField.style.display = "inline-flex";
+        viewerUtil.controller.init({ title: "Natürliche Störungen" });
+        positionSearchResultContainer();
       },
       "/services": () => {
         servicesUtil.controller.init();

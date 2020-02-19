@@ -9,7 +9,7 @@ import { debounce, searchResults, displayGeojson } from "./main_util";
 import { textField } from "./init";
 import BasemapControl from "./BasemapControl";
 import VHMControl from "./VHMControl";
-import VeraenderungControl from "./VeraenderungControl";
+import ViewerControl from "./ViewerControl";
 
 const viewerUtil = {
   model: {
@@ -102,13 +102,15 @@ const viewerUtil = {
       });
       const basemapSwitch = new BasemapControl(viewerUtil.model.map);
       const vhmControl = new VHMControl(viewerUtil.model.map);
-      const layerControl = new VeraenderungControl({
+      const viewerControl = new ViewerControl({
         map: viewerUtil.model.map,
         title
       });
       viewerUtil.model.map.addControl(basemapSwitch.createBasemapControl());
       viewerUtil.model.map.addControl(vhmControl.createVHMControl());
-      viewerUtil.model.map.addControl(layerControl.createVeraenderungControl());
+      viewerUtil.model.map.addControl(
+        viewerControl.createControl({ type: title })
+      );
       viewerUtil.model.map.addEventListener("click", e => console.log(e));
     },
     /*
