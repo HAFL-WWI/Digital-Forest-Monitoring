@@ -26,7 +26,6 @@ diff_path = "//home/eaa2/nbr_test/nbr_diff/"
 # forest mask
 #forest_mask = raster("Z_Wald_wgs84.tif")
 forestmask_recl = raster("//home/eaa2/forest_mask_T32TMT.tif")
-difftest = raster(raster("//home/eaa2/nbr_test/nbr_diff_proj/T32TMT_NBR_diff_20170726_20170719_99.tif"))
 
 # filter files and dates
 B8Names = list.files(stack_path, pattern="B08_10m", recursive=T)
