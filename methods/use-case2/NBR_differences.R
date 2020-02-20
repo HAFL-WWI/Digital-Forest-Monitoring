@@ -11,6 +11,9 @@ library(rgdal)
 library(foreach)
 library(doParallel)
 
+# set working directory
+setwd("~/")
+
 # parameters
 ref_date = as.Date("2017-08-31") # Sys.Date()
 time_intervall = 45 # in days
@@ -22,10 +25,6 @@ main_path = "//mnt/smb.hdd.rbd/BFH/Geodata/World/Sentinel-2/S2MSI2Ap/SAFE/"
 stack_path = paste(main_path,tile,"/",year,"/", sep="")
 nbr_path = "//home/eaa2/nbr_test/nbr/"
 diff_path = "//home/eaa2/nbr_test/nbr_diff/"
-
-# forest mask
-#forest_mask = raster("Z_Wald_wgs84.tif")
-forestmask_recl = raster("//home/eaa2/forest_mask_T32TMT.tif")
 
 # filter files and dates
 B8Names = list.files(stack_path, pattern="B08_10m", recursive=T)
@@ -85,10 +84,16 @@ if (length(dates_todo)>0){
     vi_stk = stack(vi_stk, nbr_stack_old)
     }
   names(vi_stk) = substring(lapply(strsplit(filesB8[nlayers(vi_stk):1],"_"), "[[", 3),1,8)
-
+  
+  # save dates to csv
+  df = data.frame(nbr_dates = substr(names(vi_stk),2,9))
+  write.csv(df, file="nbr_dates.csv", row.names=F, quote=F)
+  
   # clip to forest mask > could be saved per tile in order to increase speed, or use gdal...
+  #forest_mask = raster("Z_Wald_wgs84.tif")
   #forest_mask = crop(forest_mask, raster(vi_stk[[1]]), snap='near')
   #forestmask_recl = resample(forest_mask, raster(vi_stk[[1]]))
+  forestmask_recl = raster("forest_mask_T32TMT.tif")
   vi_stk = mask(vi_stk, forestmask_recl)
 
   # double loop for calculating all possible differences
