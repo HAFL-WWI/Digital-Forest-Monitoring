@@ -43,7 +43,6 @@ if (length(dates_todo)>0){
 
   B12Names = list.files(stack_path, pattern="B12_20m", recursive=T)
   B12Names = B12Names[dates_todo]
-  filesB12 = B12Names
   B12Names = paste(stack_path, B12Names, sep="")
 
   sclNames = list.files(stack_path, pattern="SCL_20m", recursive=T)
