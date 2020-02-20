@@ -18,13 +18,13 @@ for(i in 1:length(files)){
   e = c(478032, 498403, 5267230, 5280917)
   r = crop(r, e) 
   
-  change = (r < th)
-  change[r == -999] = NA
-  
+  change = ((r < th) & (r > -999))
+  change[is.na(change)] = 0
+ 
   # focal median (=mode) using velox (much faster)
   start_time <- Sys.time()
   vx = velox(change)
-  vx$medianFocal(wrow=5, wcol=5, bands=c(1))
+  vx$medianFocal(wrow=5, wcol=5, bands=1)
   change = vx$as.RasterLayer()
   print(paste("focal filter:", Sys.time() - start_time))
   
