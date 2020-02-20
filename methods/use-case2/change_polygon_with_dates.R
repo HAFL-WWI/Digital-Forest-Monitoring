@@ -6,7 +6,7 @@ library(mapview)
 
 # thresholds
 th = -15
-area_th = 1000
+area_th = 500
 
 files = list.files("//home/eaa2/nbr_test_copy/nbr_diff/", pattern="*.tif", full.names=T)[c(2,4,7,11,16)]
 
@@ -39,7 +39,7 @@ for(i in 1:length(files)){
   
   # add area and filter small polys
   polys$area = area(polys)
-  polys = polys[polys$area > area_th,]
+  polys = polys[(((polys$area > area_th) & (polys$class==1)) | polys$class==-1) ,]
   
   # add time attribute
   str = substr(names(r), 17, 24)
