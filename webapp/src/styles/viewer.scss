@@ -173,6 +173,8 @@
 }
 
 .mdc-chip-set {
+  max-height: 170px;
+  overflow-y: auto;
   padding-bottom: 12px;
 }
 .mdc-chip__text {
@@ -185,5 +187,8 @@
 
 .layers {
   border-top: 1px dotted grey;
+  max-height: calc(100vh - 350px);
+  max-height: calc(var(--vh, 1vh) * 100 - 368px);
+  overflow-y: auto;
   padding-top: 12px;
 }
