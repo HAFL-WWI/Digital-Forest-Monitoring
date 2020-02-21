@@ -1,5 +1,4 @@
 // material theme colors
-
 // The theme primary color
 $mdc-theme-primary: #344955;
 $mdc-theme-primary-dark: #0b222c;
@@ -33,6 +32,7 @@ $mdc-theme-on-background: #000000;
 @import "@material/textfield/mdc-text-field";
 @import "@material/textfield/icon/mdc-text-field-icon";
 @import "@material/list/mdc-list";
+@import "@material/chips/mdc-chips";
 
 @import "./homepage.scss";
 @import "./viewer.scss";

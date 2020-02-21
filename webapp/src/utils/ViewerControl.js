@@ -1,13 +1,18 @@
 import { Control } from "ol/control";
+import { WMSCapabilities } from "ol/format";
 import TileLayer from "ol/layer/Tile";
 import { TileWMS } from "ol/source";
+import { getCenter } from "ol/extent";
 import { MDCSlider } from "@material/slider";
+import { MDCSwitch } from "@material/switch";
+import { MDCChipSet, MDCChip } from "@material/chips";
 import { getLayerInfo, openSidebar } from "./main_util";
+
 class ViewerControl {
   constructor({ map, title }) {
     this.map = map;
     this.title = title;
-    this.overlays = [
+    this.changeOverlays = [
       {
         layername: "karten-werk:ndvi_max_ch_forest_diff_2018_2017_decrease",
         displayName: "Juni 2017 - Juni 2018",
@@ -19,6 +24,23 @@ class ViewerControl {
         visible: true
       }
     ];
+    this.disorderOverlays = [];
+  }
+
+  /*
+   * creates an object which can be used to create a time based wms.
+   * @param {string} time - iso date format e.g. "2017-08-25"
+   * @returns {object} layer object to use in the createWmsLayer function.
+   */
+  getTimeLayerObject(date) {
+    return {
+      layername: "karten-werk:nbr_change",
+      time: date || "2017-08-25",
+      displayName: `Veränderung ${date}`,
+      description:
+        "Veränderungsflächen während der letzten 45 Tage ab einem bestimmten Zeitpunkt",
+      visible: true
+    };
   }
 
   /*
@@ -68,7 +90,6 @@ class ViewerControl {
       default:
         return;
     }
-
     veraenderungFragment.appendChild(viewerTitle);
     if (this.viewerControls) {
       veraenderungFragment.appendChild(this.viewerControls);
@@ -79,27 +100,160 @@ class ViewerControl {
     return veraenderungControl;
   }
 
+  /*
+   * create the controls for the "Jährliche Veranderung" viewer.
+   */
   getVeraenderungControls() {
     const controls = document.createElement("div");
     controls.classList.add("viewerControl__controls");
-    this.overlays.forEach(overlay => {
-      const wmsLayer = this.createWmsLayer(overlay);
-      this.map.addLayer(wmsLayer);
-      const control = document.createElement("div");
-      control.classList.add("viewerControl__controls-control");
-      control.appendChild(this.getSwitch({ wmsLayer, overlay }));
-      control.appendChild(this.getLayerInfoIcon(overlay));
-      control.appendChild(this.getSlider(wmsLayer));
-      controls.appendChild(control);
-    });
+    this.createLayers({ layers: this.changeOverlays, domContainer: controls });
     return controls;
   }
 
+  /*
+   * removes layers from the ol map.
+   * @param {array} layers - array of layer objects.
+   */
+  removeMapOverlays(layers) {
+    layers.forEach(layer => this.map.removeLayer(layer.wmsLayer));
+  }
+
+  /*
+   * create map layers and layer control elements.
+   * @param {object} params - function parameter obejct.
+   * @param {array} params.layers - layer objects to produce overlays and control elements.
+   * @param {htmlElement} params.domContainer - the container to append the layer controls.
+   * @returns {htmlElement} domContainer - the container with all the attached layer controls or false.
+   */
+  createLayers({ layers, domContainer }) {
+    if (!Array.isArray(layers) || !domContainer) {
+      return false;
+    }
+    domContainer.innerHTML = "";
+    if (layers.length === 0) {
+      return false;
+    }
+
+    layers.forEach(overlay => {
+      overlay.wmsLayer = this.createWmsLayer(overlay);
+      this.map.addLayer(overlay.wmsLayer);
+      const control = document.createElement("div");
+      control.classList.add("viewerControl__controls-control");
+      control.appendChild(
+        this.getSwitch({ wmsLayer: overlay.wmsLayer, overlay })
+      );
+      control.appendChild(this.getLayerInfoIcon(overlay));
+      control.appendChild(this.getSlider(overlay.wmsLayer));
+      domContainer.appendChild(control);
+    });
+    return domContainer;
+  }
+
+  /*
+   * create the controls for the "Natürliche Störungen" viewer.
+   */
   getStoerungControls() {
     const controls = document.createElement("div");
     controls.classList.add("viewerControl__controls");
+    const intro = document.createElement("div");
+    intro.classList.add("viewerControl__helpertext");
+    intro.innerHTML =
+      "Wählen Sie ein Datum um Veränderungsflächen der letzten <br /><strong>45 Tage</strong> zu sehen.";
+    controls.appendChild(intro);
+    const dateChips = document.createElement("div");
+    dateChips.classList.add("datechips");
+    const chipsetEl = document.createElement("div");
+    chipsetEl.classList.add("mdc-chip-set", "mdc-chip-set--filter");
+    const chipset = new MDCChipSet(chipsetEl);
+    this.getDimensions().then(response => {
+      response.forEach(date => {
+        const chipEl = this.createDateChip(date);
+        const chip = new MDCChip(chipEl);
+        chip.listen("click", () => {
+          //remove the overlays from the map
+          this.removeMapOverlays(this.disorderOverlays);
+          chip.selected = !chip.selected;
+          const date = chipEl.dataset.name;
+          if (chip.selected === false) {
+            const disorderObj = this.getTimeLayerObject(date);
+            this.disorderOverlays.push(disorderObj);
+          } else {
+            this.disorderOverlays = this.disorderOverlays.filter(
+              overlay => overlay.time !== date
+            );
+          }
+          //create new layer elements and ol TileLayers and add them to the dom.
+          this.createLayers({
+            layers: this.disorderOverlays,
+            domContainer: layers
+          });
+          //init mdc components used by the layers.
+          const sliders = document.querySelectorAll(".mdc-slider");
+          const switches = document.querySelectorAll(".mdc-switch");
+          switches.forEach(element => new MDCSwitch(element));
+          sliders.forEach(element => new MDCSlider(element));
+        });
+        chipsetEl.appendChild(chipEl);
+        chipset.addChip(chipEl);
+      });
+    });
+    const layers = document.createElement("div");
+    layers.classList.add("layers");
+    controls.appendChild(chipsetEl);
+    controls.appendChild(layers);
     return controls;
   }
+
+  /*
+   * get all the available time dimensions for the nbr_change layer.
+   * @returns {promise} - promise with all the available time strings.
+   */
+  getDimensions() {
+    const url = "https://geoserver.karten-werk.ch/wms?request=getCapabilities";
+    const parser = new WMSCapabilities();
+    return fetch(url)
+      .then(response => response.text())
+      .then(text => {
+        const result = parser.read(text);
+        const layers = result.Capability.Layer.Layer;
+        const nbr = layers.filter(
+          layer => layer.Name === "karten-werk:nbr_change"
+        )[0];
+        //center the map to the center of the nbr_change service extent.
+        const extent = nbr.BoundingBox[1].extent;
+        if (extent) {
+          this.map.getView().setCenter(getCenter(extent));
+        }
+
+        const dimensions = nbr.Dimension[0].values.split(",");
+        return dimensions;
+      });
+  }
+
+  /*
+   * create a single date chip for the "Natürliche Störungen" viewer.
+   * @param {string} date - the text content of the chip.
+   * @returns {htmlElement} chip - MDCChip markup
+   */
+  createDateChip(date) {
+    const printDate = date.substring(0, 10);
+    const chip = document.createElement("button");
+    chip.setAttribute("data-name", `${printDate}`);
+    chip.classList.add("mdc-chip");
+    const checkmark = document.createElement("span");
+    checkmark.classList.add("mdc-chip__checkmark");
+    checkmark.innerHTML = `<svg class="mdc-chip__checkmark-svg" viewBox="-2 -3 30 30">
+    <path class="mdc-chip__checkmark-path" fill="none" stroke="black"
+          d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+  </svg>`;
+    const content = document.createElement("span");
+    content.classList.add("mdc-chip__text");
+    content.innerHTML = printDate;
+    chip.appendChild(checkmark);
+    chip.appendChild(content);
+    return chip;
+  }
+
   /*
    * creates a ol wms overlay for a geoserver layer.
    * @param {object} overlay - overlay object like stored in the model.
@@ -107,16 +261,19 @@ class ViewerControl {
    */
   createWmsLayer(overlay) {
     const url = "https://geoserver.karten-werk.ch/wms";
+    const params = {
+      LAYERS: `${overlay.layername}`,
+      FORMAT: "image/png",
+      SRS: "EPSG:3857"
+    };
+    if (overlay.time) {
+      params.time = overlay.time;
+    }
     const wmsLayer = new TileLayer({
       opacity: 1,
       source: new TileWMS({
-        url: url,
-        params: {
-          LAYERS: `${overlay.layername}`,
-          FORMAT: "image/png",
-          SRS: "EPSG:3857"
-          //TILED: true
-        },
+        url,
+        params,
         serverType: "geoserver",
         //do not fade tiles:
         transition: 0
@@ -126,9 +283,10 @@ class ViewerControl {
     wmsLayer.setVisible(overlay.visible);
     return wmsLayer;
   }
+
   /*
-   * creates the layer info (i) icon
-   * @param {object} overlay - overlay item like stored in this.overlays
+   * creates the layer info (i) icon.
+   * @param {object} overlay - overlay item like stored in this.changeOverlays.
    * @returns {HTMLElement} layerInfo - the info icon.
    */
   getLayerInfoIcon(overlay) {
@@ -153,7 +311,10 @@ class ViewerControl {
   }
 
   /*
-   * creates the layer on/off switch
+   * creates the layer on/off switch.
+   * @param {object} params - function parameter object.
+   * @param {ol/TileLayer} - openlayers tile overlay.
+   * @param {object} overlay - object like stored in this.changeOverlays.
    * @returns {DocumentFragment} switchFragment- the labeled switch.
    */
   getSwitch({ wmsLayer, overlay } = {}) {
@@ -192,8 +353,10 @@ class ViewerControl {
     switchFragment.appendChild(label);
     return switchFragment;
   }
+
   /*
-   * creates the layer transparency slider
+   * creates the layer transparency slider.
+   * @param {ol/TileLayer} - openlayers tile overlay.
    * @returns {DocumentFragment} slider - transparency slider.
    */
   getSlider(wmsLayer) {
@@ -238,10 +401,6 @@ class ViewerControl {
       wmsLayer.setOpacity(opacity);
     });
     return sliderContainer;
-  }
-
-  getDivider() {
-    return document.createElement("hr");
   }
 }
 export default ViewerControl;

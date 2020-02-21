@@ -1,4 +1,4 @@
-.mdc-text-field {
+.search {
   @include mdc-text-field-fill-color(rgba(249, 170, 51, 0.9));
   @include mdc-text-field-shape-radius(4px);
   @include mdc-text-field-bottom-line-color(white);
@@ -112,12 +112,17 @@
 }
 
 .viewerControl__controls {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.9);
   top: 2.5em;
   left: 0;
   transform: scale(1, 1);
   transform-origin: top left;
   transition: transform, opacity, 0.3s;
+}
+
+.viewerControl__helpertext {
+  font-size: 13px;
+  padding: 0 0 16px 0;
 }
 
 .title__arrow {
@@ -136,9 +141,11 @@
   padding: 0;
   width: 100%;
 }
+
 .mdc-slider {
   margin-right: 12px;
 }
+
 .basemapControl:hover {
   background-color: none;
 }
@@ -153,6 +160,7 @@
   top: unset !important;
   left: unset !important;
 }
+
 .autocomplete {
   background-color: white;
   max-height: 400px;
@@ -162,4 +170,20 @@
   transform: scale(1, 0);
   transform-origin: top left;
   transition: transform, 0.3s;
+}
+
+.mdc-chip-set {
+  padding-bottom: 12px;
+}
+.mdc-chip__text {
+  font-size: 11px;
+}
+
+.mdc-chip--selected {
+  background-color: $mdc-theme-secondary;
+}
+
+.layers {
+  border-top: 1px dotted grey;
+  padding-top: 12px;
 }

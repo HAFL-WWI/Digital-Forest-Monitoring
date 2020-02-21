@@ -30,7 +30,7 @@ const viewerUtil = {
       viewerUtil.controller.createContainer();
       viewerUtil.controller.showViewer(title);
 
-      // instantiating the material components
+      // instantiating the material components.
       const switches = [].map.call(
         document.querySelectorAll(".mdc-switch"),
         el => {
