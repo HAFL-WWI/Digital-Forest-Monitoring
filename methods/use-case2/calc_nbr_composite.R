@@ -5,7 +5,7 @@
 ############################################################
 
 # Pixel composites based on VI and composite function
-calc_pixel_composites <- function(stack_path, band_names, dates, stack_fun, ext=NULL) {
+calc_pixel_composites <- function(stack_path, dates, ext=NULL) {
   
   # load packages
   library(raster)
@@ -18,12 +18,15 @@ calc_pixel_composites <- function(stack_path, band_names, dates, stack_fun, ext=
     return((stack$B08 - stack$B12) / (stack$B08 + stack$B12))
   }
   
-  # filter .tif files and dates
-  fileNames = list.files(stack_path)
-  fileNames = fileNames[grep("tif$", fileNames)]
-  fileNames = fileNames[grepl(paste(dates, collapse="|"), fileNames)]
-  files <- fileNames
-  fileNames = paste(stack_path, fileNames, sep="")
+  # filter bands and dates
+  namesB8 = list.files(stack_path, pattern="B08_10m", recursive=T, full.names=T)
+  namesB4 = list.files(stack_path, pattern="B04_10m", recursive=T, full.names=T)
+  namesB12 = list.files(stack_path, pattern="B12_20m", recursive=T, full.names=T)
+  namesB8 = namesB8[grepl(paste(dates, collapse="|"), namesB8)]
+  namesB4 = namesB4[grepl(paste(dates, collapse="|"), namesB4)]
+  namesB12 = namesB12[grepl(paste(dates, collapse="|"), namesB12)]
+  
+  fileNames = namesB8
   
   # prepare stack
   vi_stk = stack()
@@ -38,19 +41,21 @@ calc_pixel_composites <- function(stack_path, band_names, dates, stack_fun, ext=
   # apply stack function
   vi_stk = foreach(i=1:length(fileNames), .packages = c("raster"), .combine = "addLayer") %dopar% {
     print(paste("processing", i, "of", length(fileNames),"..."))
-    # get stack
-    stk_tmp = stack(fileNames[i])
-    names(stk_tmp) = band_names
     
     # calculate indices
-    vi_tmp = stack_fun(stk_tmp)
-    vi_tmp_2 = calc_nbr(stk_tmp)
+    b4 = raster(namesB4[i])
+    b8 = raster(namesB8[i])
+    b12 = disaggregate(raster(namesB12[i]),2)
+    
+    vi_tmp = (b8 - b4)/(b8 + b4) # ndvi
+    vi_tmp_2 = (b8 - b12)/(b8 + b12) # nbr
     
     vi_tmp = stack(vi_tmp, vi_tmp_2)
     return(vi_tmp)
   }
   
   # calculate index raster
+  ndvi_stk = subset(vi_stk, subset=1:length(fileNames))
   ind_raster <- which.max(ndvi_stk)
     
   # NBR stack
