@@ -160,12 +160,17 @@ class ViewerControl {
     intro.innerHTML =
       "Wählen Sie ein Datum um Veränderungsflächen der letzten <br /><strong>45 Tage</strong> zu sehen.";
     controls.appendChild(intro);
+    const yearInfo = document.createElement("div");
+    yearInfo.classList.add("viewerControl__yearinfo");
+    controls.appendChild(yearInfo);
     const dateChips = document.createElement("div");
     dateChips.classList.add("datechips");
     const chipsetEl = document.createElement("div");
     chipsetEl.classList.add("mdc-chip-set", "mdc-chip-set--filter");
     const chipset = new MDCChipSet(chipsetEl);
     this.getDimensions().then(response => {
+      const year = response[0].split("-")[0];
+      yearInfo.innerHTML = `Jahr ${year}`;
       response.forEach(date => {
         const chipEl = this.createDateChip(date);
         const chip = new MDCChip(chipEl);
@@ -224,7 +229,6 @@ class ViewerControl {
         if (extent) {
           this.map.getView().setCenter(getCenter(extent));
         }
-
         const dimensions = nbr.Dimension[0].values.split(",");
         return dimensions;
       });
@@ -248,10 +252,36 @@ class ViewerControl {
   </svg>`;
     const content = document.createElement("span");
     content.classList.add("mdc-chip__text");
-    content.innerHTML = printDate;
+    content.innerHTML = this.formatDateString(printDate);
     chip.appendChild(checkmark);
     chip.appendChild(content);
     return chip;
+  }
+
+  /*
+   * creates a date string which can be used in a date chip e.g. 4.Apr.
+   * @param {string} datestring - something like "2017-08-05".
+   * @returns {string} result - string like "5.Apr.""
+   */
+  formatDateString(datestring) {
+    const monthstrings = [
+      "Jan",
+      "Feb",
+      "Mrz",
+      "Apr",
+      "Mai",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Okt",
+      "Nov",
+      "Dez"
+    ];
+    const date = new Date(datestring);
+    const day = date.getDate();
+    const month = monthstrings[date.getMonth()];
+    return `${day}.${month}.`;
   }
 
   /*

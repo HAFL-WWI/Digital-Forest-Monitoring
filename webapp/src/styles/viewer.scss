@@ -120,9 +120,17 @@
   transition: transform, opacity, 0.3s;
 }
 
-.viewerControl__helpertext {
+.viewerControl__helpertext,
+.viewerControl__yearinfo {
   font-size: 13px;
-  padding: 0 0 16px 0;
+}
+
+.viewerControl__helpertext {
+  padding: 0 2px 16px 2px;
+}
+
+.viewerControl__yearinfo {
+  padding: 0 2px 4px 2px;
 }
 
 .title__arrow {
@@ -175,8 +183,14 @@
 .mdc-chip-set {
   max-height: 170px;
   overflow-y: auto;
-  padding-bottom: 12px;
+  padding: 0 0 12px 0;
 }
+
+.mdc-chip-set .mdc-chip {
+  padding: 0 8px;
+  margin: 4px 2px;
+}
+
 .mdc-chip__text {
   font-size: 11px;
 }
