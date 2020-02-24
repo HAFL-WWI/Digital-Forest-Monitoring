@@ -5,11 +5,10 @@
 ############################################################
 
 # Pixel composites based on VI and composite function
-calc_pixel_composites <- function(stack_path, ndvi_path, nbr_path, dates, tilename, ext=NULL) {
+calc_pixel_composites <- function(stack_path, ndvi_path, nbr_path, dates, tilename="", ext=NULL) {
   
   # load packages
   library(raster)
-  library(rgdal)
   library(foreach)
   library(doParallel)
 
@@ -75,20 +74,10 @@ calc_pixel_composites <- function(stack_path, ndvi_path, nbr_path, dates, tilena
   # NBR composite
   nbr_composite = stackSelect(nbr_stk, ind_raster)
 
-  # date
-  #date_ras <- ind_raster
-  #for (i in 1:length(fileNames)){
-  #date_ras[date_ras==i] <- substring(strsplit(files[i],"_")[[1]][3],1,8)
-  #}
-    
-  #composite_all = stack(ndvi_composite, ind_raster, date_ras, rgb_composite, nbr_composite)
-  composite_all = nbr_composite
-   
   # crop
   if (!is.null(ext)) composite_all = crop(composite_all, ext)
   
-  # stop cluster only here, otherwise tmp files may get lost
   stopCluster(cl)
 
-  return(composite_all)
+  return(nbr_composite)
 }
