@@ -33,12 +33,15 @@ class ViewerControl {
    * @returns {object} layer object to use in the createWmsLayer function.
    */
   getTimeLayerObject(date) {
+    const fromDate = new Date(date);
+    fromDate.setDate(fromDate.getDate() - 45);
+    const from = fromDate.toLocaleDateString();
+    const to = new Date(date).toLocaleDateString();
     return {
       layername: "karten-werk:nbr_change",
       time: date || "2017-08-25",
       displayName: `Veränderung ${date}`,
-      description:
-        "Veränderungsflächen während der letzten 45 Tage ab einem bestimmten Zeitpunkt",
+      description: `Veränderungsflächen vom <strong>${from}</strong> bis zum <strong>${to}</strong>.`,
       visible: true
     };
   }
