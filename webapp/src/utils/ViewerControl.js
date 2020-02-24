@@ -178,8 +178,11 @@ class ViewerControl {
         const chipEl = this.createDateChip(date);
         const chip = new MDCChip(chipEl);
         chip.listen("click", () => {
-          //remove the overlays from the map
+          this.unselectChips({ chipset, id: chip.id });
+          // remove all overlays from the map
           this.removeMapOverlays(this.disorderOverlays);
+          // empty the disorder overlays because we want to display only one layer at the time.
+          this.disorderOverlays = [];
           chip.selected = !chip.selected;
           const date = chipEl.dataset.name;
           if (chip.selected === false) {
@@ -210,6 +213,22 @@ class ViewerControl {
     controls.appendChild(chipsetEl);
     controls.appendChild(layers);
     return controls;
+  }
+
+  /*
+   * unselect all chips except the one with the id from the function parameter.
+   * @param {object} params - function parameter object.
+   * @param {MDLChipset} params.chipset - the set with all the chips.
+   * @param {string} params.id - the id of the string that should be selected.
+   * @returns {MDLChipset} - chipset with updated chips.
+   */
+  unselectChips({ chipset, id }) {
+    chipset.chips.forEach(chip => {
+      if (chip.id !== id) {
+        chip.selected = false;
+      }
+    });
+    return chipset;
   }
 
   /*
