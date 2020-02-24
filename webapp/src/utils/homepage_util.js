@@ -33,7 +33,7 @@ const homepageUtil = {
       },
       stoerung: {
         image: sturmschaedenImage,
-        title: "Natürliche Störungen",
+        title: "Test Sommersturmschäden 2017",
         subtitle: "Geodaten: Dominique Weber, HAFL",
         description:
           "Hier können Sie sehen, wo der Wald natürlichen Störungen wie z.B. " +
