@@ -24,7 +24,7 @@ class ViewerControl {
         visible: true
       }
     ];
-    this.disorderOverlays = [];
+    this.overlays = [];
   }
 
   /*
@@ -180,22 +180,22 @@ class ViewerControl {
         chip.listen("click", () => {
           this.unselectChips({ chipset, id: chip.id });
           // remove all overlays from the map
-          this.removeMapOverlays(this.disorderOverlays);
+          this.removeMapOverlays(this.overlays);
           // empty the disorder overlays because we want to display only one layer at the time.
-          this.disorderOverlays = [];
+          this.overlays = [];
           chip.selected = !chip.selected;
           const date = chipEl.dataset.name;
           if (chip.selected === false) {
             const disorderObj = this.getTimeLayerObject(date);
-            this.disorderOverlays.push(disorderObj);
+            this.overlays.push(disorderObj);
           } else {
-            this.disorderOverlays = this.disorderOverlays.filter(
+            this.overlays = this.overlays.filter(
               overlay => overlay.time !== date
             );
           }
           //create new layer elements and ol TileLayers and add them to the dom.
           this.createLayers({
-            layers: this.disorderOverlays,
+            layers: this.overlays,
             domContainer: layers
           });
           //init mdc components used by the layers.
@@ -216,7 +216,7 @@ class ViewerControl {
   }
 
   /*
-   * unselect all chips except the one with the id from the function parameter.
+   * unselect all chips, except the one with the id from the function parameter.
    * @param {object} params - function parameter object.
    * @param {MDLChipset} params.chipset - the set with all the chips.
    * @param {string} params.id - the id of the string that should be selected.
@@ -283,7 +283,7 @@ class ViewerControl {
   /*
    * creates a date string which can be used in a date chip e.g. 4.Apr.
    * @param {string} datestring - something like "2017-08-05".
-   * @returns {string} result - string like "5.Apr.""
+   * @returns {string} result - string like "5.Apr."
    */
   formatDateString(datestring) {
     const monthstrings = [
