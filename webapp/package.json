@@ -19,7 +19,7 @@
     "lint": "eslint src/**/*.js",
     "dev": "parcel src/index.html --open --no-source-maps",
     "prebuild": "rm -rf ./dist",
-    "build": "parcel build src/index.html --no-source-maps"
+    "build": "parcel build src/index.html --no-source-maps --experimental-scope-hoisting"
   },
   "dependencies": {
     "@material/button": "^4.0.0",
@@ -43,6 +43,9 @@
       "includePaths": [
         "we add this, in order for material components to find all the .scss files."
       ]
+    },
+    "scripts": {
+      "build": "--experimental-scope-hoisting enables tree shaking support and reduces bundle size very much."
     }
   }
 }
