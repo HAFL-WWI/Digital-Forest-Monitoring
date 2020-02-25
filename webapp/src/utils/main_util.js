@@ -55,6 +55,8 @@ klaren Mehrwert für die Praxis eingesetzt werden. Das Hauptziel
 dieses Projektes ist die Implementierung von Kartenviewern sowie
 Geodiensten für mindestens 3 konkrete Use-Cases.
 <br /></br />
+<strong>Zur Zeit sind die bereitgestellten Daten und Services ausschliesslich für Testzwecke gedacht.</strong>
+<br /></br />
 Ansprechperson BFH-HAFL: Dominique Weber (+41 31 910 29 32,
 <a href="mailto:dominique.weber@bfh.ch">dominique.weber@bfh.ch</a>)`
 };
