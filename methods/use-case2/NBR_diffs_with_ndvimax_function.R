@@ -4,7 +4,7 @@
 # by Alexandra Erbach, HAFL, BFH
 ############################################################
 
-calc_nbr_differences = function(main_path, out_path, tile="T32TMT", year="2017", ref_date=as.Date("2017-08-09"), time_int_nbr=5, time_int_refstack=45, scl_vec=c(3,5,7:10), cloud_value0=-999, nodata_value=-555){
+calc_nbr_differences = function(main_path, out_path, tile="T32TMT", year="2017", ref_date=as.Date("2017-08-09"), time_int_nbr=5, time_int_refstack=45, scl_vec=c(3,5,7:10), cloud_value=-999, nodata_value=-555){
 
 # load packages
 library(raster)
