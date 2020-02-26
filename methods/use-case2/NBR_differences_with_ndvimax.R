@@ -24,8 +24,13 @@ out_path = "//home/eaa2/nbr_test_ndvimax/"
 tile_vec = c("T32TLT", "T32TLS", "T32TMT", "T32TMS", "T32TNT", "T32TNS", "T32TMR", "T31TGM")
 tile_vec = tile_vec[3]
 
-  for (tile_i in tile_vec){
-    calc_nbr_differences(main_path, out_path, tile_i, year="2017", ref_date=as.Date("2017-08-09"), time_int_nbr=3, time_int_refstack=30, scl_vec=c(3,5,7:10), cloud_value0=-999, nodata_value=-555)
-  }
+# register for paralell processing
+cl = makeCluster(detectCores() -1)
+registerDoParallel(cl)
 
+foreach(i=1:length(tile_vec)) %dopar% {
+  calc_nbr_differences(main_path, out_path, tile_vec[i], year="2017", ref_date=as.Date("2017-08-09"), time_int_nbr=3, time_int_refstack=30, scl_vec=c(3,5,7:10), cloud_value=-999, nodata_value=-555)
+}
+
+stopCluster(cl)
 print(Sys.time() - start_time)
