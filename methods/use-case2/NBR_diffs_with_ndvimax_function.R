@@ -85,6 +85,7 @@ if (length(dates_todo)>0){
     dates_for_comp = gsub("-","",dates_all[ind_dates])
     
     # call calc_pixel_comp function
+    source("//home/eaa2/Digital-Forest-Monitoring/methods/use-case2/calc_nbr_composite.R")
     comp_tmp = calc_pixel_composites (stack_path, ndvi_raw_path, nbr_raw_path, dates_for_comp, tile)
     
     comp_tmp_name = paste(tile, "_NBR_comp_", dates_for_comp[1], "_", dates_for_comp[length(dates_for_comp)], sep="")
