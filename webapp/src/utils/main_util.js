@@ -47,13 +47,12 @@ export const showTitle = () => {
 
 export const impressum = {
   tite: "IMRESSUM",
-  content: `Dies ist ein Forschungsprojekt der BFH-HAFL im Auftrag bzw. mit
-Unterstützung des BAFU. Im Rahmen dieses Projektes sollen
-vorhandene, möglichst schweizweit flächendeckende und frei
-verfügbare Fernerkundungsdaten für konkrete Use-Cases und mit einem
-klaren Mehrwert für die Praxis eingesetzt werden. Das Hauptziel
-dieses Projektes ist die Implementierung von Kartenviewern sowie
-Geodiensten für mindestens 3 konkrete Use-Cases.
+  content: `Dies ist ein Forschungsprojekt der BFH-HAFL im Auftrag bzw. 
+  mit Unterstützung des BAFU. Im Rahmen dieses Projektes sollen vorhandene, 
+  möglichst schweizweit flächendeckende und frei verfügbare Fernerkundungsdaten 
+  für konkrete Use-Cases und mit einem klaren Mehrwert für die Praxis eingesetzt werden. 
+  Das Hauptziel dieses Projektes ist die Implementierung von Kartenviewern sowie 
+  Geodiensten zu den entsprechenden Use-Cases.
 <br /></br />
 <strong>Zur Zeit sind die bereitgestellten Daten und Services ausschliesslich für Testzwecke gedacht.</strong>
 <br /></br />

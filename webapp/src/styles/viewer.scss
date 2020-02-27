@@ -137,7 +137,17 @@
   transition: transform 0.3s;
 }
 
-.layerinfo-button {
+.viewerControl__dropdown {
+  width: 100%;
+  padding: 0 0 20px 0;
+}
+
+.viewerControl__layerselect {
+  width: 100%;
+  min-width: 100%;
+}
+
+.layer-button {
   width: 30px;
   height: 30px;
   padding: 0;
@@ -147,7 +157,7 @@
   display: flex;
   align-items: center;
   padding: 0;
-  width: 100%;
+  flex-grow: 1;
 }
 
 .mdc-slider {
@@ -181,6 +191,7 @@
 }
 
 .mdc-chip-set {
+  border-bottom: 1px dotted grey;
   max-height: 170px;
   overflow-y: auto;
   padding: 0 0 12px 0;
@@ -200,9 +211,8 @@
 }
 
 .layers {
-  border-top: 1px dotted grey;
-  max-height: calc(100vh - 350px);
-  max-height: calc(var(--vh, 1vh) * 100 - 368px);
-  overflow-y: auto;
-  padding-top: 12px;
+  max-height: calc(100vh - 213px);
+  max-height: calc(var(--vh, 1vh) * 100 - 213px);
+  overflow: hidden;
+  overflow-y: scroll;
 }

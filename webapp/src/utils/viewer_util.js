@@ -31,18 +31,18 @@ const viewerUtil = {
       viewerUtil.controller.showViewer(title);
 
       // instantiating the material components.
-      const switches = [].map.call(
-        document.querySelectorAll(".mdc-switch"),
-        el => {
-          return new MDCSwitch(el);
-        }
-      );
-      const sliders = [].map.call(
-        document.querySelectorAll(".mdc-slider"),
-        el => {
-          return new MDCSlider(el);
-        }
-      );
+      // const switches = [].map.call(
+      //   document.querySelectorAll(".mdc-switch"),
+      //   el => {
+      //     return new MDCSwitch(el);
+      //   }
+      // );
+      // const sliders = [].map.call(
+      //   document.querySelectorAll(".mdc-slider"),
+      //   el => {
+      //     return new MDCSlider(el);
+      //   }
+      // );
       viewerUtil.model.searchList = new MDCList(
         document.querySelector(".mdc-list")
       );

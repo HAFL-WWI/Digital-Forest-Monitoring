@@ -33,6 +33,9 @@ $mdc-theme-on-background: #000000;
 @import "@material/textfield/icon/mdc-text-field-icon";
 @import "@material/list/mdc-list";
 @import "@material/chips/mdc-chips";
+@import "@material/menu-surface/mdc-menu-surface";
+@import "@material/menu/mdc-menu";
+@import "@material/select/mdc-select";
 
 @import "./homepage.scss";
 @import "./viewer.scss";

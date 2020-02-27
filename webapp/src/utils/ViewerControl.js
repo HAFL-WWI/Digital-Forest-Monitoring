@@ -6,6 +6,7 @@ import { getCenter } from "ol/extent";
 import { MDCSlider } from "@material/slider";
 import { MDCSwitch } from "@material/switch";
 import { MDCChipSet, MDCChip } from "@material/chips";
+import { MDCSelect } from "@material/select";
 import { getLayerInfo, openSidebar } from "./main_util";
 
 class ViewerControl {
@@ -22,6 +23,26 @@ class ViewerControl {
         This layer displays only areas where the ndvi has decreased e.g. areas of vegetation loss.
         Difference between 2018-2017`,
         visible: true
+      },
+      {
+        layername: "karten-werk:ndvi_decrease_2017_2018_vector",
+        displayName: "Testlayer - Dummy - 1",
+        description: `Difference between NDVI Maximum of 2018 and 2017, clipped to forest areas, Switzerland (expect small area in SW):
+        Sentinel-2 NDVI maximum June & July for 2017
+        Sentinel-2 NDVI maximum June & July for 2018
+        This layer displays only areas where the ndvi has decreased e.g. areas of vegetation loss.
+        Difference between 2018-2017`,
+        visible: false
+      },
+      {
+        layername: "karten-werk:liegenschaften_pkgossau",
+        displayName: "Testlayer - Dummy - 2",
+        description: `Difference between NDVI Maximum of 2018 and 2017, clipped to forest areas, Switzerland (expect small area in SW):
+        Sentinel-2 NDVI maximum June & July for 2017
+        Sentinel-2 NDVI maximum June & July for 2018
+        This layer displays only areas where the ndvi has decreased e.g. areas of vegetation loss.
+        Difference between 2018-2017`,
+        visible: false
       }
     ];
     this.overlays = [];
@@ -88,6 +109,10 @@ class ViewerControl {
         this.viewerControls = this.getStoerungControls();
         break;
       case "Jährliche Veränderung":
+        // add only the visible:true layers on startup.
+        this.overlays = this.changeOverlays.filter(
+          layer => layer.visible === true
+        );
         this.viewerControls = this.getVeraenderungControls();
         break;
       default:
@@ -109,7 +134,15 @@ class ViewerControl {
   getVeraenderungControls() {
     const controls = document.createElement("div");
     controls.classList.add("viewerControl__controls");
-    this.createLayers({ layers: this.changeOverlays, domContainer: controls });
+    const dropdown = this.createLayerDropdown(this.changeOverlays);
+    controls.appendChild(dropdown);
+    const layers = document.createElement("div");
+    layers.classList.add("layers");
+    controls.appendChild(layers);
+    this.createLayers({
+      layers: this.overlays,
+      domContainer: layers
+    });
     return controls;
   }
 
@@ -122,7 +155,95 @@ class ViewerControl {
   }
 
   /*
-   * create map layers and layer control elements.
+   * creates a dropdown menu with new layers which can be added to the map.
+   * @param {array} layers - layer objects which must be available in the dropdown.
+   * @returns {htmlElement} - dropdown menu wich layers to choose.
+   */
+  createLayerDropdown(layers) {
+    const dropdownContainer = document.createElement("div");
+    dropdownContainer.classList.add("viewerControl__dropdown");
+    const mdcSelect = document.createElement("div");
+    mdcSelect.classList.add("mdc-select");
+    const mdcSelectAnchor = document.createElement("div");
+    mdcSelectAnchor.classList.add(
+      "mdc-select__anchor",
+      "viewerControl__layerselect"
+    );
+    const mdcSelectDropdownIcon = document.createElement("i");
+    mdcSelectDropdownIcon.classList.add("mdc-select__dropdown-icon");
+    mdcSelect.appendChild(mdcSelectAnchor);
+    const mdcSelectText = document.createElement("div");
+    mdcSelectText.classList.add("mdc-select__selected-text");
+    const mdcSelectLabel = document.createElement("span");
+    mdcSelectLabel.classList.add("mdc-floating-label");
+    mdcSelectLabel.innerHTML = "Layer hinzufügen...";
+    const mdcSelectRipple = document.createElement("div");
+    mdcSelectRipple.classList.add("mdc-line-ripple");
+
+    mdcSelectAnchor.appendChild(mdcSelectDropdownIcon);
+    mdcSelectAnchor.appendChild(mdcSelectText);
+    mdcSelectAnchor.appendChild(mdcSelectLabel);
+    mdcSelectAnchor.appendChild(mdcSelectRipple);
+
+    const mdcSelectMenu = document.createElement("div");
+    mdcSelectMenu.classList.add(
+      "mdc-select__menu",
+      "mdc-menu",
+      "mdc-menu-surface"
+    );
+    const mdcList = document.createElement("ul");
+    mdcList.classList.add("mdc-list");
+    const listItems = this.createDropdownList(layers);
+    mdcList.appendChild(listItems);
+    mdcSelectMenu.appendChild(mdcList);
+    mdcSelect.appendChild(mdcSelectMenu);
+    dropdownContainer.appendChild(mdcSelect);
+    const select = new MDCSelect(mdcSelect);
+    select.listen("MDCSelect:change", () => {
+      const layer = this.changeOverlays.filter(
+        overlay => overlay.displayName === select.value
+      )[0];
+      const layerInToc = this.overlays.filter(
+        overlay => overlay.layername === layer.layername
+      );
+      if (layerInToc.length > 0) {
+        console.log("layer allready in toc");
+        return;
+      }
+      layer.visible = true;
+      this.overlays.unshift(layer);
+      // remove all overlays from the map
+      this.removeMapOverlays(this.overlays);
+      // @TODO
+      // maybe this could be done better. dont' add every layer from scratch, but only the new one.
+      // it is not as easy at it seems, because the consistency of the map layers with the layer controls.
+      this.createLayers({
+        layers: this.overlays,
+        domContainer: document.querySelector(".layers")
+      });
+    });
+    return dropdownContainer;
+  }
+
+  /*
+   * creates the dropdown content with new layers which can be added to the map.
+   * @param {array} layers - layer objects which must be available in the list.
+   * @returns {documentFragement} - li elements
+   */
+  createDropdownList(layers) {
+    const list = new DocumentFragment();
+    layers.forEach(layer => {
+      const li = document.createElement("li");
+      li.classList.add("mdc-list-item");
+      li.setAttribute("data-value", layer.displayName);
+      li.innerHTML = layer.displayName;
+      list.appendChild(li);
+    });
+    return list;
+  }
+
+  /*
+   * create map layers and layer control elements and add layers to the map.
    * @param {object} params - function parameter obejct.
    * @param {array} params.layers - layer objects to produce overlays and control elements.
    * @param {htmlElement} params.domContainer - the container to append the layer controls.
@@ -136,20 +257,33 @@ class ViewerControl {
     if (layers.length === 0) {
       return false;
     }
-
-    layers.forEach(overlay => {
-      overlay.wmsLayer = this.createWmsLayer(overlay);
+    //add the layers to the map and the toc
+    let i = layers.length - 1;
+    while (i >= 0) {
+      const overlay = layers[i];
+      if (!overlay.wmsLayer) {
+        overlay.wmsLayer = this.createWmsLayer(overlay);
+      }
       this.map.addLayer(overlay.wmsLayer);
-      const control = document.createElement("div");
-      control.classList.add("viewerControl__controls-control");
-      control.appendChild(
-        this.getSwitch({ wmsLayer: overlay.wmsLayer, overlay })
-      );
-      control.appendChild(this.getLayerInfoIcon(overlay));
-      control.appendChild(this.getSlider(overlay.wmsLayer));
-      domContainer.appendChild(control);
-    });
+      domContainer.prepend(this.createLayerControl(overlay));
+      i--;
+    }
     return domContainer;
+  }
+
+  /*
+   * create a layer control element.
+   * @param {object} layer - layer obejct.
+   * @returns {htmlElement} layer - layer control.
+   */
+  createLayerControl(layer) {
+    const layerControl = document.createElement("div");
+    layerControl.classList.add("viewerControl__controls-control");
+    layerControl.appendChild(this.getSwitch({ overlay: layer }));
+    layerControl.appendChild(this.getLayerRemoveButton(layer));
+    layerControl.appendChild(this.getSlider(layer.wmsLayer));
+    layerControl.appendChild(this.getLayerInfoButton(layer));
+    return layerControl;
   }
 
   /*
@@ -170,7 +304,7 @@ class ViewerControl {
     dateChips.classList.add("datechips");
     const chipsetEl = document.createElement("div");
     chipsetEl.classList.add("mdc-chip-set", "mdc-chip-set--filter");
-    const chipset = new MDCChipSet(chipsetEl);
+    this.chipset = new MDCChipSet(chipsetEl);
     this.getDimensions().then(response => {
       const year = response[0].split("-")[0];
       yearInfo.innerHTML = `Jahr ${year}`;
@@ -178,7 +312,7 @@ class ViewerControl {
         const chipEl = this.createDateChip(date);
         const chip = new MDCChip(chipEl);
         chip.listen("click", () => {
-          this.unselectChips({ chipset, id: chip.id });
+          this.unselectChips({ chipset: this.chipset, id: chip.id });
           // remove all overlays from the map
           this.removeMapOverlays(this.overlays);
           // empty the disorder overlays because we want to display only one layer at the time.
@@ -198,14 +332,9 @@ class ViewerControl {
             layers: this.overlays,
             domContainer: layers
           });
-          //init mdc components used by the layers.
-          const sliders = document.querySelectorAll(".mdc-slider");
-          const switches = document.querySelectorAll(".mdc-switch");
-          switches.forEach(element => new MDCSwitch(element));
-          sliders.forEach(element => new MDCSlider(element));
         });
         chipsetEl.appendChild(chipEl);
-        chipset.addChip(chipEl);
+        this.chipset.addChip(chipEl);
       });
     });
     const layers = document.createElement("div");
@@ -341,10 +470,10 @@ class ViewerControl {
    * @param {object} overlay - overlay item like stored in this.changeOverlays.
    * @returns {HTMLElement} layerInfo - the info icon.
    */
-  getLayerInfoIcon(overlay) {
+  getLayerInfoButton(overlay) {
     const layerInfo = document.createElement("button");
     layerInfo.classList.add(
-      "layerinfo-button",
+      "layer-button",
       "mdc-icon-button",
       "material-icons"
     );
@@ -362,14 +491,37 @@ class ViewerControl {
     return layerInfo;
   }
 
+  getLayerRemoveButton(overlay) {
+    const removeLayer = document.createElement("button");
+    removeLayer.classList.add(
+      "layer-button",
+      "mdc-icon-button",
+      "material-icons"
+    );
+    removeLayer.innerHTML = "delete";
+    removeLayer.addEventListener("click", () => {
+      this.removeMapOverlays(this.overlays);
+      this.overlays = this.overlays.filter(
+        item => item.displayName !== overlay.displayName
+      );
+      this.createLayers({
+        layers: this.overlays,
+        domContainer: document.querySelector(".layers")
+      });
+      if (this.chipset) {
+        this.unselectChips({ chipset: this.chipset, id: "" });
+      }
+    });
+    return removeLayer;
+  }
+
   /*
    * creates the layer on/off switch.
    * @param {object} params - function parameter object.
-   * @param {ol/TileLayer} - openlayers tile overlay.
-   * @param {object} overlay - object like stored in this.changeOverlays.
+   * @param {object} params.overlay - object like stored in this.changeOverlays but with a wmsLayer property.
    * @returns {DocumentFragment} switchFragment- the labeled switch.
    */
-  getSwitch({ wmsLayer, overlay } = {}) {
+  getSwitch({ overlay } = {}) {
     const switchFragment = new DocumentFragment();
     const layerSwitch = document.createElement("div");
     const switchTrack = document.createElement("div");
@@ -386,9 +538,9 @@ class ViewerControl {
     input.id = `${overlay.layername}_switch`;
     input.checked = overlay.visible;
     input.setAttribute("role", "switch");
-    if (wmsLayer && overlay.displayName) {
+    if (overlay.wmsLayer && overlay.displayName) {
       input.addEventListener("change", e => {
-        wmsLayer.setVisible(e.target.checked);
+        overlay.wmsLayer.setVisible(e.target.checked);
       });
     }
 
@@ -403,6 +555,9 @@ class ViewerControl {
     layerSwitch.appendChild(thumbUnderlay);
     switchFragment.appendChild(layerSwitch);
     switchFragment.appendChild(label);
+    window.requestAnimationFrame(() => {
+      new MDCSwitch(layerSwitch);
+    });
     return switchFragment;
   }
 
@@ -422,12 +577,6 @@ class ViewerControl {
     const slider = document.createElement("div");
     slider.id = `${wmsLayer.name}_slider`;
     slider.title = "Transparenz";
-    const trackContainer = document.createElement("div");
-    const track = document.createElement("div");
-    const thumbContainer = document.createElement("div");
-    const thumbContainerContent = `<div class="mdc-slider__pin"><span class="mdc-slider__pin-value-marker">
-    </span></div><svg class="mdc-slider__thumb" width="21" height="21">
-    <circle cx="10.5" cy="10.5" r="7.875"></circle></svg><div class="mdc-slider__focus-ring"></div>`;
     slider.classList.add("mdc-slider", "mdc-slider--discrete");
     slider.tabIndex = "0";
     slider.setAttribute("role", "slider");
@@ -435,7 +584,12 @@ class ViewerControl {
     slider.setAttribute("aria-valuemax", "100");
     slider.setAttribute("aria-valuenow", "100");
     slider.setAttribute("ariaLabel", "transparency slider");
-
+    const trackContainer = document.createElement("div");
+    const track = document.createElement("div");
+    const thumbContainer = document.createElement("div");
+    const thumbContainerContent = `<div class="mdc-slider__pin"><span class="mdc-slider__pin-value-marker">
+    </span></div><svg class="mdc-slider__thumb" width="21" height="21">
+    <circle cx="10.5" cy="10.5" r="7.875"></circle></svg><div class="mdc-slider__focus-ring"></div>`;
     trackContainer.classList.add("mdc-slider__track-container");
     track.classList.add("mdc-slider__track");
     thumbContainer.classList.add("mdc-slider__thumb-container");
@@ -446,12 +600,16 @@ class ViewerControl {
     slider.appendChild(thumbContainer);
     sliderContainer.appendChild(opacityIcon);
     sliderContainer.appendChild(slider);
-    const mdcslider = new MDCSlider(slider);
-
-    mdcslider.listen("MDCSlider:input", e => {
-      const opacity = parseFloat(e.target.getAttribute("aria-valuenow") / 100);
-      wmsLayer.setOpacity(opacity);
+    window.requestAnimationFrame(() => {
+      const mdcslider = new MDCSlider(slider);
+      mdcslider.listen("MDCSlider:input", e => {
+        const opacity = parseFloat(
+          e.target.getAttribute("aria-valuenow") / 100
+        );
+        wmsLayer.setOpacity(opacity);
+      });
     });
+
     return sliderContainer;
   }
 }
