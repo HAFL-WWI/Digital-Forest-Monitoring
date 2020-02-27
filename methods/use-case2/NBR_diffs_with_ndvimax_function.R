@@ -12,8 +12,11 @@ library(foreach)
 library(doParallel)
 
 # source functions
-source("//home/eaa2/Digital-Forest-Monitoring/methods/use-case2/calc_nbr_composite.R")
-source("//home/eaa2/Digital-Forest-Monitoring/methods/use-case2/dir_exists_create_func.R")
+source("//home/eaa2/Digital-Forest-Monitoring/methods/general/calc_veg_indices.R")
+source("//home/eaa2/Digital-Forest-Monitoring/methods/general/calc_max_composite.R")
+source("//home/eaa2/Digital-Forest-Monitoring/methods/general/dir_exists_create_func.R")
+source("//home/eaa2/Digital-Forest-Monitoring/methods/general/cleanup_files.R")
+source("//home/eaa2/Digital-Forest-Monitoring/methods/use-case2/calc_diff.R")
   
 # paths
 stack_path = paste(main_path,tile,"/",year,"/", sep="")
@@ -85,8 +88,19 @@ if (length(dates_todo)>0){
     dates_for_comp = gsub("-","",dates_all[ind_dates])
     
     # call calc_pixel_comp function
-    source("//home/eaa2/Digital-Forest-Monitoring/methods/use-case2/calc_nbr_composite.R")
-    comp_tmp = calc_pixel_composites (stack_path, ndvi_raw_path, nbr_raw_path, dates_for_comp, tile)
+    source("//home/eaa2/Digital-Forest-Monitoring/methods/general/calc_veg_indices.R")
+    source("//home/eaa2/Digital-Forest-Monitoring/methods/general/calc_max_composite.R")
+    ndvi_stk = calc_veg_indices (stack_path, "B04_10m", "B08_10m", stk1 = NULL, stk2 = NULL, ndvi_raw_path, dates_for_comp, veg_ind="NDVI", tilename=tile, ext=NULL)
+    
+    names8 = list.files(stack_path, pattern="B08_10m", recursive=T, full.names=T)
+    names12 = list.files(stack_path, pattern="B12_20m", recursive=T, full.names=T)
+    names8 = names8[grepl(paste(dates_for_comp, collapse="|"), names8)]
+    names12 = names12[grepl(paste(dates_for_comp, collapse="|"), names12)]
+    nbr_stk = calc_veg_indices (NULL, NULL, NULL, stk1 = stack(names8), stk2 = disaggregate(stack(b12),2), nbr_raw_path, dates_for_comp, veg_ind="NBR", tilename=tile, ext=NULL)
+    
+    ind_ras = calc_max_composite (stack_path=NULL, stk=ndvi_stk, dates=NULL, ext=NULL, calc_max=F, calc_ind=T)
+    
+    comp_tmp = stackSelect(nbr_stk, ind_ras)
     
     comp_tmp_name = paste(tile, "_NBR_comp_", dates_for_comp[1], "_", dates_for_comp[length(dates_for_comp)], sep="")
     writeRaster(comp_tmp, paste(comp_path,comp_tmp_name,".tif",sep=""), overwrite=T)
@@ -94,42 +108,15 @@ if (length(dates_todo)>0){
     return(comp_tmp)
   }
   
-  # calculate NBR difference raster(s)
-  # --> function(stk1, stk2, cloud_value, nodata_value, time_int)
-  for (i in length(dates_todo):1){
-      nbr_diff = vi_stk[[i]]-comp_stk[[i]]
-      nbr_diff = round(nbr_diff*100)
-      nbr_diff[(vi_stk[[i]] == cloud_value)] = cloud_value # clouds
-      nbr_diff[(vi_stk[[i]] == nodata_value)] = nodata_value # nodata
-      ras_name = paste(tile,"_NBR_diff_",substr(names(vi_stk[[i]]),2,9),"_",time_int_refstack,"days", sep="")
-      cloud_perc = round(100*ncell(nbr_diff[nbr_diff==cloud_value])/(ncell(nbr_diff[nbr_diff!=nodata_value])))
-     
-      # save as 16 Bit Integer
-      writeRaster(nbr_diff, paste(diff_path, ras_name,"_",cloud_perc,".tif",sep=""), overwrite=T, datatype='INT2S')
-    }
-
   stopCluster(cl)
+  
+  # calculate NBR difference raster(s) and return stack
+  nbr_diff = calc_diff (vi_stk, comp_stk, cloud_value, nodata_value, time_int_refstack, out_path = diff_path)
 
   # delete files if necessary
-  # --> function(path, refdate, time_int, path_vec_delete)
-  # 1) NDVI & NBR raw files
-  nbr_raw_files = list.files(nbr_raw_path)
-  dates_nbr_raw = as.Date(substring(lapply(strsplit(nbr_raw_files,"_"), "[[", 3),1,8), format = "%Y%m%d")
-  ind = which(dates_nbr_raw < ref_date - time_int_nbr - time_int_refstack)
-  if (length(ind)>0){
-    unlink(list.files(nbr_raw_path, full.names = T)[ind],sep="")
-    unlink(list.files(ndvi_raw_path, full.names = T)[ind],sep="")
-  }
+  cleanup (nbr_raw_path, refdate = ref_date, timeint = time_int_nbr + time_int_refstack, path_vec_delete = c(nbr_raw_path, ndvi_raw_path))
+  cleanup (nbr_path, refdate = ref_date, timeint = time_int_nbr, path_vec_delete = c(nbr_path, comp_path, diff_path))
   
-  # 2) cNBRs and composites and difference rasters
-  nbr_files = list.files(nbr_path)
-  dates_nbr = as.Date(substring(lapply(strsplit(nbr_files,"_"), "[[", 3),1,8), format = "%Y%m%d")
-  ind_nbr = which(dates_nbr < ref_date - time_int_nbr)
-  if (length(ind_nbr)>0){ # careful, may be dangerous based on only one index if sth goes wrong?
-    unlink(list.files(nbr_path, full.names=T)[ind_nbr])
-    unlink(list.files(comp_path, full.names=T)[ind_nbr]) 
-    unlink(list.files(diff_path, full.names=T)[ind_nbr]) 
-  } 
 
 }
 }
