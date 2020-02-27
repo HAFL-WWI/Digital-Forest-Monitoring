@@ -16,8 +16,6 @@ setwd("~/")
 
 # source functions
 source("//home/eaa2/Digital-Forest-Monitoring/methods/use-case2/NBR_diffs_with_ndvimax_function.R")
-source("//home/eaa2/Digital-Forest-Monitoring/methods/use-case2/calc_nbr_composite.R")
-source("//home/eaa2/Digital-Forest-Monitoring/methods/use-case2/dir_exists_create_func.R")
 
 # paths
 main_path = "//mnt/smb.hdd.rbd/BFH/Geodata/World/Sentinel-2/S2MSI2Ap/SAFE/"
