@@ -88,7 +88,7 @@
   flex-wrap: wrap;
   min-width: 245px;
   max-width: 245px;
-  padding: 16px 8px;
+  // padding: 16px 8px;
   position: absolute;
 }
 
@@ -126,11 +126,11 @@
 }
 
 .viewerControl__helpertext {
-  padding: 0 2px 16px 2px;
+  padding: 16px 8px;
 }
 
 .viewerControl__yearinfo {
-  padding: 0 2px 4px 2px;
+  padding: 0 8px 4px 8px;
 }
 
 .title__arrow {
@@ -163,6 +163,9 @@
 .mdc-slider {
   margin-right: 12px;
 }
+.mdc-slider__thumb-container {
+  height: auto;
+}
 
 .basemapControl:hover {
   background-color: none;
@@ -194,7 +197,7 @@
   border-bottom: 1px dotted grey;
   max-height: 170px;
   overflow-y: auto;
-  padding: 0 0 12px 0;
+  padding: 8px;
 }
 
 .mdc-chip-set .mdc-chip {
@@ -213,6 +216,7 @@
 .layers {
   max-height: calc(100vh - 213px);
   max-height: calc(var(--vh, 1vh) * 100 - 213px);
+  padding: 8px;
   overflow: hidden;
   overflow-y: scroll;
 }
