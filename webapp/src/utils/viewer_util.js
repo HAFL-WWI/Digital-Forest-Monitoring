@@ -1,7 +1,5 @@
 import { Map, View } from "ol";
 import { defaults as defaultControls } from "ol/control";
-import { MDCSwitch } from "@material/switch";
-import { MDCSlider } from "@material/slider";
 import { MDCList } from "@material/list";
 import "ol/ol.css";
 import { orthoBasemap, swBasemap, vegetationBasemap } from "./basemap_util";
@@ -29,20 +27,6 @@ const viewerUtil = {
       viewerUtil.controller.removeContent();
       viewerUtil.controller.createContainer();
       viewerUtil.controller.showViewer(title);
-
-      // instantiating the material components.
-      // const switches = [].map.call(
-      //   document.querySelectorAll(".mdc-switch"),
-      //   el => {
-      //     return new MDCSwitch(el);
-      //   }
-      // );
-      // const sliders = [].map.call(
-      //   document.querySelectorAll(".mdc-slider"),
-      //   el => {
-      //     return new MDCSlider(el);
-      //   }
-      // );
       viewerUtil.model.searchList = new MDCList(
         document.querySelector(".mdc-list")
       );
