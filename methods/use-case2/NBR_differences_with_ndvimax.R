@@ -39,4 +39,5 @@ foreach(i=1:length(tile_vec)) %dopar% {
 }
 
 stopCluster(cl)
+
 print(Sys.time() - start_time)
