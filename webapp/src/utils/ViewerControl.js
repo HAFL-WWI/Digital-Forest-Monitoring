@@ -478,6 +478,7 @@ class ViewerControl {
       "material-icons"
     );
     layerInfo.innerHTML = "info";
+    layerInfo.title = "Layer Infos";
     layerInfo.addEventListener("click", () => {
       const content = new DocumentFragment();
       const title = document.createElement("h3");
@@ -493,12 +494,13 @@ class ViewerControl {
 
   getLayerRemoveButton(overlay) {
     const removeLayer = document.createElement("button");
+    removeLayer.title = "Layer entfernen";
     removeLayer.classList.add(
       "layer-button",
       "mdc-icon-button",
       "material-icons"
     );
-    removeLayer.innerHTML = "delete";
+    removeLayer.innerHTML = "remove_circle";
     removeLayer.addEventListener("click", () => {
       this.removeMapOverlays(this.overlays);
       this.overlays = this.overlays.filter(
@@ -524,6 +526,7 @@ class ViewerControl {
   getSwitch({ overlay } = {}) {
     const switchFragment = new DocumentFragment();
     const layerSwitch = document.createElement("div");
+    layerSwitch.title = "Layer ein/aus";
     const switchTrack = document.createElement("div");
     const thumbUnderlay = document.createElement("div");
     const thumb = document.createElement("div");
