@@ -60,6 +60,17 @@ const viewerUtil = {
       viewerUtil.model.content.innerHTML = "";
     },
     /*
+     * remove all the non basemap layers from map
+     * @returns {array} remaining (basemap) layers
+     */
+    removeOverlayLayers: () => {
+      const currentLayers = viewerUtil.model.map.getLayers().getArray();
+      for (var i = currentLayers.length - 1; i > 2; i--) {
+        viewerUtil.model.map.removeLayer(currentLayers[i]);
+      }
+      return currentLayers;
+    },
+    /*
      * displays the ol viewer
      */
     createContainer: () => {
@@ -71,30 +82,39 @@ const viewerUtil = {
      * @param {string} title - the title to display on top of the layer control.
      */
     showViewer: title => {
-      viewerUtil.model.map = new Map({
-        view: new View({
-          center: [829300, 5933555], //Bern
-          zoom: 13,
-          minZoom: 9,
-          maxZoom: 21
-        }),
-        layers: [orthoBasemap, swBasemap, vegetationBasemap],
-        target: "map",
-        controls: defaultControls({
-          attributionOptions: { collapsible: false }
-        })
-      });
-      const basemapSwitch = new BasemapControl(viewerUtil.model.map);
-      const vhmControl = new VHMControl(viewerUtil.model.map);
+      // we only have to create a new map object, if no one exists.
+      if (viewerUtil.model.map === undefined) {
+        viewerUtil.model.map = new Map({
+          view: new View({
+            center: [829300, 5933555], //Bern
+            zoom: 13,
+            minZoom: 9,
+            maxZoom: 21
+          }),
+          layers: [orthoBasemap, swBasemap, vegetationBasemap],
+          target: "map",
+          controls: defaultControls({
+            attributionOptions: { collapsible: false }
+          })
+        });
+        const basemapSwitch = new BasemapControl(viewerUtil.model.map);
+        const vhmControl = new VHMControl(viewerUtil.model.map);
+        viewerUtil.model.map.addControl(basemapSwitch.createBasemapControl());
+        viewerUtil.model.map.addControl(vhmControl.createVHMControl());
+      } else {
+        // if we allready have a map object, only set the target.
+        viewerUtil.model.map.setTarget(viewerUtil.model.viewerContainer);
+        viewerUtil.controller.removeOverlayLayers();
+        viewerUtil.view.removeViewerControls();
+      }
       const viewerControl = new ViewerControl({
         map: viewerUtil.model.map,
         title
       });
-      viewerUtil.model.map.addControl(basemapSwitch.createBasemapControl());
-      viewerUtil.model.map.addControl(vhmControl.createVHMControl());
-      viewerUtil.model.map.addControl(
-        viewerControl.createControl({ type: title })
-      );
+      viewerUtil.model.viewerControl = viewerControl.createControl({
+        type: title
+      });
+      viewerUtil.model.map.addControl(viewerUtil.model.viewerControl);
       viewerUtil.model.map.addEventListener("click", e => console.log(e));
     },
     /*
@@ -163,6 +183,20 @@ const viewerUtil = {
       const viewerContainer = document.createElement("div");
       viewerContainer.id = "map";
       return viewerContainer;
+    },
+    /*
+     * remove the viewer controls from the map object and the dom
+     */
+    removeViewerControls() {
+      if (viewerUtil.model.viewerControl) {
+        viewerUtil.model.map.removeControl(viewerUtil.model.viewerControl);
+        const viewerTitle = document.querySelector(".viewerControl__title");
+        const viewerControls = document.querySelector(
+          ".viewerControl__controls"
+        );
+        viewerTitle.parentNode.removeChild(viewerTitle);
+        viewerControls.parentNode.removeChild(viewerControls);
+      }
     }
   }
 };
