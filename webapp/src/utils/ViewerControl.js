@@ -22,7 +22,8 @@ class ViewerControl {
         Sentinel-2 NDVI maximum June & July for 2018
         This layer displays only areas where the ndvi has decreased e.g. areas of vegetation loss.
         Difference between 2018-2017`,
-        visible: true
+        visible: true,
+        toc: false
       },
       {
         layername: "karten-werk:ndvi_decrease_2017_2018_vector",
@@ -32,7 +33,8 @@ class ViewerControl {
         Sentinel-2 NDVI maximum June & July for 2018
         This layer displays only areas where the ndvi has decreased e.g. areas of vegetation loss.
         Difference between 2018-2017`,
-        visible: false
+        visible: false,
+        toc: false
       },
       {
         layername: "karten-werk:liegenschaften_pkgossau",
@@ -42,18 +44,20 @@ class ViewerControl {
         Sentinel-2 NDVI maximum June & July for 2018
         This layer displays only areas where the ndvi has decreased e.g. areas of vegetation loss.
         Difference between 2018-2017`,
-        visible: false
+        visible: false,
+        toc: false
       }
     ];
-    this.overlays = [];
+    this.activeLayers = [];
   }
 
   /*
    * creates an object which can be used to create a time based wms.
-   * @param {string} time - iso date format e.g. "2017-08-25"
+   * @param {string} time - iso date format e.g. "2017-08-25".
    * @returns {object} layer object to use in the createWmsLayer function.
    */
   getTimeLayerObject(date) {
+    date = date.substring(0, 10);
     const fromDate = new Date(date);
     fromDate.setDate(fromDate.getDate() - 45);
     const from = fromDate.toLocaleDateString();
@@ -63,7 +67,8 @@ class ViewerControl {
       time: date || "2017-08-25",
       displayName: `Veränderung ${date}`,
       description: `Veränderungsflächen vom <strong>${from}</strong> bis zum <strong>${to}</strong>.`,
-      visible: true
+      visible: true,
+      toc: false
     };
   }
 
@@ -102,17 +107,12 @@ class ViewerControl {
     viewerTitle.appendChild(title);
     viewerTitle.appendChild(titleIcon);
     viewerTitle.appendChild(titleArrow);
-
     // add the necessary controls for every viewer.
     switch (type) {
       case "Natürliche Störungen":
         this.viewerControls = this.getStoerungControls();
         break;
       case "Jährliche Veränderung":
-        // add only the visible:true layers on startup.
-        this.overlays = this.changeOverlays.filter(
-          layer => layer.visible === true
-        );
         this.viewerControls = this.getVeraenderungControls();
         break;
       default:
@@ -139,10 +139,8 @@ class ViewerControl {
     const layers = document.createElement("div");
     layers.classList.add("layers");
     controls.appendChild(layers);
-    this.createLayers({
-      layers: this.overlays,
-      domContainer: layers
-    });
+    // add the first layer to the toc and the map
+    this.addLayer({ layer: this.changeOverlays[0], domContainer: layers });
     return controls;
   }
 
@@ -203,24 +201,13 @@ class ViewerControl {
       const layer = this.changeOverlays.filter(
         overlay => overlay.displayName === select.value
       )[0];
-      const layerInToc = this.overlays.filter(
-        overlay => overlay.layername === layer.layername
-      );
-      if (layerInToc.length > 0) {
+      if (layer.toc === true) {
         console.log("layer allready in toc");
         return;
       }
       layer.visible = true;
-      this.overlays.unshift(layer);
-      // remove all overlays from the map
-      this.removeMapOverlays(this.overlays);
-      // @TODO
-      // maybe this could be done better. dont' add every layer from scratch, but only the new one.
-      // it is not as easy at it seems, because the consistency of the map layers with the layer controls.
-      this.createLayers({
-        layers: this.overlays,
-        domContainer: document.querySelector(".layers")
-      });
+      layer.toc = true;
+      this.addLayer({ layer, domContainer: document.querySelector(".layers") });
     });
     return dropdownContainer;
   }
@@ -228,7 +215,7 @@ class ViewerControl {
   /*
    * creates the dropdown content with new layers which can be added to the map.
    * @param {array} layers - layer objects which must be available in the list.
-   * @returns {documentFragement} - li elements
+   * @returns {documentFragement} - li elements.
    */
   createDropdownList(layers) {
     const list = new DocumentFragment();
@@ -243,32 +230,37 @@ class ViewerControl {
   }
 
   /*
-   * create map layers and layer control elements and add layers to the map.
+   * add a layer to the map and the toc.
    * @param {object} params - function parameter obejct.
-   * @param {array} params.layers - layer objects to produce overlays and control elements.
-   * @param {htmlElement} params.domContainer - the container to append the layer controls.
-   * @returns {htmlElement} domContainer - the container with all the attached layer controls or false.
+   * @param {object} params.layer - layer object to produce overlays and control elements.
+   * @param {htmlElement} params.domContainer - the container to prepend the layer control.
+   * @returns {htmlElement} layerElement - html layer element.
    */
-  createLayers({ layers, domContainer }) {
-    if (!Array.isArray(layers) || !domContainer) {
+  addLayer({ layer, domContainer } = {}) {
+    if (!layer || !domContainer) {
       return false;
     }
-    domContainer.innerHTML = "";
-    if (layers.length === 0) {
-      return false;
+    layer.toc = true;
+    if (!layer.wmsLayer) {
+      layer.wmsLayer = this.createWmsLayer(layer);
     }
-    //add the layers to the map and the toc
-    let i = layers.length - 1;
-    while (i >= 0) {
-      const overlay = layers[i];
-      if (!overlay.wmsLayer) {
-        overlay.wmsLayer = this.createWmsLayer(overlay);
-      }
-      this.map.addLayer(overlay.wmsLayer);
-      domContainer.prepend(this.createLayerControl(overlay));
-      i--;
-    }
-    return domContainer;
+    this.map.addLayer(layer.wmsLayer);
+    layer.domElement = this.createLayerControl(layer);
+    domContainer.prepend(layer.domElement);
+    return layer;
+  }
+
+  /*
+   * remove a layer from the map and the toc.
+   * @param {object} layer - layer object with neccessary params like wmsLayer and domElement.
+   * @returns {object} layer - the layer object of the removed layer.
+   */
+  removeLayer(layer) {
+    layer.toc = false;
+    layer.visible = false;
+    this.map.removeLayer(layer.wmsLayer);
+    document.querySelector(".layers").removeChild(layer.domElement);
+    return layer;
   }
 
   /*
@@ -311,27 +303,25 @@ class ViewerControl {
       response.forEach(date => {
         const chipEl = this.createDateChip(date);
         const chip = new MDCChip(chipEl);
+        const layer = this.getTimeLayerObject(date);
         chip.listen("click", () => {
+          const domContainer = document.querySelector(".layers");
           this.unselectChips({ chipset: this.chipset, id: chip.id });
-          // remove all overlays from the map
-          this.removeMapOverlays(this.overlays);
-          // empty the disorder overlays because we want to display only one layer at the time.
-          this.overlays = [];
+          // remove the layer from the dom and the map
+          domContainer.innerHTML = "";
+          this.removeMapOverlays(this.activeLayers);
           chip.selected = !chip.selected;
-          const date = chipEl.dataset.name;
           if (chip.selected === false) {
-            const disorderObj = this.getTimeLayerObject(date);
-            this.overlays.push(disorderObj);
+            this.addLayer({
+              layer,
+              domContainer
+            });
+            this.activeLayers.push(layer);
           } else {
-            this.overlays = this.overlays.filter(
-              overlay => overlay.time !== date
-            );
+            // set properties on the layer object in order to be consistent.
+            layer.toc = false;
+            layer.visible = false;
           }
-          //create new layer elements and ol TileLayers and add them to the dom.
-          this.createLayers({
-            layers: this.overlays,
-            domContainer: layers
-          });
         });
         chipsetEl.appendChild(chipEl);
         this.chipset.addChip(chipEl);
@@ -388,7 +378,7 @@ class ViewerControl {
   /*
    * create a single date chip for the "Natürliche Störungen" viewer.
    * @param {string} date - the text content of the chip.
-   * @returns {htmlElement} chip - MDCChip markup
+   * @returns {htmlElement} chip - MDCChip markup.
    */
   createDateChip(date) {
     const printDate = date.substring(0, 10);
@@ -502,14 +492,7 @@ class ViewerControl {
     );
     removeLayer.innerHTML = "remove_circle";
     removeLayer.addEventListener("click", () => {
-      this.removeMapOverlays(this.overlays);
-      this.overlays = this.overlays.filter(
-        item => item.displayName !== overlay.displayName
-      );
-      this.createLayers({
-        layers: this.overlays,
-        domContainer: document.querySelector(".layers")
-      });
+      this.removeLayer(overlay);
       if (this.chipset) {
         this.unselectChips({ chipset: this.chipset, id: "" });
       }
