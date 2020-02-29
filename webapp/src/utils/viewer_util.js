@@ -48,10 +48,12 @@ const viewerUtil = {
       const selectedIndex = viewerUtil.model.searchList.selectedIndex;
       const selectedElement =
         viewerUtil.model.searchList.listElements[selectedIndex];
-      displayGeojson({
-        geojson: JSON.parse(selectedElement.dataset.geojson),
-        map: viewerUtil.model.map
-      });
+      if (selectedElement) {
+        displayGeojson({
+          geojson: JSON.parse(selectedElement.dataset.geojson),
+          map: viewerUtil.model.map
+        });
+      }
     },
     /*
      * removes 'old' content like homepage, services etc.
