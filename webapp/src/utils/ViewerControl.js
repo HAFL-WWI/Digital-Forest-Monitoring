@@ -524,13 +524,14 @@ class ViewerControl {
     input.id = `${overlay.layername}_switch`;
     input.checked = overlay.visible;
     input.setAttribute("role", "switch");
+    input.setAttribute("aria-checked", "true");
     if (overlay.wmsLayer && overlay.displayName) {
       input.addEventListener("change", e => {
         overlay.wmsLayer.setVisible(e.target.checked);
+        input.setAttribute("aria-checked", e.target.checked.toString());
       });
     }
-
-    label.for = "layer-switch";
+    label.setAttribute("for", `${overlay.layername}_switch`);
     label.innerHTML = `${overlay.displayName}`;
     label.style.padding = "0 0 0 12px";
     label.style.flexGrow = 1;
