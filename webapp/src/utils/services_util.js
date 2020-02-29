@@ -136,10 +136,12 @@ const servicesUtil = {
       const cardActions = document.createElement("div");
       cardActions.style.flexDirection = "column";
       cardActions.style.alignItems = "flex-start";
-      const serviceTitle = document.createElement("h5");
+      const serviceTitle = document.createElement("label");
+      serviceTitle.setAttribute("for", `${title}_textarea`);
       serviceTitle.style.margin = "0 0 8px 0";
       serviceTitle.innerHTML = "URL:";
       const serviceLink = document.createElement("textarea");
+      serviceLink.id = `${title}_textarea`;
       serviceLink.value = serviceUrl;
       serviceLink.style.fontSize = "14px";
       serviceLink.style.width = "100%";
@@ -163,7 +165,7 @@ const servicesUtil = {
         window.open(serviceUrl, "_top")
       );
       cardMedia.classList.add("homepage-card__media");
-      cardMedia.innerHTML = `<iframe width="100%" height="100%" src="${videoUrl}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+      cardMedia.innerHTML = `<iframe width="100%" height="100%" src="${videoUrl}" title="${title}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
       cardTitleContainer.classList.add("homepage-card__primary");
       cardTitle.classList.add(
         "homepage-card__title",
