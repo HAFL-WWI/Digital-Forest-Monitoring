@@ -14,8 +14,8 @@ calc_veg_indices <- function(stack_path, x1_pattern, x2_pattern, stk_1, stk_2, o
   
   # filter bands and dates
   if (!is.null(stack_path) & !is.null(x1_pattern) & !is.null(x2_pattern)) {
-    namesX1 = list.files(stack_path, pattern=b1_pattern, recursive=T, full.names=T)
-    namesX2 = list.files(stack_path, pattern=b2_pattern, recursive=T, full.names=T)
+    namesX1 = list.files(stack_path, pattern=x1_pattern, recursive=T, full.names=T)
+    namesX2 = list.files(stack_path, pattern=x2_pattern, recursive=T, full.names=T)
   
     namesX1 = namesX1[grepl(paste(dates, collapse="|"), namesX1)]
     namesX2 = namesX2[grepl(paste(dates, collapse="|"), namesX2)]
