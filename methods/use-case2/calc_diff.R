@@ -9,7 +9,7 @@ calc_diff = function(stk1, stk2, cloud_value, nodata_value, time_int, out_path){
   # load packages
   library(raster)
   library(foreach)
-  library(doparall)
+  library(doParallel)
     
   # register for paralell processing
   print("starting multi-core processing, applying stack function...")
