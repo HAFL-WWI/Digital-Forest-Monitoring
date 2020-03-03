@@ -74,7 +74,7 @@ build_composite_stack = function(main_path, out_path, tile="T32TMT", year="2017"
     stopCluster(cl)
     
     # delete files if necessary
-    cleanup (nbr_raw_path, refdate = ref_date, timeint = time_int_nbr + time_int_refstack, path_vec_delete = c(nbr_raw_path, ndvi_raw_path))
+    cleanup (ndvi_raw_path, refdate = ref_date, timeint = time_int_nbr + time_int_refstack, path_vec_delete = c(nbr_raw_path, ndvi_raw_path))
     cleanup (nbr_path, refdate = ref_date, timeint = time_int_nbr, path_vec_delete = c(nbr_path, comp_path, diff_path))
     
     return(comp_stk)
