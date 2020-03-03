@@ -9,7 +9,7 @@ cleanup = function(check_path, refdate, timeint, path_vec_delete){
   
   if (length(ind)>0){
     for (path in path_vec_delete){
-      unlink(list.files(path, full.names = T)[ind],sep="")
+      unlink(list.files(path, full.names = T)[ind])
     }
   }
 }

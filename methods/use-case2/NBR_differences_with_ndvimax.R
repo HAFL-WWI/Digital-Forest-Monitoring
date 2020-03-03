@@ -30,9 +30,9 @@ cl = makeCluster(detectCores() -1)
 registerDoParallel(cl)
 
 # calculate NBR differences
-#foreach(i=1:length(tile_vec)) %dopar% {
-#calc_nbr_differences(main_path, out_path, tile_vec[i], year="2017", ref_date=as.Date("2017-08-09"), time_int_nbr=3, time_int_refstack=20, scl_vec=c(3,5,7:10), cloud_value=-999, nodata_value=-555)
-#}
+foreach(i=1:length(tile_vec)) %dopar% {
+calc_nbr_differences(main_path, out_path, tile_vec[i], year="2017", ref_date=as.Date("2017-08-09"), time_int_nbr=3, time_int_refstack=20, scl_vec=c(3,5,7:10), cloud_value=-999, nodata_value=-555)
+}
 
 # --> mask, polygonize etc.
 
