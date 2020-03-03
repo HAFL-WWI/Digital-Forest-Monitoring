@@ -50,7 +50,7 @@ if (length(dates_todo)>0){
   registerDoParallel(cl)
 
   # build NBR stack & save NDVIs & NBRs
-  vi_stk = foreach(i=length(dates_todo):1, .packages = c("raster"), .combine = "addLayer") %dopar% {
+  nbr_stk = foreach(i=length(dates_todo):1, .packages = c("raster"), .combine = "addLayer") %dopar% {
     
     # calculate indices
     b4 = raster(B4Names[i])
@@ -62,19 +62,19 @@ if (length(dates_todo)>0){
     ndvi_name = paste(tile, "_NDVI_", substring(lapply(strsplit(filesB8[i],"_"), "[[", 3),1,8), sep="")
     writeRaster(ndvi, paste(ndvi_raw_path,ndvi_name,".tif",sep=""), overwrite=T)
     
-    vi_tmp = (b8 - b12)/(b8 + b12)
+    nbr_tmp = (b8 - b12)/(b8 + b12)
     nbr_raw_name = paste(tile, "_NBR_", substring(lapply(strsplit(filesB8[i],"_"), "[[", 3),1,8), sep="")
-    writeRaster(vi_tmp, paste(nbr_raw_path, nbr_raw_name,".tif",sep=""), overwrite=T)
+    writeRaster(nbr_tmp, paste(nbr_raw_path, nbr_raw_name,".tif",sep=""), overwrite=T)
     
     # mask clouds and nodata
-    vi_tmp[scl %in% scl_vec] = cloud_value # clouds
-    vi_tmp[scl == 0] = nodata_value # nodata
-    vi_tmp_name = paste(tile, "_NBRc_", substring(lapply(strsplit(filesB8[i],"_"), "[[", 3),1,8), sep="")
-    writeRaster(vi_tmp, paste(nbr_path,vi_tmp_name,".tif",sep=""), overwrite=T)
+    nbr_tmp[scl %in% scl_vec] = cloud_value # clouds
+    nbr_tmp[scl == 0] = nodata_value # nodata
+    nbr_tmp_name = paste(tile, "_NBRc_", substring(lapply(strsplit(filesB8[i],"_"), "[[", 3),1,8), sep="")
+    writeRaster(nbr_tmp, paste(nbr_path,nbr_tmp_name,".tif",sep=""), overwrite=T)
     
-    return(vi_tmp)
+    return(nbr_tmp)
   }
-  names(vi_stk) = substring(lapply(strsplit(filesB8[nlayers(vi_stk):1],"_"), "[[", 3),1,8)
+  names(nbr_stk) = substring(lapply(strsplit(filesB8[nlayers(nbr_stk):1],"_"), "[[", 3),1,8)
   
   stopCluster(cl)
   
@@ -82,7 +82,7 @@ if (length(dates_todo)>0){
   comp_stk = stack(rev(list.files(comp_path, full.names=T)))[[1:length(dates_todo)]]
 
   # calculate NBR difference raster(s) and return stack
-  nbr_diff = calc_diff (vi_stk, comp_stk, cloud_value, nodata_value, time_int_refstack, out_path = diff_path)
+  nbr_diff = calc_diff (nbr_stk, comp_stk, cloud_value, nodata_value, time_int_refstack, out_path = diff_path, tile)
 
  }
 }
