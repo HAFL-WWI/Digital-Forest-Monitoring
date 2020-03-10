@@ -57,6 +57,7 @@ for(i in 1:length(tiles)) {
 }
 print(Sys.time()- start_time)
 
+# TODO re-projection probably leads to less accuracte pixel locations 
 print("project tiles to LV95...")
 project(tiles_path)
 print(Sys.time()- start_time)
@@ -70,7 +71,7 @@ system(paste("gdalwarp -cutline", ch_shp, "-crop_to_cutline -wo CUTLINE_ALL_TOUC
 
 print("clip mosaic to forest mask...")
 # TODO to make sure that forest mask has same dimension etc. it should be generated based on the extent of the mosaic
-system(paste("gdal_calc.py -A ", mosaic_ch_file," -B ", forest_mask, " --outfile=", mosaic_ch_forest_file, " --calc=\"A*(B==1)\" --co=\"COMPRESS=LZW\" --type='Float32'", sep=""))
+system(paste("gdal_calc.py -A ", mosaic_ch_file," -B ", forest_mask, " --outfile=", mosaic_ch_forest_file, " --calc=\"A*(B==1)\" --co=\"COMPRESS=LZW\" --type='Float32' --NoDataValue=-9999", sep=""))
 
 # END ...
 print(Sys.time()- start_time)
