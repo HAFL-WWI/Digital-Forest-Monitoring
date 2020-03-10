@@ -28,13 +28,13 @@ build_composite_stack = function(main_path, out_path, tile="T32TMT", year="2017"
   # filter files and dates
   B8Names = list.files(stack_path, pattern="B08_10m", recursive=T)
   dates_all = as.Date(substring(lapply(strsplit(B8Names,"_"), "[[", 3),1,8), format = "%Y%m%d")
-  nbr_files = list.files(nbr_path)
-  dates_nbr = as.Date(substring(lapply(strsplit(nbr_files,"_"), "[[", 3),1,8), format = "%Y%m%d")
+  comp_files = list.files(comp_path)
+  dates_comp = as.Date(substring(lapply(strsplit(comp_files,"_"), "[[", 5),1,8), format = "%Y%m%d")
   
-  #dates_todo = which(dates_all >= max(dates_nbr))
-  dates_todo = which((dates_all <= ref_date) & (dates_all >= ref_date-time_int_nbr))
+  #dates_todo = which(dates_all > max(dates_comp))
+  dates_todo = which((dates_all < ref_date) & (dates_all >= ref_date-time_int_nbr))
   
-  if (length(dates_todo)>0 & length(list.files(comp_path))<length(nbr_files)){
+  if (length(dates_todo)>0){
     
     # register for parallel processing
     cl = makeCluster(detectCores() -1)
