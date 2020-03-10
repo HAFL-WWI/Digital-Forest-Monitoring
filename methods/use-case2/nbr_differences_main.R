@@ -5,6 +5,7 @@
 ############################################################
 
 start_time <- Sys.time()
+
 setwd("~/Digital-Forest-Monitoring/methods")
 
 # load packages
@@ -14,7 +15,6 @@ library(doParallel)
 
 # source functions
 source("use-case2/calc_nbr_differences.R")
-source("use-case2/build_composite_stack.R")
 source("use-case2/build_polygons.R")
 source("use-case2/update_shapefile.R")
 
@@ -32,20 +32,17 @@ registerDoParallel(cl)
 
 # calculate NBR differences
 foreach(i=1:length(tile_vec)) %dopar% {
-  nbr_diff = calc_nbr_differences(main_path, out_path, tile_vec[i], year="2017", ref_date=as.Date("2017-08-09"), time_int_nbr=3, time_int_refstack=20, scl_vec=c(3,5,7:10), cloud_value=-999, nodata_value=-555)
-}
+  nbr_diff = calc_nbr_differences(main_path, out_path, tile_vec[i], year="2017", ref_date=as.Date("2017-08-19"), time_int_nbr=45, time_int_refstack=45, scl_vec=c(3,5,7:10), cloud_value=-999, nodata_value=-555)
 
-# TODO apply forest mask
 
-# polygonize
-polys = build_polygons(nbr_diff)
+  # TODO apply forest mask
 
-# update shapefile
-update_shapefile(polys, shp)
+  # polygonize
+  polys = build_polygons(nbr_diff)
 
-# calculate composite & clean up
-foreach(i=1:length(tile_vec)) %dopar% {
-  build_composite_stack(main_path, out_path, tile_vec[i], year="2017", ref_date=as.Date("2017-08-09"), time_int_nbr=6, time_int_refstack=15)
+  # update shapefile
+  update_shapefile(polys, shp)
+
 }
 
 stopCluster(cl)
