@@ -2,7 +2,7 @@
 # Function for automatic calculation of NBR-NDVI max composites 
 ############################################################
 
-build_composite_stack = function(main_path, out_path, tile="T32TMT", year="2017", ref_date=as.Date("2017-08-09"), time_int_nbr=5, time_int_refstack=45){
+build_composite_stack = function(main_path, out_path, tile="T32TMT", year="2017", ref_date=as.Date("2017-08-19"), time_int_nbr=45, time_int_refstack=45){
   
   # load packages
   library(raster)
@@ -10,10 +10,10 @@ build_composite_stack = function(main_path, out_path, tile="T32TMT", year="2017"
   library(doParallel)
   
   # source functions
-  source("//home/eaa2/Digital-Forest-Monitoring/methods/general/calc_veg_indices.R")
-  source("//home/eaa2/Digital-Forest-Monitoring/methods/general/calc_max_composite.R")
-  source("//home/eaa2/Digital-Forest-Monitoring/methods/general/dir_exists_create_func.R")
-  source("//home/eaa2/Digital-Forest-Monitoring/methods/general/cleanup_files.R")
+  source("~/Digital-Forest-Monitoring/methods/general/calc_veg_indices.R")
+  source("~/Digital-Forest-Monitoring/methods/general/calc_max_composite.R")
+  source("~/Digital-Forest-Monitoring/methods/general/dir_exists_create_func.R")
+  source("~/Digital-Forest-Monitoring/methods/general/cleanup_files.R")
 
   # paths
   stack_path = paste(main_path,tile,"/",year,"/", sep="")
@@ -32,7 +32,7 @@ build_composite_stack = function(main_path, out_path, tile="T32TMT", year="2017"
   dates_comp = as.Date(substring(lapply(strsplit(comp_files,"_"), "[[", 5),1,8), format = "%Y%m%d")
   
   #dates_todo = which(dates_all > max(dates_comp))
-  dates_todo = which((dates_all < ref_date) & (dates_all >= ref_date-time_int_nbr))
+  dates_todo = which((dates_all <= ref_date) & (dates_all >= ref_date-time_int_nbr))
   
   if (length(dates_todo)>0){
     
@@ -49,8 +49,8 @@ build_composite_stack = function(main_path, out_path, tile="T32TMT", year="2017"
       dates_for_comp = gsub("-","",dates_all[ind_dates])
   
       # call calc_pixel_comp function
-      source("//home/eaa2/Digital-Forest-Monitoring/methods/general/calc_veg_indices.R")
-      source("//home/eaa2/Digital-Forest-Monitoring/methods/general/calc_max_composite.R")
+      source("~/Digital-Forest-Monitoring/methods/general/calc_veg_indices.R")
+      source("~/Digital-Forest-Monitoring/methods/general/calc_max_composite.R")
       
       b8 = list.files(stack_path, pattern="B08_10m", recursive=T, full.names=T)
       b8 = b8[grepl(paste(dates_for_comp, collapse="|"), b8)]
@@ -63,6 +63,9 @@ build_composite_stack = function(main_path, out_path, tile="T32TMT", year="2017"
       nbr_stk = calc_veg_indices (stk_1 = stack(b8), stk_2 = disaggregate(stack(b12),2), nbr_raw_path, dates_for_comp, veg_ind="NBR", tilename=tile, ext=NULL)
   
       ind_ras = calc_max_composite (vi_stk=ndvi_stk, ext=NULL, calc_max=F, calc_ind=T)
+      
+      # only for testing, to be removed later
+      writeRaster(ind_ras, paste("//home/eaa2/test_t32tmt/T32TMT/2017/ind_test_folder/ind",i,".tif",sep=""), overwrite=T)
   
       comp_tmp = stackSelect(nbr_stk, ind_ras)
   
