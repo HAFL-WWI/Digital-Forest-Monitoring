@@ -4,7 +4,7 @@
 # by Alexandra Erbach, HAFL, BFH
 ############################################################
 
-calc_nbr_differences = function(main_path, out_path, tile="T32TMT", year="2017", ref_date=as.Date("2017-08-09"), time_int_nbr=5, time_int_refstack=45, scl_vec=c(3,5,7:10), cloud_value=-999, nodata_value=-555){
+calc_nbr_differences = function(main_path, out_path, tile="T32TMT", year="2017", ref_date=as.Date("2017-08-09"), time_int_nbr=45, time_int_refstack=45, scl_vec=c(3,5,7:10), cloud_value=-999, nodata_value=-555){
 
 # load packages
 library(raster)
@@ -72,8 +72,6 @@ if (length(dates_todo)>0){
   }
   names(nbr_stk) = substring(lapply(strsplit(filesB8[nlayers(nbr_stk):1],"_"), "[[", 3),1,8)
   
-  stopCluster(cl)
-  
   # get composite stack
   comp_stk = stack(rev(list.files(comp_path, full.names=T)))[[1:length(dates_todo)]]
   names(comp_stk) = lapply(strsplit(names(comp_stk),"_"), "[[", 5)
@@ -81,7 +79,13 @@ if (length(dates_todo)>0){
   # calculate NBR difference raster(s) and return stack
   nbr_diff = calc_diff (nbr_stk, comp_stk, cloud_value, nodata_value, out_path = diff_path, tile)
 
+  # only for testing, to be removed later
+  print(nlayers(nbr_diff))
+  
+  stopCluster(cl)
+  
   return(nbr_diff)
-} else {
-    return(NULL)}
+  } else {
+  return(NULL)
+  }
 }
