@@ -1,9 +1,9 @@
 ############################################################
-# Calculate NDVI max composite for Switzerland.
+# Mosaic and clip ndvi max exported from google earth engine 
 #
 # IMPORTANT: Forest mask must have same crs, dimension, extent, origin as mosaic
-# see https://github.com/HAFL-FWI/Digital-Forest-Monitoring/blob/master/methods/misc/create_forest_mask.sh
-# 
+# see scripts under Digital-Forest-Monitoring/misc
+#
 # by Dominique Weber, BFH-HAFL
 ############################################################
 
@@ -14,24 +14,18 @@ library(raster)
 setwd("~/Digital-Forest-Monitoring/methods")
 
 # source functions
-source("use-case1/calc_ndvi_max.R")
 source("use-case1/project.R")
 source("use-case1/mosaic.R")
 
 ###########################################
 # define year and output directory here
-year = "2019"
-out_dir = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/NDVI_max_2019"
+out_dir = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/NDVI_max_2018"
 ###########################################
 
 ###########################################
 # DEFAULT SETTINGS
-base_path = "//mnt/smb.hdd.rbd/BFH/Geodata.new/World/Sentinel-2/S2MSI1C/GeoTIFF"
-band_names = c("B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B8A", "B09", "B10","B11", "B12")
-months = c("06", "07")
-tiles = c("32TLT", "32TMT", "32TNT", "32TPT", "31TGM", "32TLS", "32TMS", "32TNS", "32TPS", "32TLR", "32TMR")
 ch_shp = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/general/swissBOUNDARIES3D/swissBOUNDARIES3D_1_1_TLM_LANDESGEBIET.shp"
-forest_mask = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/general/swissTLM3D_Wald/Wald_LV95.tif" 
+forest_mask = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/general/swissTLM3D_Wald/Wald_LV95_rs.tif" 
 mosaic_file = file.path(out_dir, "ndvi_max.tif")
 mosaic_ch_file = file.path(out_dir, "ndvi_max_ch.tif")
 mosaic_ch_forest_file = file.path(out_dir, "ndvi_max_ch_forest.tif")
@@ -40,33 +34,8 @@ mosaic_ch_forest_file = file.path(out_dir, "ndvi_max_ch_forest.tif")
 # START...
 start_time <- Sys.time()
 
-# create ndvi max per tile
-if (!dir.exists(out_dir)){ dir.create(out_dir) } 
-print(paste("NDVI Max", year, "out path:", out_dir))
-print("processing tiles:")
-print(tiles)
-for(i in 1:length(tiles)) {
-  # prepare
-  images_path = file.path(base_path, tiles[i], year)
-  dates_filter = paste(year, months, sep="")
-  
-  # calc max composite
-  comp = calc_ndvi_max(images_path, band_names, dates_filter, ext=NULL, ind=F)
-  
-  # write
-  tiles_path = file.path(out_dir, "tiles")
-  if (!dir.exists(tiles_path)){ dir.create(tiles_path) } 
-  writeRaster(comp, file.path(tiles_path, paste("ndvi_max_", tiles[i], ".tif", sep="")), overwrite=T)
-}
-print(Sys.time()- start_time)
-
-# TODO re-projection probably leads to less accuracte pixel locations 
-print("project tiles to LV95...")
-project(tiles_path)
-print(Sys.time()- start_time)
-
 print("mosaic all tiles...")
-mosaic(tiles_path, mosaic_file)
+mosaic(out_dir, mosaic_file, ".tif")
 print(Sys.time()- start_time)
 
 print("clip mosaic to swiss boundaries...")
