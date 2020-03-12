@@ -65,12 +65,13 @@ build_composite_stack = function(main_path, out_path, tile="T32TMT", year="2017"
       ind_ras = calc_max_composite (vi_stk=ndvi_stk, ext=NULL, calc_max=F, calc_ind=T)
       
       # only for testing, to be removed later
-      writeRaster(ind_ras, paste("//home/eaa2/test_t32tmt/T32TMT/2017/ind_test_folder/ind",i,".tif",sep=""), overwrite=T)
+      #writeRaster(ind_ras, paste("//home/eaa2/test_t32tmt/T32TMT/2017/ind_test_folder/ind",i,".tif",sep=""), overwrite=T)
   
       comp_tmp = stackSelect(nbr_stk, ind_ras)
+      comp_tmp = round(comp_tmp*100)
   
       comp_tmp_name = paste(tile, "_NBR_comp_", dates_for_comp[1], "_", dates_for_comp[length(dates_for_comp)], sep="")
-      writeRaster(comp_tmp, paste(comp_path,comp_tmp_name,".tif",sep=""), overwrite=T)
+      writeRaster(comp_tmp, paste(comp_path,comp_tmp_name,".tif",sep=""), overwrite=T, datatype='INT2S')
   
       return(comp_tmp)
     }
@@ -80,6 +81,6 @@ build_composite_stack = function(main_path, out_path, tile="T32TMT", year="2017"
     cleanup (ndvi_raw_path, refdate = ref_date, timeint = time_int_nbr + time_int_refstack, path_vec_delete = c(nbr_raw_path, ndvi_raw_path))
     cleanup (nbr_path, refdate = ref_date, timeint = time_int_nbr, path_vec_delete = c(nbr_path, comp_path, diff_path))
     
-    return(comp_stk)
+    # return(comp_stk)
   }
 }
