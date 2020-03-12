@@ -18,14 +18,17 @@ calc_diff = function(nbr_stk, comp_stk, cloud_value, nodata_value, out_path, til
   
   # build NBR stack & save NDVIs & NBRs
   n = nlayers(nbr_stk)
+  ind = vector(length=n)
   dates_nbr_stk = as.Date(substring(names(nbr_stk),2,9), format = "%Y%m%d")
   dates_comp_stk = as.Date(substring(names(comp_stk),2,9), format = "%Y%m%d")
   
   diff_stk = foreach(i=n:1, .packages = c("raster"), .combine = "addLayer") %dopar% {  
     
     j = which(dates_comp_stk < dates_nbr_stk[i])[1]
+    diff_tmp = raster(extent(nbr_stk[[1]]), res=c(10,10))
     
     if (!is.na(j)){
+      ind[i] = T
       diff_tmp = nbr_stk[[i]]-comp_stk[[j]]
       diff_tmp[(nbr_stk[[i]] == cloud_value)] = cloud_value # clouds
       diff_tmp[(nbr_stk[[i]] == nodata_value)] = nodata_value # nodata
@@ -39,6 +42,9 @@ calc_diff = function(nbr_stk, comp_stk, cloud_value, nodata_value, out_path, til
   }
   
   stopCluster(cl)
-  #return(diff_stk)
+  
+  diff_stk = diff_stk[[which(ind)]]
+  
+  return(diff_stk)
   
 }
