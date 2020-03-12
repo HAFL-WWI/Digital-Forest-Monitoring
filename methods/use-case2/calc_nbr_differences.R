@@ -12,8 +12,8 @@ library(foreach)
 library(doParallel)
 
 # source functions
-source("//home/eaa2/Digital-Forest-Monitoring/methods/general/dir_exists_create_func.R")
-source("//home/eaa2/Digital-Forest-Monitoring/methods/use-case2/calc_diff.R")
+source("general/dir_exists_create_func.R")
+source("use-case2/calc_diff.R")
   
 # paths
 stack_path = paste(main_path,tile,"/",year,"/", sep="")
@@ -39,8 +39,6 @@ if (length(dates_todo)>0){
   B8Names = B8Names[dates_todo]
   filesB8 = B8Names
   B8Names = paste(stack_path, B8Names, sep="")
-
-  B4Names = list.files(stack_path, pattern="B04_10m", recursive=T, full.names = T)[dates_todo]
   B12Names = list.files(stack_path, pattern="B12_20m", recursive=T, full.names = T)[dates_todo]
   sclNames = list.files(stack_path, pattern="SCL_20m", recursive=T, full.names = T)[dates_todo]
 
@@ -52,20 +50,24 @@ if (length(dates_todo)>0){
   # build NBR stack & save NDVIs & NBRs
   nbr_stk = foreach(i=length(dates_todo):1, .packages = c("raster"), .combine = "addLayer") %dopar% {
     
-    # calculate indices
-    b8 = raster(B8Names[i])
-    b12 = disaggregate(raster(B12Names[i]),2)
-    scl = disaggregate(raster(sclNames[i]),2)
+    if (length(grep(gsub("-","",dates_all[dates_todo[i]]), nbr_files))>0){
+      nbr_tmp = raster(list.files(nbr_path,full.names=T)[grep(gsub("-","",dates_all[dates_todo[i]]), nbr_files)])
+      } else {
+      # calculate indices
+      b8 = raster(B8Names[i])
+      b12 = disaggregate(raster(B12Names[i]),2)
+      scl = disaggregate(raster(sclNames[i]),2)
+      
+      nbr_tmp = (b8 - b12)/(b8 + b12)
+      
+      # mask clouds and nodata
+      nbr_tmp = round(nbr_tmp*100)
+      nbr_tmp[scl %in% scl_vec] = cloud_value # clouds
+      nbr_tmp[scl == 0] = nodata_value # nodata
     
-    nbr_tmp = (b8 - b12)/(b8 + b12)
-
-    # mask clouds and nodata
-    nbr_tmp = round(nbr_tmp*100)
-    nbr_tmp[scl %in% scl_vec] = cloud_value # clouds
-    nbr_tmp[scl == 0] = nodata_value # nodata
-    nbr_tmp_name = paste(tile, "_NBRc_", substring(lapply(strsplit(filesB8[i],"_"), "[[", 3),1,8), sep="")
-    writeRaster(nbr_tmp, paste(nbr_path,nbr_tmp_name,".tif",sep=""), overwrite=T, datatype='INT2S')
-    
+      nbr_tmp_name = paste(tile, "_NBRc_", substring(lapply(strsplit(filesB8[i],"_"), "[[", 3),1,8), sep="")
+      writeRaster(nbr_tmp, paste(nbr_path,nbr_tmp_name,".tif",sep=""), overwrite=T, datatype='INT2S')
+    }
     return(nbr_tmp)
   }
   names(nbr_stk) = substring(lapply(strsplit(filesB8[nlayers(nbr_stk):1],"_"), "[[", 3),1,8)
@@ -79,5 +81,7 @@ if (length(dates_todo)>0){
   # calculate NBR difference raster(s) and return stack
   nbr_diff = calc_diff (nbr_stk, comp_stk, cloud_value, nodata_value, out_path = diff_path, tile)
 
- }
+  return(nbr_diff)
+} else {
+    return(NULL)}
 }
