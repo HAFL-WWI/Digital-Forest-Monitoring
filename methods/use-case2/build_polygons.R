@@ -4,13 +4,14 @@
 # by Dominique Weber, BFH-HAFL
 ############################################################
 
-library(raster)
-library(rgdal)
-library(velox)
-library(rgeos)
-library(stars)
-
 build_polygons <- function(r, th = -15, area_th = 500) {
+  
+  library(raster)
+  library(rgdal)
+  library(velox)
+  library(rgeos)
+  library(stars)
+  
   print("threshold and clouds...")
   change = ((r < th) & (r > -999))
   change[is.na(change)] = 0
