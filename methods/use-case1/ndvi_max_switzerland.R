@@ -62,7 +62,7 @@ print(Sys.time()- start_time)
 
 # TODO re-projection probably leads to less accuracte pixel locations 
 print("project tiles to LV95...")
-project(tiles_path)
+project(tiles_path, "EPSG:2056")
 print(Sys.time()- start_time)
 
 print("mosaic all tiles...")

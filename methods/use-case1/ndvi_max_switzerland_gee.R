@@ -14,7 +14,6 @@ library(raster)
 setwd("~/Digital-Forest-Monitoring/methods")
 
 # source functions
-source("use-case1/project.R")
 source("use-case1/mosaic.R")
 
 ###########################################

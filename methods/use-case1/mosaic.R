@@ -1,5 +1,5 @@
 ############################################################
-# Project to LV95 and mosaic all tiles
+# Mosaic rasters with gdal_merge
 #
 # by Dominique Weber, BFH-HAFL
 ############################################################
