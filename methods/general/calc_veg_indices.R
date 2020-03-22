@@ -5,7 +5,7 @@
 # by Dominique Weber & Alexandra Erbach, HAFL, BFH
 ############################################################
 
-calc_veg_indices <- function(stack_path, x1_pattern, x2_pattern, stk_1, stk_2, out_path, dates, veg_ind="NDVI", tilename="", ext=NULL) {
+calc_veg_indices <- function(stk_1, stk_2, out_path, dates, veg_ind="NDVI", tilename="", ext=NULL) {
   
   # load packages
   library(raster)
@@ -13,14 +13,6 @@ calc_veg_indices <- function(stack_path, x1_pattern, x2_pattern, stk_1, stk_2, o
   library(doParallel)
   
   # filter bands and dates
-  if (!is.null(stack_path) & !is.null(x1_pattern) & !is.null(x2_pattern)) {
-    namesX1 = list.files(stack_path, pattern=b1_pattern, recursive=T, full.names=T)
-    namesX2 = list.files(stack_path, pattern=b2_pattern, recursive=T, full.names=T)
-  
-    namesX1 = namesX1[grepl(paste(dates, collapse="|"), namesX1)]
-    namesX2 = namesX2[grepl(paste(dates, collapse="|"), namesX2)]
-  }
-  
   out_names = list.files(out_path, full.names=T)
   out_names = out_names[grepl(paste(dates, collapse="|"), out_names)]
   
@@ -39,14 +31,9 @@ calc_veg_indices <- function(stack_path, x1_pattern, x2_pattern, stk_1, stk_2, o
       vi_tmp = raster(out_names[grep(dates[i], out_names)])
     }
     else {
-      if (!is.null(stk_1) & !is.null(stk_2)){
-        x1 = stk_1[[i]]
-        x2 = stk_2[[i]]
-      }
-      else {
-        x1 = raster(namesX1[i])
-        x2 = raster(namesX2[i])
-      }
+      x1 = stk_1[[i]]
+      x2 = stk_2[[i]]
+      
       vi_tmp = (x1 - x2)/(x1 + x2)
       out_name = paste(tilename, "_", veg_ind, "_", dates[i], sep="")
       writeRaster(vi_tmp, paste(out_path, out_name, ".tif",sep=""), overwrite=T)

@@ -24,19 +24,14 @@ calc_ndvi_max <- function(stack_path, band_names, dates, ext=NULL, ind=F) {
   calc_ndvi <- function(stack) {
     return((stack$B08 - stack$B04) / (stack$B08 + stack$B04))
   }
-  
-  # prepare stack
-  vi_stk = stack()
-  print("Images to process:")
+
+  print("==========================")
+  print(paste("Calculate NDVI of", length(fileNames), "stacks in parallel mode:"))
   print(fileNames)
   
-  # register for paralell processing
   print("starting multi-core processing, applying stack function...")
   cl = makeCluster(detectCores() -1)
   registerDoParallel(cl)
-  
-  # calculate ndvi
-  print(paste("processing", length(fileNames), "stacks in parallel mode..."))
   ndvi_stk = foreach(i=1:length(fileNames), .packages = c("raster"), .combine = "addLayer") %dopar% {
     # get stack
     stk_tmp = brick(fileNames[i])
@@ -50,6 +45,8 @@ calc_ndvi_max <- function(stack_path, band_names, dates, ext=NULL, ind=F) {
   }
   stopCluster(cl)
   
+  print("==========================")
+  print("calculate max")
   ndvi_max = calc(ndvi_stk, max, na.rm=T)
   if (ind){ 
     max_ind = which.max(ndvi_stk)

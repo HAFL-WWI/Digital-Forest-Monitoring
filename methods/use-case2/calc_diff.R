@@ -4,12 +4,12 @@
 # by Dominique Weber & Alexandra Erbach, HAFL, BFH
 ############################################################
 
-calc_diff = function(stk1, stk2, cloud_value, nodata_value, time_int, out_path){
+calc_diff = function(nbr_stk, comp_stk, cloud_value, nodata_value, out_path, tile){
  
   # load packages
   library(raster)
   library(foreach)
-  library(doparall)
+  library(doParallel)
     
   # register for paralell processing
   print("starting multi-core processing, applying stack function...")
@@ -17,20 +17,34 @@ calc_diff = function(stk1, stk2, cloud_value, nodata_value, time_int, out_path){
   registerDoParallel(cl)
   
   # build NBR stack & save NDVIs & NBRs
-  diff_stk = foreach(i=nlayers(stk1):1, .packages = c("raster"), .combine = "addLayer") %dopar% {  
+  n = nlayers(nbr_stk)
+  dates_nbr_stk = as.Date(substring(names(nbr_stk),2,9), format = "%Y%m%d")
+  dates_comp_stk = as.Date(substring(names(comp_stk),2,9), format = "%Y%m%d")
   
-    diff_tmp = stk1[[i]]-stk2[[i]]
-    diff_tmp = round(diff_tmp*100)
-    diff_tmp[(stk1[[i]] == cloud_value)] = cloud_value # clouds
-    diff_tmp[(stk1[[i]] == nodata_value)] = nodata_value # nodata
-    ras_name = paste(tile,"_NBR_diff_",substr(names(stk1[[i]]),2,9),"_",time_int,"days", sep="")
-    cloud_perc = round(100*ncell(diff_tmp[diff_tmp==cloud_value])/(ncell(diff_tmp[diff_tmp!=nodata_value])))
+  ind_comp = rep(NA,n)
+  for (i in 1:n){
+    ind_comp[i] = which(dates_comp_stk < dates_nbr_stk[i])[1]
+  }
+  ind_comp = ind_comp[which(!is.na(ind_comp))]
   
-  # save as 16 Bit Integer
-    writeRaster(diff_tmp, paste(out_path, ras_name,"_",cloud_perc,".tif",sep=""), overwrite=T, datatype='INT2S')
+  diff_stk = foreach(i=length(ind_comp):1, .packages = c("raster"), .combine = "addLayer") %dopar% {  
+    
+    j = ind_comp[i]
+    diff_tmp = nbr_stk[[i]]-comp_stk[[j]]
+    diff_tmp[(nbr_stk[[i]] == cloud_value)] = cloud_value # clouds
+    diff_tmp[(nbr_stk[[i]] == nodata_value)] = nodata_value # nodata
+    time_int = as.integer(dates_nbr_stk[i] - dates_comp_stk[j])
+    ras_name = paste(tile,"_NBR_diff_",substr(names(nbr_stk[[i]]),2,9),"_",time_int,"days", sep="")
+    #cloud_perc = round(100*ncell(diff_tmp[diff_tmp==cloud_value])/(ncell(diff_tmp[diff_tmp!=nodata_value])))
+  
+    # save as 16 Bit Integer
+    writeRaster(diff_tmp, paste(out_path, ras_name,".tif",sep=""), overwrite=T, datatype='INT2S')
+    
+    return(diff_tmp)
   }
   
   stopCluster(cl)
+
   return(diff_stk)
   
 }
