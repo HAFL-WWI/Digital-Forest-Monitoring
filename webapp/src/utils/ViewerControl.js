@@ -13,37 +13,38 @@ class ViewerControl {
   constructor({ map, title }) {
     this.map = map;
     this.title = title;
+    this.nbr_change = "karten-werk:nbr_change_T32TMT";
     this.changeOverlays = [
       {
-        layername: "karten-werk:ndvi_decrease_2017_2018",
-        displayName: "Juni 2017 - Juni 2018",
-        description: `Difference between NDVI Maximum of 2018 and 2017, clipped to forest areas, Switzerland (expect small area in SW):
-        Sentinel-2 NDVI maximum June & July for 2017
+        layername: "karten-werk:ndvi_decrease_2019_2018",
+        displayName: "Juni 2018 - Juni 2019",
+        description: `Difference between NDVI Maximum of 2019 and 2018, clipped to forest areas, Switzerland (expect small area in SW):
         Sentinel-2 NDVI maximum June & July for 2018
+        Sentinel-2 NDVI maximum June & July for 2019
         This layer displays only areas where the ndvi has decreased e.g. areas of vegetation loss.
-        Difference between 2018-2017`,
+        Difference between 2019-2018`,
         visible: true,
         toc: false
       },
       {
-        layername: "karten-werk:ndvi_decrease_2017_2018_vector",
-        displayName: "Testlayer - Dummy - 1",
+        layername: "karten-werk:ndvi_decrease_2018_2017",
+        displayName: "Juni 2017 - Juni 2018",
         description: `Difference between NDVI Maximum of 2018 and 2017, clipped to forest areas, Switzerland (expect small area in SW):
-        Sentinel-2 NDVI maximum June & July for 2017
         Sentinel-2 NDVI maximum June & July for 2018
+        Sentinel-2 NDVI maximum June & July for 2017
         This layer displays only areas where the ndvi has decreased e.g. areas of vegetation loss.
         Difference between 2018-2017`,
         visible: false,
         toc: false
       },
       {
-        layername: "karten-werk:liegenschaften_pkgossau",
-        displayName: "Testlayer - Dummy - 2",
-        description: `Difference between NDVI Maximum of 2018 and 2017, clipped to forest areas, Switzerland (expect small area in SW):
+        layername: "karten-werk:ndvi_decrease_2017_2016",
+        displayName: "Juni 2016 - Juni 2017",
+        description: `Difference between NDVI Maximum of 2017 and 2016, clipped to forest areas, Switzerland (expect small area in SW):
         Sentinel-2 NDVI maximum June & July for 2017
-        Sentinel-2 NDVI maximum June & July for 2018
+        Sentinel-2 NDVI maximum June & July for 2016
         This layer displays only areas where the ndvi has decreased e.g. areas of vegetation loss.
-        Difference between 2018-2017`,
+        Difference between 2017-2016`,
         visible: false,
         toc: false
       }
@@ -63,7 +64,7 @@ class ViewerControl {
     const from = fromDate.toLocaleDateString();
     const to = new Date(date).toLocaleDateString();
     return {
-      layername: "karten-werk:nbr_change",
+      layername: this.nbr_change,
       time: date || "2017-08-25",
       displayName: `Veränderung ${date}`,
       description: `Veränderungsflächen vom <strong>${from}</strong> bis zum <strong>${to}</strong>.`,
@@ -362,9 +363,7 @@ class ViewerControl {
       .then(text => {
         const result = parser.read(text);
         const layers = result.Capability.Layer.Layer;
-        const nbr = layers.filter(
-          layer => layer.Name === "karten-werk:nbr_change"
-        )[0];
+        const nbr = layers.filter(layer => layer.Name === this.nbr_change)[0];
         //center the map to the center of the nbr_change service extent.
         const extent = nbr.BoundingBox[1].extent;
         if (extent) {
