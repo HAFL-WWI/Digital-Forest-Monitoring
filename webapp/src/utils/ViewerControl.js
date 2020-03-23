@@ -14,37 +14,29 @@ class ViewerControl {
     this.map = map;
     this.title = title;
     this.nbr_change = "karten-werk:nbr_change_T32TMT";
+    this.uc1description = `Hinweiskarte für Waldveränderungen (z.B. Holzschläge) 
+      auf Basis von Sentinel-2-Satellitenbildern. Die Werte in der Legende 
+      beschreiben die Abnahme des <a href="https://de.wikipedia.org/wiki/Normalized_Difference_Vegetation_Index"> NDVI Vegetationsindex</a> zwischen den zwei 
+      Zeitpunkten. Werte näher bei -1 weisen auf stärkere Waldveränderungen (z.B. Räumungen) hin.`;
     this.changeOverlays = [
       {
         layername: "karten-werk:ndvi_decrease_2019_2018",
         displayName: "Juni 2018 - Juni 2019",
-        description: `Difference between NDVI Maximum of 2019 and 2018, clipped to forest areas, Switzerland (expect small area in SW):
-        Sentinel-2 NDVI maximum June & July for 2018
-        Sentinel-2 NDVI maximum June & July for 2019
-        This layer displays only areas where the ndvi has decreased e.g. areas of vegetation loss.
-        Difference between 2019-2018`,
+        description: this.uc1description,
         visible: true,
         toc: false
       },
       {
         layername: "karten-werk:ndvi_decrease_2018_2017",
         displayName: "Juni 2017 - Juni 2018",
-        description: `Difference between NDVI Maximum of 2018 and 2017, clipped to forest areas, Switzerland (expect small area in SW):
-        Sentinel-2 NDVI maximum June & July for 2018
-        Sentinel-2 NDVI maximum June & July for 2017
-        This layer displays only areas where the ndvi has decreased e.g. areas of vegetation loss.
-        Difference between 2018-2017`,
+        description: this.uc1description,
         visible: false,
         toc: false
       },
       {
         layername: "karten-werk:ndvi_decrease_2017_2016",
         displayName: "Juni 2016 - Juni 2017",
-        description: `Difference between NDVI Maximum of 2017 and 2016, clipped to forest areas, Switzerland (expect small area in SW):
-        Sentinel-2 NDVI maximum June & July for 2017
-        Sentinel-2 NDVI maximum June & July for 2016
-        This layer displays only areas where the ndvi has decreased e.g. areas of vegetation loss.
-        Difference between 2017-2016`,
+        description: this.uc1description,
         visible: false,
         toc: false
       }
