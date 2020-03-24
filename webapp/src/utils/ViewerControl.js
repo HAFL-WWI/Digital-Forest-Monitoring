@@ -2,7 +2,6 @@ import { Control } from "ol/control";
 import { WMSCapabilities } from "ol/format";
 import TileLayer from "ol/layer/Tile";
 import { TileWMS } from "ol/source";
-import { getCenter } from "ol/extent";
 import { MDCSlider } from "@material/slider";
 import { MDCSwitch } from "@material/switch";
 import { MDCChipSet, MDCChip } from "@material/chips";
