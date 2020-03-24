@@ -1,0 +1,323 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.closeSidebar = exports.openSidebar = exports.removeGeojsonOverlays = exports.displayGeojson = exports.debounce = exports.positionSearchResultContainer = exports.searchResults = exports.dialogContent = exports.dialogTitle = exports.getLayerInfo = exports.impressum = exports.showTitle = exports.hideTitle = exports.getTitle = exports.setTitle = exports.sidebar = void 0;
+
+var _style = require("ol/style");
+
+var _Vector = _interopRequireDefault(require("ol/layer/Vector"));
+
+var _Vector2 = _interopRequireDefault(require("ol/source/Vector"));
+
+var _GeoJSON = _interopRequireDefault(require("ol/format/GeoJSON"));
+
+var _extent = require("ol/extent");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const appBarTitle = document.getElementsByClassName("top-app-bar__title")[0];
+const sidebar = document.querySelector(".sidebar");
+exports.sidebar = sidebar;
+const sidebarContent = document.querySelector(".sidebar__content");
+/*
+ * changes the top appbar title.
+ * @param {string} title - the new title to display.
+ * @returns {boolean} - true if title changed successfully, false otherwise.
+ */
+
+const setTitle = title => {
+  if (!title) {
+    return false;
+  }
+
+  appBarTitle.innerHTML = title;
+  return true;
+};
+/*
+ * calculates the title based on the window.width.
+ * @returns {string} title - title to use based on the current window.width.
+ */
+
+
+exports.setTitle = setTitle;
+
+const getTitle = () => {
+  const width = window.innerWidth;
+  const title = width <= 550 ? "Waldmonitoring" : "Waldmonitoring mit Sentinel Satellitenbildern";
+  return title;
+};
+/*
+ * hide the appBar title
+ */
+
+
+exports.getTitle = getTitle;
+
+const hideTitle = () => {
+  appBarTitle.style.display = "none";
+};
+/*
+ * show the appBar title
+ */
+
+
+exports.hideTitle = hideTitle;
+
+const showTitle = () => {
+  appBarTitle.style.display = "block";
+};
+
+exports.showTitle = showTitle;
+const impressum = {
+  tite: "IMRESSUM",
+  content: `Dies ist ein Forschungsprojekt der BFH-HAFL im Auftrag bzw. 
+  mit Unterstützung des BAFU. Im Rahmen dieses Projektes sollen vorhandene, 
+  möglichst schweizweit flächendeckende und frei verfügbare Fernerkundungsdaten 
+  für konkrete Use-Cases und mit einem klaren Mehrwert für die Praxis eingesetzt werden. 
+  Das Hauptziel dieses Projektes ist die Implementierung von Kartenviewern sowie 
+  Geodiensten zu den entsprechenden Use-Cases.
+<br /></br />
+<strong>Zur Zeit sind die bereitgestellten Daten und Services ausschliesslich für Testzwecke gedacht.</strong>
+<br /></br />
+Ansprechperson BFH-HAFL: Dominique Weber (+41 31 910 29 32,
+<a href="mailto:dominique.weber@bfh.ch">dominique.weber@bfh.ch</a>)`
+};
+exports.impressum = impressum;
+
+const getLayerInfo = overlay => {
+  return `<div>
+  <h4>Legende:</h4>
+  <img src="https://geoserver.karten-werk.ch//wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&height=15&LAYER=${overlay.layername}&legend_options=forceLabels:on" />
+  <h4>Beschreibung:</h4>
+  <section>${overlay.description}</section>
+  </div>`;
+};
+
+exports.getLayerInfo = getLayerInfo;
+const dialogTitle = document.querySelector("#dialog-title");
+exports.dialogTitle = dialogTitle;
+const dialogContent = document.querySelector("#dialog-content");
+exports.dialogContent = dialogContent;
+const searchResults = document.querySelector(".autocomplete");
+/*
+ *  set the position of the search result box below the search input.
+ */
+
+exports.searchResults = searchResults;
+
+const positionSearchResultContainer = () => {
+  const searchInput = document.querySelector(".mdc-text-field");
+  const searchMetrics = searchInput.getBoundingClientRect();
+  searchResults.style.left = `${searchMetrics.left}px`;
+  searchResults.style.width = `${searchMetrics.width}px`;
+};
+/*
+ * debounce function for the places search
+ * Returns a function, that, as long as it continues to be invoked, will not
+ * be triggered. The function will be called after it stops being called for
+ * N milliseconds. If `immediate` is passed, trigger the function on the
+ * leading edge, instead of the trailing.
+ * credits:https://davidwalsh.name/javascript-debounce-function
+ */
+
+
+exports.positionSearchResultContainer = positionSearchResultContainer;
+
+const debounce = (func, wait, immediate) => {
+  var timeout;
+  return function () {
+    var context = this,
+        args = arguments;
+
+    var later = function () {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+};
+/*
+ * geojson display styles.
+ */
+
+
+exports.debounce = debounce;
+const image = new _style.Circle({
+  radius: 5,
+  fill: null,
+  stroke: new _style.Stroke({
+    color: "red",
+    width: 4
+  })
+});
+const styles = {
+  Point: new _style.Style({
+    image: image
+  }),
+  LineString: new _style.Style({
+    stroke: new _style.Stroke({
+      color: "yellow",
+      width: 4
+    })
+  }),
+  MultiLineString: new _style.Style({
+    stroke: new _style.Stroke({
+      color: "yellow",
+      width: 4
+    })
+  }),
+  MultiPoint: new _style.Style({
+    image: image
+  }),
+  MultiPolygon: new _style.Style({
+    stroke: new _style.Stroke({
+      color: "yellow",
+      width: 4
+    }),
+    fill: new _style.Fill({
+      color: "rgba(255, 0, 0, 0.3)"
+    })
+  }),
+  Polygon: new _style.Style({
+    stroke: new _style.Stroke({
+      color: "blue",
+      lineDash: [4],
+      width: 4
+    }),
+    fill: new _style.Fill({
+      color: "rgba(0, 0, 255, 0.1)"
+    })
+  }),
+  GeometryCollection: new _style.Style({
+    stroke: new _style.Stroke({
+      color: "magenta",
+      width: 2
+    }),
+    fill: new _style.Fill({
+      color: "magenta"
+    }),
+    image: new _style.Circle({
+      radius: 10,
+      fill: null,
+      stroke: new _style.Stroke({
+        color: "magenta"
+      })
+    })
+  }),
+  Circle: new _style.Style({
+    stroke: new _style.Stroke({
+      color: "red",
+      width: 2
+    }),
+    fill: new _style.Fill({
+      color: "rgba(255,0,0,0.2)"
+    })
+  })
+};
+/*
+ * get the right style for a geojson.
+ * @param {object} feature - geojson feature.
+ * @returns {object} ol/Style object.
+ */
+
+const styleFunction = function (feature) {
+  return styles[feature.getGeometry().getType()];
+};
+/*
+ * Adds a Geojson Object to the openlayers map
+ * @param {object} geojson - valid geojson object
+ * @returns {object} geojsonLayer - ol VectorLayer instance or null in case of failure
+ */
+
+
+const displayGeojson = ({
+  geojson,
+  map
+} = {}) => {
+  if (!geojson || !map) {
+    return false;
+  }
+
+  removeGeojsonOverlays(map);
+  const vectorSource = createOlVectorSource(geojson);
+  const geojsonLayer = new _Vector.default({
+    source: vectorSource,
+    style: styleFunction,
+    zIndex: map.getLayers().getLength()
+  });
+  geojsonLayer.type = "geojson";
+  map.addLayer(geojsonLayer);
+  const extent = vectorSource.getExtent();
+  map.getView().setCenter((0, _extent.getCenter)(extent));
+  return geojsonLayer;
+};
+/*
+ * Removes every Geojson overlay from the openlayers map
+ * @param {object} map - openlayers map object.
+ * @returns {boolean} true in case of success, false otherwise.
+ */
+
+
+exports.displayGeojson = displayGeojson;
+
+const removeGeojsonOverlays = map => {
+  if (!map) {
+    return false;
+  }
+
+  map.getLayers().forEach(layer => {
+    if (layer.type === "geojson") {
+      map.removeLayer(layer);
+    }
+  });
+  return true;
+};
+/*
+ * creates an openLayers vector source object based on geojson.
+ * @param {object} geojson - the geojson used by the source.
+ * @returns {object} VectorSource - ol/source/Vector object
+ */
+
+
+exports.removeGeojsonOverlays = removeGeojsonOverlays;
+
+const createOlVectorSource = geojson => {
+  return new _Vector2.default({
+    features: new _GeoJSON.default().readFeatures(geojson)
+  });
+};
+/*
+ * opens the sidebar to display legends, infos etc.
+ * @param {object} params
+ * @param {DomElement} params.content - the content to display inside the sidebar.
+ */
+
+
+const openSidebar = ({
+  content = null
+} = {}) => {
+  sidebar.style.zIndex = 5;
+  sidebar.style.transform = "scale(1)";
+
+  if (content) {
+    sidebarContent.appendChild(content);
+  }
+};
+
+exports.openSidebar = openSidebar;
+
+const closeSidebar = () => {
+  sidebarContent.innerHTML = "";
+  sidebar.style.transform = "scale(0,1)";
+  window.setTimeout(() => {
+    sidebar.style.zIndex = -1;
+  }, 400);
+};
+
+exports.closeSidebar = closeSidebar;

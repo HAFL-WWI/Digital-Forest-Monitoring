@@ -1,3 +1,5 @@
 {
-  "endOfLine": "auto"
+  "endOfLine": "auto",
+  "trailingComma": "none",
+  "arrowParens": "avoid"
 }

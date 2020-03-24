@@ -1,0 +1,148 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.defaults = defaults;
+Object.defineProperty(exports, "Attribution", {
+  enumerable: true,
+  get: function () {
+    return _Attribution.default;
+  }
+});
+Object.defineProperty(exports, "Rotate", {
+  enumerable: true,
+  get: function () {
+    return _Rotate.default;
+  }
+});
+Object.defineProperty(exports, "Zoom", {
+  enumerable: true,
+  get: function () {
+    return _Zoom.default;
+  }
+});
+Object.defineProperty(exports, "Control", {
+  enumerable: true,
+  get: function () {
+    return _Control.default;
+  }
+});
+Object.defineProperty(exports, "FullScreen", {
+  enumerable: true,
+  get: function () {
+    return _FullScreen.default;
+  }
+});
+Object.defineProperty(exports, "MousePosition", {
+  enumerable: true,
+  get: function () {
+    return _MousePosition.default;
+  }
+});
+Object.defineProperty(exports, "OverviewMap", {
+  enumerable: true,
+  get: function () {
+    return _OverviewMap.default;
+  }
+});
+Object.defineProperty(exports, "ScaleLine", {
+  enumerable: true,
+  get: function () {
+    return _ScaleLine.default;
+  }
+});
+Object.defineProperty(exports, "ZoomSlider", {
+  enumerable: true,
+  get: function () {
+    return _ZoomSlider.default;
+  }
+});
+Object.defineProperty(exports, "ZoomToExtent", {
+  enumerable: true,
+  get: function () {
+    return _ZoomToExtent.default;
+  }
+});
+
+var _Collection = _interopRequireDefault(require("./Collection.js"));
+
+var _Attribution = _interopRequireDefault(require("./control/Attribution.js"));
+
+var _Rotate = _interopRequireDefault(require("./control/Rotate.js"));
+
+var _Zoom = _interopRequireDefault(require("./control/Zoom.js"));
+
+var _Control = _interopRequireDefault(require("./control/Control.js"));
+
+var _FullScreen = _interopRequireDefault(require("./control/FullScreen.js"));
+
+var _MousePosition = _interopRequireDefault(require("./control/MousePosition.js"));
+
+var _OverviewMap = _interopRequireDefault(require("./control/OverviewMap.js"));
+
+var _ScaleLine = _interopRequireDefault(require("./control/ScaleLine.js"));
+
+var _ZoomSlider = _interopRequireDefault(require("./control/ZoomSlider.js"));
+
+var _ZoomToExtent = _interopRequireDefault(require("./control/ZoomToExtent.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * @module ol/control
+ */
+
+/**
+ * @typedef {Object} DefaultsOptions
+ * @property {boolean} [attribution=true] Include
+ * {@link module:ol/control/Attribution~Attribution}.
+ * @property {import("./control/Attribution.js").Options} [attributionOptions]
+ * Options for {@link module:ol/control/Attribution~Attribution}.
+ * @property {boolean} [rotate=true] Include
+ * {@link module:ol/control/Rotate~Rotate}.
+ * @property {import("./control/Rotate.js").Options} [rotateOptions] Options
+ * for {@link module:ol/control/Rotate~Rotate}.
+ * @property {boolean} [zoom] Include {@link module:ol/control/Zoom~Zoom}.
+ * @property {import("./control/Zoom.js").Options} [zoomOptions] Options for
+ * {@link module:ol/control/Zoom~Zoom}.
+ * @api
+ */
+
+/**
+ * Set of controls included in maps by default. Unless configured otherwise,
+ * this returns a collection containing an instance of each of the following
+ * controls:
+ * * {@link module:ol/control/Zoom~Zoom}
+ * * {@link module:ol/control/Rotate~Rotate}
+ * * {@link module:ol/control/Attribution~Attribution}
+ *
+ * @param {DefaultsOptions=} opt_options
+ * Defaults options.
+ * @return {Collection<import("./control/Control.js").default>}
+ * Controls.
+ * @api
+ */
+function defaults(opt_options) {
+  var options = opt_options ? opt_options : {};
+  var controls = new _Collection.default();
+  var zoomControl = options.zoom !== undefined ? options.zoom : true;
+
+  if (zoomControl) {
+    controls.push(new _Zoom.default(options.zoomOptions));
+  }
+
+  var rotateControl = options.rotate !== undefined ? options.rotate : true;
+
+  if (rotateControl) {
+    controls.push(new _Rotate.default(options.rotateOptions));
+  }
+
+  var attributionControl = options.attribution !== undefined ? options.attribution : true;
+
+  if (attributionControl) {
+    controls.push(new _Attribution.default(options.attributionOptions));
+  }
+
+  return controls;
+}

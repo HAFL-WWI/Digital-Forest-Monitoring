@@ -1,0 +1,8 @@
+"use strict";
+
+var _init = require("./utils/init");
+
+/*
+ * this file is used to initialize application
+ */
+(0, _init.init)();

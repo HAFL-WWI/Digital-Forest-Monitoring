@@ -9,11 +9,11 @@
     ]
   },
   "devDependencies": {
-    "eslint": "^6.6.0",
+    "eslint": "^6.8.0",
     "parcel-bundler": "^1.12.4",
-    "parcel-plugin-static-files-copy": "^2.2.1",
-    "prettier": "^1.19.1",
-    "sass": "^1.23.1"
+    "parcel-plugin-static-files-copy": "^2.3.1",
+    "prettier": "^2.0.2",
+    "sass": "^1.26.3"
   },
   "scripts": {
     "lint": "eslint src/**/*.js",
