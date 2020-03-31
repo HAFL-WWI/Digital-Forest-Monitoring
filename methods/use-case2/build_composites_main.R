@@ -29,7 +29,7 @@ registerDoParallel(cl)
 
 # calculate composite & clean up
 foreach(i=1:length(tile_vec)) %dopar% {
-  build_composite_stack(main_path, out_path, tile_vec[i], year="2017", ref_date=as.Date("2017-08-19"), time_int_nbr=45, time_int_refstack=45)
+  build_composite_stack(main_path, out_path, tile_vec[i], year="2017", ref_date=as.Date("2017-08-19"), time_int_nbr=5, time_int_refstack=10, thr=0.99)
 }
 
 stopCluster(cl)
