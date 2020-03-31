@@ -15,17 +15,17 @@ build_polygons <- function(r, th = -15, area_th = 500) {
   print("threshold and clouds...")
   change = ((r < th) & (r > -555)) # careful with use of absolute number...
   change[is.na(change)] = 0
+  change[r == -999] = -1
+  change[r == -555] = -2
   
-  print("focal filtering...")
+  #print("focal filtering...")
   vx = velox(change)
   vx$medianFocal(wrow=5, wcol=5, bands=1)
   change = vx$as.RasterLayer()
   
   # set raster values
-  change[change != 1] = NA
-  change[r == -999] = -1
-  change[r == -555] = -2
-  
+  change[change == 0] = NA
+
   # create polygons
   print("polygonize...")
   tmp = st_as_stars(change)
