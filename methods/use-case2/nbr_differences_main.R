@@ -34,7 +34,7 @@ registerDoParallel(cl)
 # calculate NBR differences
 foreach(i=1:length(tile_vec)) %dopar% {
   
-  diff_stk = calc_nbr_differences(main_path, out_path, tile_vec[i], year="2017", ref_date=as.Date("2017-08-19"), time_int_nbr=5, time_int_refstack=10, cloud_vec=c(3,5,7:11), cloud_value=-999, nodata_vec=c(0:2,5,6,11), nodata_value=-555)
+  diff_stk = calc_nbr_differences(main_path, out_path, tile_vec[i], year="2017", ref_date=as.Date("2017-08-19"), time_int_nbr=5, time_int_refstack=10, cloud_vec=c(3,7:10), cloud_value=-999, nodata_vec=c(0:2,5,6,11), nodata_value=-555)
   print ("done diff stk")
   if (!is.null(diff_stk)){
     # apply forest mask
