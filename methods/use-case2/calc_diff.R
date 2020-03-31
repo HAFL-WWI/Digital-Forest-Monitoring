@@ -5,12 +5,12 @@
 ############################################################
 
 calc_diff = function(nbr_stk, comp_stk, cloud_value, nodata_value, out_path, tile){
- 
+  
   # load packages
   library(raster)
   library(foreach)
   library(doParallel)
-    
+  
   # register for paralell processing
   print("starting multi-core processing, applying stack function...")
   cl = makeCluster(detectCores() -1)
@@ -36,7 +36,7 @@ calc_diff = function(nbr_stk, comp_stk, cloud_value, nodata_value, out_path, til
     time_int = as.integer(dates_nbr_stk[i] - dates_comp_stk[j])
     ras_name = paste(tile,"_NBR_diff_",substr(names(nbr_stk[[i]]),2,9),"_",time_int,"days", sep="")
     #cloud_perc = round(100*ncell(diff_tmp[diff_tmp==cloud_value])/(ncell(diff_tmp[diff_tmp!=nodata_value])))
-  
+    
     # save as 16 Bit Integer
     writeRaster(diff_tmp, paste(out_path, ras_name,".tif",sep=""), overwrite=T, datatype='INT2S')
     
@@ -44,7 +44,8 @@ calc_diff = function(nbr_stk, comp_stk, cloud_value, nodata_value, out_path, til
   }
   
   stopCluster(cl)
-
+  
+  names(diff_stk) = paste(tile,"_NBR_diff_",substr(names(nbr_stk[[1:length(ind_comp)]]),2,9),sep="")
   return(diff_stk)
   
 }
