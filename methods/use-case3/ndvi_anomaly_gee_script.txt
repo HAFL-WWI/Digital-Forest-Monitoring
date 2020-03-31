@@ -1,0 +1,142 @@
+//////////////////////////////////////////////////////////////
+// Time series analysis for drought stress detection
+//
+// Script prepared by Dominique Weber, BFH-HAFL
+/////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////
+// PARAMS
+
+//LOCATIONS
+
+// Switzerland
+Map.setCenter(8.83, 47.62, 7)
+var swiss = ee.Geometry.Rectangle(5.4, 45.5, 11, 48.1);
+var aoi = swiss;
+
+// Boncourt
+//Map.setCenter(7.02, 47.49, 14)
+//var aoi = ee.Geometry.Rectangle(6.97324, 47.50835, 7.21612, 47.38846);
+
+// Walensee
+//Map.setCenter(9.10816, 47.13483, 14)
+//var aoi = ee.Geometry.Rectangle(8.93667, 47.20197, 9.35101, 47.06807);
+
+// PARAMS
+var reference_year_from = 2015
+var reference_year_to = 2018
+var monitoring_year_from = 2019
+var monitoring_year_to = 2019
+var month_from = 6
+var month_to = 6
+
+/////////////////////////////////////////////////////////////
+// GENERAL FUNCTIONS
+// Function to mask cloud from built-in quality band
+var maskcloud1 = function(image) {
+  var QA60 = image.select(['QA60']);
+  return image.updateMask(QA60.lt(1));
+};
+
+// Function to mask further cloud using B1 (cirrus cloud) threshold
+var maskcloud2 = function(image) {
+ var B1 = image.select(['B1']);
+ var bin = B1.gt(1500);
+ return image.updateMask(bin.lt(1));
+};
+
+// Functions to calculate and add an VI band
+var addNDVI = function(image) {
+  return image.addBands(image.normalizedDifference(['B8', 'B4']).rename('NDVI'));
+};
+
+/////////////////////////////////////////////////////////////
+// Display sentinel-2 reference image
+var s2_2019 = ee.Image(ee.ImageCollection('COPERNICUS/S2_SR')
+  .filterDate('2019-09-06', '2019-09-08')
+  .filterBounds(aoi)
+  .mean());
+Map.addLayer(s2_2019, {bands: ['B4', 'B3', 'B2'],  max: 1250}, '2019 7.Sept', false);  
+// Display sentinel-2 reference image
+var s2_2018 = ee.Image(ee.ImageCollection('COPERNICUS/S2_SR')
+  .filterDate('2018-09-16', '2018-09-18')
+  .filterBounds(aoi)
+  .mean());
+Map.addLayer(s2_2018, {bands: ['B4', 'B3', 'B2'],  max: 1250}, '2018 17.Sept', false);
+
+/////////////////////////////////////////////////////////////
+// Display full time series
+var S2 = ee.ImageCollection('COPERNICUS/S2')
+  .filterDate('2015-01-01', Date.now())
+  .filterBounds(aoi)
+  .map(maskcloud1)
+  .map(maskcloud2)
+  .map(addNDVI);
+
+//plot time series for given geometry
+print(ui.Chart.image.series(S2.select(['NDVI']), DROUGHT, ee.Reducer.mean())
+    .setOptions({title: 'NDVI Time Series DROUGHT', lineWidth: 1, pointSize: 3,}));
+
+    //plot time series for given geometry
+print(ui.Chart.image.series(S2.select(['NDVI']), DROUGHT2, ee.Reducer.mean())
+    .setOptions({title: 'NDVI Time Series DROUGHT2', lineWidth: 1, pointSize: 3,}));
+
+//plot time series for given geometry
+print(ui.Chart.image.series(S2.select(['NDVI']), RECOVERY, ee.Reducer.mean())
+    .setOptions({title: 'NDVI Time Series RECOVERY', lineWidth: 1, pointSize: 3,}));
+    
+    //plot time series for given geometry
+print(ui.Chart.image.series(S2.select(['NDVI']), REFERENCE, ee.Reducer.mean())
+    .setOptions({title: 'NDVI Time Series REFERENCE', lineWidth: 1, pointSize: 3,}));
+
+/////////////////////////////////////////////////////////////    
+// Reference period
+var ref = ee.ImageCollection('COPERNICUS/S2')
+  .filter(ee.Filter.calendarRange(reference_year_from,reference_year_to,'year'))
+  .filter(ee.Filter.calendarRange(month_from,month_to,'month'))
+  .filterBounds(aoi)
+  .map(maskcloud1)
+  .map(maskcloud2);
+ref = ref.map(addNDVI);
+
+// Reduce the collection.
+var mean = ref.select(['NDVI']).reduce(ee.Reducer.mean())
+var sd = ref.select(['NDVI']).reduce(ee.Reducer.stdDev())
+
+/////////////////////////////////////////////////////////////    
+// Monitoring period
+var current = ee.ImageCollection('COPERNICUS/S2')
+  .filter(ee.Filter.calendarRange(monitoring_year_from,monitoring_year_to,'year'))
+  .filter(ee.Filter.calendarRange(month_from,month_to,'month'))
+  .filterBounds(aoi)
+  .map(maskcloud1)
+  .map(maskcloud2);
+current = current.map(addNDVI);
+var greenest = current.qualityMosaic('NDVI');
+
+// calculate z-score
+// see: https://en.wikipedia.org/wiki/Standard_score
+// see: https://www.sciencedirect.com/science/article/pii/S0034425718305509
+var z_score = greenest.select(['NDVI']).subtract(mean).divide(sd);
+
+// display NDVIs
+var ndvi_params = {min: 0, max: 1, palette: ['blue', 'white', 'green']};
+Map.addLayer(mean, ndvi_params, 'ndvi reference', false);  
+Map.addLayer(greenest.select(['NDVI']), ndvi_params, 'ndvi monitoring', false);
+
+// display greenest composite
+Map.addLayer(greenest, {bands: ['B4', 'B3', 'B2'],  max: 1250}, 'RGB monitoring', false);
+
+// display z-score
+var z_params = {min: -4, max: 4, palette: ['blue', 'white', 'green']};
+Map.addLayer(z_score, z_params, 'z score', true);  
+
+// Export
+Export.image.toDrive({
+  image: z_score,
+  description: 'z_score',
+  scale: 10,
+  maxPixels: 2000000000,
+  region: aoi,
+  crs: 'EPSG:2056'
+});
