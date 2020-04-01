@@ -27,8 +27,8 @@ var reference_year_from = 2015
 var reference_year_to = 2018
 var monitoring_year_from = 2019
 var monitoring_year_to = 2019
-var month_from = 6
-var month_to = 6
+var month_from = 7
+var month_to = 8
 
 /////////////////////////////////////////////////////////////
 // GENERAL FUNCTIONS
@@ -77,7 +77,7 @@ var S2 = ee.ImageCollection('COPERNICUS/S2')
 print(ui.Chart.image.series(S2.select(['NDVI']), DROUGHT, ee.Reducer.mean())
     .setOptions({title: 'NDVI Time Series DROUGHT', lineWidth: 1, pointSize: 3,}));
 
-    //plot time series for given geometry
+//plot time series for given geometry
 print(ui.Chart.image.series(S2.select(['NDVI']), DROUGHT2, ee.Reducer.mean())
     .setOptions({title: 'NDVI Time Series DROUGHT2', lineWidth: 1, pointSize: 3,}));
 
@@ -85,10 +85,14 @@ print(ui.Chart.image.series(S2.select(['NDVI']), DROUGHT2, ee.Reducer.mean())
 print(ui.Chart.image.series(S2.select(['NDVI']), RECOVERY, ee.Reducer.mean())
     .setOptions({title: 'NDVI Time Series RECOVERY', lineWidth: 1, pointSize: 3,}));
     
-    //plot time series for given geometry
+//plot time series for given geometry
 print(ui.Chart.image.series(S2.select(['NDVI']), REFERENCE, ee.Reducer.mean())
     .setOptions({title: 'NDVI Time Series REFERENCE', lineWidth: 1, pointSize: 3,}));
 
+//plot time series for given geometry
+print(ui.Chart.image.series(S2.select(['NDVI']), TEST, ee.Reducer.mean())
+    .setOptions({title: 'NDVI Time Series TEST', lineWidth: 1, pointSize: 3,}));
+    
 /////////////////////////////////////////////////////////////    
 // Reference period
 var ref = ee.ImageCollection('COPERNICUS/S2')
@@ -96,36 +100,41 @@ var ref = ee.ImageCollection('COPERNICUS/S2')
   .filter(ee.Filter.calendarRange(month_from,month_to,'month'))
   .filterBounds(aoi)
   .map(maskcloud1)
-  .map(maskcloud2);
-ref = ref.map(addNDVI);
+  .map(maskcloud2)
+  .map(addNDVI);
 
-// Reduce the collection.
-var mean = ref.select(['NDVI']).reduce(ee.Reducer.mean())
-var sd = ref.select(['NDVI']).reduce(ee.Reducer.stdDev())
+// NDVI metrices for reference period
+var ref_ndvi = ref.select(['NDVI']).reduce(ee.Reducer.median())
+var ref_sd = ref.select(['NDVI']).reduce(ee.Reducer.stdDev())
 
 /////////////////////////////////////////////////////////////    
 // Monitoring period
-var current = ee.ImageCollection('COPERNICUS/S2')
+var mon = ee.ImageCollection('COPERNICUS/S2')
   .filter(ee.Filter.calendarRange(monitoring_year_from,monitoring_year_to,'year'))
   .filter(ee.Filter.calendarRange(month_from,month_to,'month'))
   .filterBounds(aoi)
   .map(maskcloud1)
-  .map(maskcloud2);
-current = current.map(addNDVI);
-var greenest = current.qualityMosaic('NDVI');
+  .map(maskcloud2)
+  .map(addNDVI);
+  
+// NDVI metrices for monitoring period
+var mon_ndvi = mon.select(['NDVI']).reduce(ee.Reducer.median())
 
 // calculate z-score
 // see: https://en.wikipedia.org/wiki/Standard_score
 // see: https://www.sciencedirect.com/science/article/pii/S0034425718305509
-var z_score = greenest.select(['NDVI']).subtract(mean).divide(sd);
+// see: ftp://mco.cfc.umt.edu/ndvi/aqua/monthly/MODIS_ndvi_monthly_zscore_metadata_FGDC.html
+// see: https://www.mdpi.com/2072-4292/6/4/3101
+var z_score = mon_ndvi.subtract(ref_ndvi).divide(ref_sd);
 
 // display NDVIs
 var ndvi_params = {min: 0, max: 1, palette: ['blue', 'white', 'green']};
-Map.addLayer(mean, ndvi_params, 'ndvi reference', false);  
-Map.addLayer(greenest.select(['NDVI']), ndvi_params, 'ndvi monitoring', false);
+Map.addLayer(ref_ndvi, ndvi_params, 'ndvi reference', false);  
+Map.addLayer(mon_ndvi, ndvi_params, 'ndvi monitoring', false);
 
 // display greenest composite
-Map.addLayer(greenest, {bands: ['B4', 'B3', 'B2'],  max: 1250}, 'RGB monitoring', false);
+//var mon_greenest = mon.qualityMosaic('NDVI');
+//Map.addLayer(mon_greenest, {bands: ['B4', 'B3', 'B2'],  max: 1250}, 'RGB monitoring greenest', false);
 
 // display z-score
 var z_params = {min: -4, max: 4, palette: ['blue', 'white', 'green']};
