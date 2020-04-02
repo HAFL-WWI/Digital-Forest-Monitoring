@@ -34,17 +34,15 @@ registerDoParallel(cl)
 # calculate NBR differences
 foreach(i=1:length(tile_vec)) %dopar% {
   
-  diff_stk = calc_nbr_differences(main_path, out_path, tile_vec[i], year="2017", ref_date=as.Date("2017-08-19"), time_int_nbr=5, time_int_refstack=10, cloud_vec=c(3,7:10), cloud_value=-999, nodata_vec=c(0:2,5,6,11), nodata_value=-555)
-  print ("done diff stk")
+  diff_stk = calc_nbr_differences(main_path, out_path, tile_vec[i], year="2017", ref_date=as.Date("2017-08-19"), time_int_nbr=45, time_int_refstack=45, cloud_vec=c(3,7:10), cloud_value=-999, nodata_vec=c(0:2,5,6,11), nodata_value=-555)
+
   if (!is.null(diff_stk)){
     # apply forest mask
     forest_mask = raster(list.files(masks, pattern=tile_vec[i], full.names = T))
     nbr_diff_masked = mask(diff_stk, forest_mask)
-    print("done mask")
-  
+    
     # polygonize and update shapefile
-    shp = file.path(out_path, paste("nbr_change_", tile_vec[i], ".shp", sep=""))
-    print("done shp")
+    shp = file.path(out_path, paste("nbr_change_", tile_vec[i], "_new2.shp", sep=""))
     for(j in 1:nlayers(nbr_diff_masked)){
       # polygonize
       polys = build_polygons(nbr_diff_masked[[j]])
