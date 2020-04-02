@@ -59,19 +59,25 @@ calc_nbr_differences = function(main_path, out_path, tile="T32TMT", year="2017",
         b12 = disaggregate(raster(B12Names[i]),2)
         scl = disaggregate(raster(sclNames[i]),2)
         
+        # majority filter on scl
+        scl_cl = scl
+        scl_cl[scl_cl %in% nodata_vec] = nodata_value
+        scl_cl[scl_cl %in% cloud_vec] = cloud_value
+        scl_vx = velox(scl_cl)
+        scl_vx$medianFocal(wrow=5, wcol=5, bands=1)
+        scl_vx = scl_vx$as.RasterLayer()
+        
+        # calculate nbr
         nbr_tmp = (b8 - b12)/(b8 + b12)
+        nbr_tmp = round(nbr_tmp*100)
         
         # mask nodata
-        nbr_tmp = round(nbr_tmp*100)
-        nbr_tmp[scl %in% nodata_vec] = nodata_value
+        nbr_tmp[scl_vx == nodata_value] = nodata_value
         
         # mask clouds and create buffer
-        cloud_ras = nbr_tmp
-        cloud_ras[scl %in% cloud_vec] = 1
-        cloud_ras[cloud_ras != 1] = 0
-        
+        cloud_ras = scl_vx == cloud_value
         vx = velox(cloud_ras)
-        vx$sumFocal(weights=matrix(1,11,11), bands=1)
+        vx$sumFocal(weights=matrix(1,11,11), bands=1) # should be input parameter in function
         cloud_ras = vx$as.RasterLayer()
         nbr_tmp[cloud_ras > 0] = cloud_value
         
