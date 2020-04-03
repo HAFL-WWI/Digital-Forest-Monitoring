@@ -31,24 +31,28 @@ tile_vec = tile_vec[3]
 cl = makeCluster(detectCores() -1)
 registerDoParallel(cl)
 
+#diff_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case2/T32TMT/2017/nbr_diff"
+#diff_stk = stack(rev(list.files(diff_path, full.names=T)))[[1]]
+#names(diff_stk) = rev(lapply(strsplit(list.files(diff_path),".tif"), "[[", 1))[1]
+
 # calculate NBR differences
-foreach(i=1:length(tile_vec)) %dopar% {
+foreach(i=1:length(tile_vec), .packages = c("raster", "velox")) %dopar% {
   
   diff_stk = calc_nbr_differences(main_path, out_path, tile_vec[i], year="2017", ref_date=as.Date("2017-08-19"), time_int_nbr=45, time_int_refstack=45, cloud_vec=c(3,7:10), cloud_value=-999, nodata_vec=c(0:2,5,6,11), nodata_value=-555)
-
+  
   if (!is.null(diff_stk)){
     # apply forest mask
     forest_mask = raster(list.files(masks, pattern=tile_vec[i], full.names = T))
-    nbr_diff_masked = mask(diff_stk, forest_mask)
+    nbr_diff_masked = mask(diff_stk, forest_mask, updatevalue = 0)
     
     # polygonize and update shapefile
-    shp = file.path(out_path, paste("nbr_change_", tile_vec[i], "_new2.shp", sep=""))
+    shp = file.path(out_path, paste(tile_vec[i],"/2017/nbr_change_", tile_vec[i], ".shp", sep=""))
     for(j in 1:nlayers(nbr_diff_masked)){
       # polygonize
       polys = build_polygons(nbr_diff_masked[[j]])
     
       # update shapefile
-      update_shapefile(polys, shp)
+      update_shapefile(polys, shp, length_of_archive = 45)
     }
   }
 }
