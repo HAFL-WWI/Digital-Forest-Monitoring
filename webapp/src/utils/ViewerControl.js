@@ -107,6 +107,9 @@ class ViewerControl {
       case "Jährliche Veränderung":
         this.viewerControls = this.getVeraenderungControls();
         break;
+      case "Vitalität der Wälder":
+        this.viewerControls = this.getVeraenderungControls();
+        break;
       default:
         return;
     }
