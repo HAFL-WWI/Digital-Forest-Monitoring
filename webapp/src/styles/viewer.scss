@@ -138,7 +138,6 @@
 
 .viewerControl__dropdown {
   width: 100%;
-  padding: 0 0 20px 0;
 }
 
 .viewerControl__layerselect {
@@ -210,6 +209,10 @@
 
 .mdc-chip--selected {
   background-color: $mdc-theme-secondary;
+}
+
+.monthchips {
+  width: 100%;
 }
 
 .layers {

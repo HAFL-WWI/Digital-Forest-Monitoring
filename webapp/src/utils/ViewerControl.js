@@ -17,6 +17,11 @@ class ViewerControl {
       auf Basis von Sentinel-2-Satellitenbildern. Die Werte in der Legende 
       beschreiben die Abnahme des <a href="https://de.wikipedia.org/wiki/Normalized_Difference_Vegetation_Index"> NDVI Vegetationsindex</a> zwischen den zwei 
       Zeitpunkten. Werte näher bei -1 weisen auf stärkere Waldveränderungen (z.B. Räumungen) hin.`;
+    this.uc3description = `Hinweiskarte für die Veränderung der Vitalität in Bezug zum Medianwert seit 2015. 
+    Dargestellt sind standardisierte NDVI-Werte (Sentinel-2-Satellitenbilder). Negative Werte deuten auf eine
+     Abnahme der Vitalität hin, positive Werte deuten auf eine Zunahme der Vitalität hin. 
+     Je tiefer bzw. höher die Werte sind, desto wahrscheinlicher ist es, dass eine effektive Veränderung stattfand. 
+     Potenzielle Fehlerquellen sind Wolken und andere atmosphärische Störungen.`;
     this.changeOverlays = [
       {
         layername: "karten-werk:ndvi_decrease_2019_2018",
@@ -40,6 +45,24 @@ class ViewerControl {
         toc: false
       }
     ];
+    this.month = [
+      { number: "01-02", text: "Jan/Feb" },
+      { number: "02-03", text: "Feb/Mrz" },
+      { number: "03-04", text: "Mrz/Apr" },
+      { number: "04-05", text: "Apr/Mai" },
+      { number: "05-06", text: "Mai/Jun" },
+      { number: "06-07", text: "Jun/Jul" },
+      { number: "07-08", text: "Jul/Aug" },
+      { number: "08-09", text: "Aug/Sep" },
+      { number: "09-10", text: "Sep/Okt" },
+      { number: "10-11", text: "Okt/Nov" },
+      { number: "11-12", text: "Nov/Dez" },
+      { number: "12-01", text: "Dez/Jan" }
+    ];
+    this.vitalityLayers = {
+      2018: { month: this.month.slice(5, 8) },
+      2019: { month: this.month.slice(5, 8) }
+    };
     this.activeLayers = [];
   }
 
@@ -59,6 +82,23 @@ class ViewerControl {
       time: date || "2017-08-25",
       displayName: `Veränderung ${date}`,
       description: `Veränderungsflächen vom <strong>${from}</strong> bis zum <strong>${to}</strong>.`,
+      visible: true,
+      toc: false
+    };
+  }
+
+  /*
+   * creates an object which can be used to vitality wms.
+   * @param {object} params - function parameter object.
+   * @param {number} params.year - year of the vitality layer e.g. 2018.
+   * @param {object} params.month - month of the vitality layer as number and text.
+   * @returns {object} layer object to use in the createWmsLayer function.
+   */
+  getVitalityLayerObject({ year, month }) {
+    return {
+      layername: `kartenwerk:ndvi_anomaly_${year}_${month.number}`,
+      displayName: `NDVI Anomalien ${month.number} ${year}`,
+      description: this.uc3description,
       visible: true,
       toc: false
     };
@@ -108,7 +148,9 @@ class ViewerControl {
         this.viewerControls = this.getVeraenderungControls();
         break;
       case "Vitalität der Wälder":
-        this.viewerControls = this.getVeraenderungControls();
+        this.viewerControls = this.getVitalityControls(
+          Object.keys(this.vitalityLayers)
+        );
         break;
       default:
         return;
@@ -125,6 +167,7 @@ class ViewerControl {
 
   /*
    * create the controls for the "Jährliche Veranderung" viewer.
+   * @returns {htmlElement} - a div element with all the controls for the viewer.
    */
   getVeraenderungControls() {
     const controls = document.createElement("div");
@@ -140,6 +183,33 @@ class ViewerControl {
   }
 
   /*
+   * create the controls for the "Vitalität der Wälder" viewer.
+   * @param {array} years - the years to display in the dropdown [{displayName:2019},...].
+   * @returns {htmlElement} - a div element with all the controls for the viewer.
+   */
+  getVitalityControls(years) {
+    const yearObjects = [];
+    years.forEach(year => yearObjects.push({ displayName: year }));
+    const controls = document.createElement("div");
+    controls.classList.add("viewerControl__controls");
+    const monthChips = document.createElement("div");
+    monthChips.classList.add("monthchips");
+    const chipsetEl = document.createElement("div");
+    chipsetEl.classList.add("mdc-chip-set", "mdc-chip-set--filter");
+    this.chipset = new MDCChipSet(chipsetEl);
+    monthChips.appendChild(chipsetEl);
+    const dropdown = this.createVitalityDropdown(yearObjects, chipsetEl);
+    controls.appendChild(dropdown);
+    const layers = document.createElement("div");
+    layers.classList.add("layers");
+    controls.appendChild(monthChips);
+    controls.appendChild(layers);
+    // add the first layer to the toc and the map
+    //this.addLayer({ layer: this.changeOverlays[0], domContainer: layers });
+    return controls;
+  }
+
+  /*
    * removes layers from the ol map.
    * @param {array} layers - array of layer objects.
    */
@@ -148,11 +218,11 @@ class ViewerControl {
   }
 
   /*
-   * creates a dropdown menu with new layers which can be added to the map.
-   * @param {array} layers - layer objects which must be available in the dropdown.
-   * @returns {htmlElement} - dropdown menu wich layers to choose.
+   * creates a material design dropdown component.
+   * @param {string} label - the select label.
+   * @returns {object} - 2 div elements {dropdownContainer:htmlElement, mdcSelect:htmlElement}
    */
-  createLayerDropdown(layers) {
+  createMDCDropdown(label) {
     const dropdownContainer = document.createElement("div");
     dropdownContainer.classList.add("viewerControl__dropdown");
     const mdcSelect = document.createElement("div");
@@ -169,7 +239,7 @@ class ViewerControl {
     mdcSelectText.classList.add("mdc-select__selected-text");
     const mdcSelectLabel = document.createElement("span");
     mdcSelectLabel.classList.add("mdc-floating-label");
-    mdcSelectLabel.innerHTML = "Layer hinzufügen...";
+    mdcSelectLabel.innerHTML = label;
     const mdcSelectRipple = document.createElement("div");
     mdcSelectRipple.classList.add("mdc-line-ripple");
 
@@ -177,7 +247,19 @@ class ViewerControl {
     mdcSelectAnchor.appendChild(mdcSelectText);
     mdcSelectAnchor.appendChild(mdcSelectLabel);
     mdcSelectAnchor.appendChild(mdcSelectRipple);
+    return { dropdownContainer, mdcSelect };
+  }
 
+  /*
+   * creates the select menu for the dropdown component.
+   * @param {object} params - function parameter object.
+   * @param {array} params.items - the items to show in the dropdown list.
+   * @param {htmlElement} params.mdcSelect - div element.
+   * @param {htmlElement} params.dropdownContainer - div element.
+   * @param {function} params.callback - function to call when select item get's clicked.
+   * @returns {htmlElement} - dropdownContainer div element.
+   */
+  createSelectMenu({ items, mdcSelect, dropdownContainer, callback }) {
     const mdcSelectMenu = document.createElement("div");
     mdcSelectMenu.classList.add(
       "mdc-select__menu",
@@ -186,15 +268,28 @@ class ViewerControl {
     );
     const mdcList = document.createElement("ul");
     mdcList.classList.add("mdc-list");
-    const listItems = this.createDropdownList(layers);
+    const listItems = this.createDropdownList(items);
     mdcList.appendChild(listItems);
     mdcSelectMenu.appendChild(mdcList);
     mdcSelect.appendChild(mdcSelectMenu);
     dropdownContainer.appendChild(mdcSelect);
     const select = new MDCSelect(mdcSelect);
-    select.listen("MDCSelect:change", () => {
+    select.listen("MDCSelect:change", callback);
+    return dropdownContainer;
+  }
+
+  /*
+   * creates a dropdown menu with new layers which can be added to the map.
+   * @param {array} layers - layer objects which must be available in the dropdown.
+   * @returns {htmlElement} - dropdown menu wich layers to choose.
+   */
+  createLayerDropdown(layers) {
+    const { dropdownContainer, mdcSelect } = this.createMDCDropdown(
+      "Layer hinzufügen"
+    );
+    const callback = event => {
       const layer = this.changeOverlays.filter(
-        overlay => overlay.displayName === select.value
+        overlay => overlay.displayName === event.detail.value
       )[0];
       if (layer.toc === true) {
         console.log("layer allready in toc");
@@ -203,8 +298,46 @@ class ViewerControl {
       layer.visible = true;
       layer.toc = true;
       this.addLayer({ layer, domContainer: document.querySelector(".layers") });
+    };
+    return this.createSelectMenu({
+      items: layers,
+      mdcSelect,
+      dropdownContainer,
+      callback
     });
-    return dropdownContainer;
+  }
+
+  /*
+   * creates the dropdown menu and chip logic for the vitality viewer.
+   * @param {array} years - year objects with a displayName property.
+   * @param {domElement} chipset - container for the chips.
+   * @returns {domElement} dropdown menu with years to choose.
+   */
+  createVitalityDropdown(years, chipset) {
+    const { dropdownContainer, mdcSelect } = this.createMDCDropdown(
+      "Jahr wählen"
+    );
+    const callback = e => {
+      chipset.innerHTML = "";
+      const year = e.detail.value;
+      const months = this.vitalityLayers[year].month;
+      months.forEach(month => {
+        const monthChipElement = this.createMonthChip(year, month);
+        const chip = new MDCChip(monthChipElement);
+        const layer = this.getVitalityLayerObject({ year, month });
+        chip.listen("click", () => {
+          this.handleChipClick(chip, layer);
+        });
+        chipset.appendChild(monthChipElement);
+        this.chipset.addChip(monthChipElement);
+      });
+    };
+    return this.createSelectMenu({
+      items: years,
+      mdcSelect,
+      dropdownContainer,
+      callback
+    });
   }
 
   /*
@@ -300,23 +433,7 @@ class ViewerControl {
         const chip = new MDCChip(chipEl);
         const layer = this.getTimeLayerObject(date);
         chip.listen("click", () => {
-          const domContainer = document.querySelector(".layers");
-          this.unselectChips({ chipset: this.chipset, id: chip.id });
-          // remove the layer from the dom and the map
-          domContainer.innerHTML = "";
-          this.removeMapOverlays(this.activeLayers);
-          chip.selected = !chip.selected;
-          if (chip.selected === false) {
-            this.addLayer({
-              layer,
-              domContainer
-            });
-            this.activeLayers.push(layer);
-          } else {
-            // set properties on the layer object in order to be consistent.
-            layer.toc = false;
-            layer.visible = false;
-          }
+          this.handleChipClick(chip, layer);
         });
         chipsetEl.appendChild(chipEl);
         this.chipset.addChip(chipEl);
@@ -327,6 +444,32 @@ class ViewerControl {
     controls.appendChild(chipsetEl);
     controls.appendChild(layers);
     return controls;
+  }
+
+  /*
+   * handles klick events on a chip.
+   * @param {MDCChip} chip - MDCChip object.
+   * @paran {object} layer - layer object to use in the createWmsLayer function.
+   * @returns {void}
+   */
+  handleChipClick(chip, layer) {
+    const domContainer = document.querySelector(".layers");
+    this.unselectChips({ chipset: this.chipset, id: chip.id });
+    // remove the layer from the dom and the map
+    domContainer.innerHTML = "";
+    this.removeMapOverlays(this.activeLayers);
+    chip.selected = !chip.selected;
+    if (chip.selected === false) {
+      this.addLayer({
+        layer,
+        domContainer
+      });
+      this.activeLayers.push(layer);
+    } else {
+      // set properties on the layer object in order to be consistent.
+      layer.toc = false;
+      layer.visible = false;
+    }
   }
 
   /*
@@ -386,6 +529,30 @@ class ViewerControl {
     content.innerHTML = this.formatDateString(printDate);
     chip.appendChild(checkmark);
     chip.appendChild(content);
+    return chip;
+  }
+
+  /*
+   * create a single month chip for the "Vitalität der Wälder" viewer.
+   * @param {number} year - 2018, 2019....
+   * @param {object} month - {monthNumber:"06-07":monthText:"Jun/Jul"}.
+   * @returns {htmlElement} chip - MDCChip markup.
+   */
+  createMonthChip(year, month) {
+    const chip = document.createElement("button");
+    chip.setAttribute("data-month", `${year}_${month.number}`);
+    chip.classList.add("mdc-chip");
+    const checkmark = document.createElement("span");
+    checkmark.classList.add("mdc-chip__checkmark");
+    checkmark.innerHTML = `<svg class="mdc-chip__checkmark-svg" viewBox="-2 -3 30 30">
+    <path class="mdc-chip__checkmark-path" fill="none" stroke="black"
+          d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+  </svg>`;
+    const chipContent = document.createElement("span");
+    chipContent.classList.add("mdc-chip__text");
+    chipContent.innerHTML = month.text;
+    chip.appendChild(checkmark);
+    chip.appendChild(chipContent);
     return chip;
   }
 
