@@ -1,5 +1,6 @@
 import veraenderungImage from "../img/jaehrl_veraenderung.jpg";
 import sturmschaedenImage from "../img/sturmschaeden.jpg";
+import vitalitaetImage from "../img/vitalitaet.jpg";
 import geoservices from "../img/geoservices.jpg";
 import { router } from "./router";
 const homepageUtil = {
@@ -39,6 +40,16 @@ const homepageUtil = {
           "Hier können Sie sehen, wo der Wald natürlichen Störungen wie z.B. " +
           "Borkenkäferbefall oder Sommersturmschäden ausgesetzt ist.",
         route: "/stoerungen",
+        linktext: "zum viewer"
+      },
+      vitalitaet: {
+        image: vitalitaetImage,
+        title: "Hinweiskarten zur Vitalität",
+        subtitle: "Geodaten: Dominique Weber, HAFL",
+        description:
+        "Trockenheit führte in den vergangen Jahren vermehrt zu Waldschäden. "+
+        "Hier finden Sie Hinweiskarten zur Vitalität der Wälder.",
+        route: "/vitalitaet",
         linktext: "zum viewer"
       },
       geodienste: {

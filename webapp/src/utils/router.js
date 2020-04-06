@@ -39,6 +39,15 @@ export const initRouter = () => {
         viewerUtil.controller.init({ title: "Natürliche Störungen" });
         positionSearchResultContainer();
       },
+      "/vitalitaet": () => {
+        // we dont't want a short sidebar transition on startup
+        // that's why we add it here, after the app has loaded.
+        sidebar.style.transition = "transform 0.3s";
+        hideTitle();
+        textField.style.display = "inline-flex";
+        viewerUtil.controller.init({ title: "Vitalität der Wälder" });
+        positionSearchResultContainer();
+      },
       "/services": () => {
         servicesUtil.controller.init();
         setTitle("Geodienste");
