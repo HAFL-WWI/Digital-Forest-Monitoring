@@ -326,7 +326,7 @@ class ViewerControl {
         const chip = new MDCChip(monthChipElement);
         const layer = this.getVitalityLayerObject({ year, month });
         chip.listen("click", () => {
-          this.handleChipClick(chip, layer);
+          this.handleChipClick({ chip, layer, singleLayer: false });
         });
         chipset.appendChild(monthChipElement);
         this.chipset.addChip(monthChipElement);
@@ -369,6 +369,7 @@ class ViewerControl {
       return false;
     }
     layer.toc = true;
+    layer.visible = true;
     if (!layer.wmsLayer) {
       layer.wmsLayer = this.createWmsLayer(layer);
     }
@@ -387,7 +388,10 @@ class ViewerControl {
     layer.toc = false;
     layer.visible = false;
     this.map.removeLayer(layer.wmsLayer);
-    document.querySelector(".layers").removeChild(layer.domElement);
+    const layers = document.querySelector(".layers");
+    if (layers.contains(layer.domElement)) {
+      layers.removeChild(layer.domElement);
+    }
     return layer;
   }
 
@@ -433,7 +437,7 @@ class ViewerControl {
         const chip = new MDCChip(chipEl);
         const layer = this.getTimeLayerObject(date);
         chip.listen("click", () => {
-          this.handleChipClick(chip, layer);
+          this.handleChipClick({ chip, layer });
         });
         chipsetEl.appendChild(chipEl);
         this.chipset.addChip(chipEl);
@@ -452,12 +456,17 @@ class ViewerControl {
    * @paran {object} layer - layer object to use in the createWmsLayer function.
    * @returns {void}
    */
-  handleChipClick(chip, layer) {
+  handleChipClick({ chip, layer, singleLayer = true } = {}) {
+    if (!chip || !layer) {
+      return;
+    }
     const domContainer = document.querySelector(".layers");
-    this.unselectChips({ chipset: this.chipset, id: chip.id });
-    // remove the layer from the dom and the map
-    domContainer.innerHTML = "";
-    this.removeMapOverlays(this.activeLayers);
+    // remove the layer from the dom and the map if we are in singleLayer mode
+    if (singleLayer) {
+      domContainer.innerHTML = "";
+      this.removeMapOverlays(this.activeLayers);
+      this.unselectChips({ chipset: this.chipset, id: chip.id });
+    }
     chip.selected = !chip.selected;
     if (chip.selected === false) {
       this.addLayer({
@@ -466,9 +475,7 @@ class ViewerControl {
       });
       this.activeLayers.push(layer);
     } else {
-      // set properties on the layer object in order to be consistent.
-      layer.toc = false;
-      layer.visible = false;
+      this.removeLayer(layer);
     }
   }
 
