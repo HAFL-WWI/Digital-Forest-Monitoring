@@ -323,10 +323,11 @@ class ViewerControl {
       const months = this.vitalityLayers[year].month;
       months.forEach(month => {
         const monthChipElement = this.createMonthChip(year, month);
-        const chip = new MDCChip(monthChipElement);
+
         const layer = this.getVitalityLayerObject({ year, month });
-        chip.listen("click", () => {
-          this.handleChipClick({ chip, layer, singleLayer: false });
+        layer.chip = new MDCChip(monthChipElement);
+        layer.chip.listen("click", () => {
+          this.handleChipClick({ layer, singleLayer: false });
         });
         chipset.appendChild(monthChipElement);
         this.chipset.addChip(monthChipElement);
@@ -433,11 +434,11 @@ class ViewerControl {
       const year = response[0].split("-")[0];
       yearInfo.innerHTML = `Jahr ${year}`;
       response.forEach(date => {
-        const chipEl = this.createDateChip(date);
-        const chip = new MDCChip(chipEl);
         const layer = this.getTimeLayerObject(date);
-        chip.listen("click", () => {
-          this.handleChipClick({ chip, layer });
+        const chipEl = this.createDateChip(date);
+        layer.chip = new MDCChip(chipEl);
+        layer.chip.listen("click", () => {
+          this.handleChipClick({ layer });
         });
         chipsetEl.appendChild(chipEl);
         this.chipset.addChip(chipEl);
@@ -452,14 +453,14 @@ class ViewerControl {
 
   /*
    * handles klick events on a chip.
-   * @param {MDCChip} chip - MDCChip object.
    * @paran {object} layer - layer object to use in the createWmsLayer function.
    * @returns {void}
    */
-  handleChipClick({ chip, layer, singleLayer = true } = {}) {
-    if (!chip || !layer) {
+  handleChipClick({ layer, singleLayer = true } = {}) {
+    if (!layer) {
       return;
     }
+    const { chip } = layer;
     const domContainer = document.querySelector(".layers");
     // remove the layer from the dom and the map if we are in singleLayer mode
     if (singleLayer) {
@@ -657,9 +658,7 @@ class ViewerControl {
     removeLayer.innerHTML = "remove_circle";
     removeLayer.addEventListener("click", () => {
       this.removeLayer(overlay);
-      if (this.chipset) {
-        this.unselectChips({ chipset: this.chipset, id: "" });
-      }
+      overlay.chip.selected = false;
     });
     return removeLayer;
   }
