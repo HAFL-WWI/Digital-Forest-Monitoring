@@ -1,5 +1,6 @@
 import { Control } from "ol/control";
 import { WMSCapabilities } from "ol/format";
+import { transform } from "ol/proj";
 import TileLayer from "ol/layer/Tile";
 import { TileWMS } from "ol/source";
 import { MDCSlider } from "@material/slider";
@@ -323,7 +324,6 @@ class ViewerControl {
       const months = this.vitalityLayers[year].month;
       months.forEach(month => {
         const monthChipElement = this.createMonthChip(year, month);
-
         const layer = this.getVitalityLayerObject({ year, month });
         layer.chip = new MDCChip(monthChipElement);
         layer.chip.listen("click", () => {
@@ -407,6 +407,9 @@ class ViewerControl {
     layerControl.appendChild(this.getSwitch({ overlay: layer }));
     layerControl.appendChild(this.getLayerRemoveButton(layer));
     layerControl.appendChild(this.getSlider(layer.wmsLayer));
+    if (this.title === "Natürliche Störungen") {
+      layerControl.appendChild(this.getSentinelLink(layer));
+    }
     layerControl.appendChild(this.getLayerInfoButton(layer));
     return layerControl;
   }
@@ -661,6 +664,44 @@ class ViewerControl {
       overlay.chip.selected = false;
     });
     return removeLayer;
+  }
+
+  /*
+   * creates the sentinel link.
+   * @param {object} layer - layer item like stored in this.changeOverlays.
+   * @returns {HTMLElement} layerInfo - the info icon.
+   */
+  getSentinelLink(layer) {
+    const sentinelLink = document.createElement("button");
+    sentinelLink.classList.add(
+      "layer-button",
+      "mdc-icon-button",
+      "material-icons"
+    );
+    sentinelLink.innerHTML = "satellite";
+    sentinelLink.title = "Bild auf Sentinel Playground ansehen";
+    sentinelLink.addEventListener("click", () => {
+      const zoom = this.map.getView().getZoom();
+      const [lng, lat] = transform(
+        this.map.getView().getCenter(),
+        "EPSG:3857",
+        "EPSG:4326"
+      );
+      const url =
+        `https://apps.sentinel-hub.com/sentinel-playground/?source=S2&` +
+        `lat=${lat}&` +
+        `lng=${lng}&` +
+        `zoom=${zoom}&` +
+        `preset=1-NATURAL-COLOR&` +
+        `layers=B01,B02,B03&` +
+        `maxcc=20&` +
+        `gain=2.0&` +
+        `gamma=1.0&` +
+        `time=${layer.time}%7C${layer.time}&` +
+        `showDates=true`;
+      window.open(url);
+    });
+    return sentinelLink;
   }
 
   /*
