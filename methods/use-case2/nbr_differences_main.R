@@ -19,13 +19,12 @@ source("use-case2/build_polygons.R")
 source("use-case2/update_shapefile.R")
 
 # paths
-main_path = "//mnt/smb.hdd.rbd/BFH/Geodata/World/Sentinel-2/S2MSI2Ap/SAFE/"
-out_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case2/"
-#masks = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/general/swissTLM3D_Wald/tiles/"
-masks = "//home/eaa2/test_t32tmt/tiles"
+main_path = "//mnt/smb.hdd.rbd/BFH/Geodata/ESA/S2MSI2Ap/SAFE/"
+out_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case2/Test_all/"
+masks = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/general/swissTLM3D_Wald/tiles/"
 
-tile_vec = c("32TLT", "32TLS", "T32TMT", "32TMS", "32TNT", "32TNS", "32TMR", "31TGM")
-tile_vec = tile_vec[3]
+tile_vec = c("32TLT", "32TLS", "32TMT", "32TMS", "32TNT", "32TNS", "32TMR", "31TGM")
+#tile_vec = tile_vec[3]
 
 # register for paralell processing
 cl = makeCluster(detectCores() -1)
