@@ -60,10 +60,13 @@ class ViewerControl {
       { number: "11-12", text: "Nov/Dez" },
       { number: "12-01", text: "Dez/Jan" }
     ];
-    this.vitalityLayers = {
-      2018: { month: this.month.slice(5, 8) },
-      2019: { month: this.month.slice(5, 8) }
-    };
+    this.vitalityLayers = [
+      {
+        year: "2019",
+        month: this.month.slice(5, 8)
+      },
+      { year: "2018", month: this.month.slice(5, 8) }
+    ];
     this.activeLayers = [];
   }
 
@@ -149,9 +152,7 @@ class ViewerControl {
         this.viewerControls = this.getVeraenderungControls();
         break;
       case "Vitalität der Wälder":
-        this.viewerControls = this.getVitalityControls(
-          Object.keys(this.vitalityLayers)
-        );
+        this.viewerControls = this.getVitalityControls(this.vitalityLayers);
         break;
       default:
         return;
@@ -190,7 +191,7 @@ class ViewerControl {
    */
   getVitalityControls(years) {
     const yearObjects = [];
-    years.forEach(year => yearObjects.push({ displayName: year }));
+    years.forEach(yearObj => yearObjects.push({ displayName: yearObj.year }));
     const controls = document.createElement("div");
     controls.classList.add("viewerControl__controls");
     const monthChips = document.createElement("div");
@@ -205,8 +206,6 @@ class ViewerControl {
     layers.classList.add("layers");
     controls.appendChild(monthChips);
     controls.appendChild(layers);
-    // add the first layer to the toc and the map
-    //this.addLayer({ layer: this.changeOverlays[0], domContainer: layers });
     return controls;
   }
 
@@ -258,7 +257,7 @@ class ViewerControl {
    * @param {htmlElement} params.mdcSelect - div element.
    * @param {htmlElement} params.dropdownContainer - div element.
    * @param {function} params.callback - function to call when select item get's clicked.
-   * @returns {htmlElement} - dropdownContainer div element.
+   * @returns {MDCSelect} select - MDCSelect element.
    */
   createSelectMenu({ items, mdcSelect, dropdownContainer, callback }) {
     const mdcSelectMenu = document.createElement("div");
@@ -276,13 +275,13 @@ class ViewerControl {
     dropdownContainer.appendChild(mdcSelect);
     const select = new MDCSelect(mdcSelect);
     select.listen("MDCSelect:change", callback);
-    return dropdownContainer;
+    return select;
   }
 
   /*
    * creates a dropdown menu with new layers which can be added to the map.
    * @param {array} layers - layer objects which must be available in the dropdown.
-   * @returns {htmlElement} - dropdown menu wich layers to choose.
+   * @returns {htmlElement} - dropdown menu with layers to choose.
    */
   createLayerDropdown(layers) {
     const { dropdownContainer, mdcSelect } = this.createMDCDropdown(
@@ -300,12 +299,13 @@ class ViewerControl {
       layer.toc = true;
       this.addLayer({ layer, domContainer: document.querySelector(".layers") });
     };
-    return this.createSelectMenu({
+    this.createSelectMenu({
       items: layers,
       mdcSelect,
       dropdownContainer,
       callback
     });
+    return dropdownContainer;
   }
 
   /*
@@ -321,8 +321,10 @@ class ViewerControl {
     const callback = e => {
       chipset.innerHTML = "";
       const year = e.detail.value;
-      const months = this.vitalityLayers[year].month;
-      months.forEach(month => {
+      const selectedYear = this.vitalityLayers.filter(
+        layer => layer.year.toString() === year.toString()
+      )[0];
+      selectedYear.month.forEach(month => {
         const monthChipElement = this.createMonthChip(year, month);
         const layer = this.getVitalityLayerObject({ year, month });
         layer.chip = new MDCChip(monthChipElement);
@@ -333,12 +335,14 @@ class ViewerControl {
         this.chipset.addChip(monthChipElement);
       });
     };
-    return this.createSelectMenu({
+    const select = this.createSelectMenu({
       items: years,
       mdcSelect,
       dropdownContainer,
       callback
     });
+    select.value = years[0].displayName;
+    return dropdownContainer;
   }
 
   /*
@@ -661,7 +665,9 @@ class ViewerControl {
     removeLayer.innerHTML = "remove_circle";
     removeLayer.addEventListener("click", () => {
       this.removeLayer(overlay);
-      overlay.chip.selected = false;
+      if (overlay.chip) {
+        overlay.chip.selected = false;
+      }
     });
     return removeLayer;
   }

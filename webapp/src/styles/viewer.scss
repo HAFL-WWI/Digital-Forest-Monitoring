@@ -218,7 +218,7 @@
 .layers {
   max-height: calc(100vh - 213px);
   max-height: calc(var(--vh, 1vh) * 100 - 213px);
-  padding: 8px;
+  padding: 0 8px;
   overflow: hidden;
   overflow-y: scroll;
 }
