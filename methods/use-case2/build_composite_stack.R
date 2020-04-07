@@ -68,7 +68,6 @@ build_composite_stack = function(main_path, out_path, tile="T32TMT", year="2017"
       #writeRaster(ind_ras, paste("//home/eaa2/test_t32tmt/T32TMT/2017/ind_test_folder/ind",i,".tif",sep=""), overwrite=T)
       
       comp_tmp = stackSelect(nbr_stk, ind_ras)
-      comp_tmp = round(comp_tmp*100)
       
       comp_tmp_name = paste(tile, "_NBR_comp_", dates_for_comp[1], "_", dates_for_comp[length(dates_for_comp)], sep="")
       writeRaster(comp_tmp, paste(comp_path,comp_tmp_name,".tif",sep=""), overwrite=T, datatype='INT2S')
