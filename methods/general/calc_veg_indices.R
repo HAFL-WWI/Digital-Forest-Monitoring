@@ -5,7 +5,7 @@
 # by Dominique Weber & Alexandra Erbach, HAFL, BFH
 ############################################################
 
-calc_veg_indices <- function(stk_1, stk_2, out_path, dates, veg_ind="NDVI", tilename="", ext=NULL) {
+calc_veg_indices <- function(stk_1, stk_2, out_path, dates, veg_ind="NDVI", tilename="", ext=NULL, thr=0.99) {
   
   # load packages
   library(raster)
@@ -35,8 +35,10 @@ calc_veg_indices <- function(stk_1, stk_2, out_path, dates, veg_ind="NDVI", tile
       x2 = stk_2[[i]]
       
       vi_tmp = (x1 - x2)/(x1 + x2)
+      if (!is.null(thr)) vi_tmp[vi_tmp >= thr] = NA
       out_name = paste(tilename, "_", veg_ind, "_", dates[i], sep="")
-      writeRaster(vi_tmp, paste(out_path, out_name, ".tif",sep=""), overwrite=T)
+      vi_tmp = round(vi_tmp*100)
+      writeRaster(vi_tmp, paste(out_path, out_name, ".tif",sep=""), overwrite=T, datatype='INT2S')
     }
     
     return(vi_tmp)
