@@ -196,6 +196,10 @@ class ViewerControl {
     controls.classList.add("viewerControl__controls");
     const monthChips = document.createElement("div");
     monthChips.classList.add("monthchips");
+    const title = document.createElement("div");
+    title.classList.add("chips-title");
+    title.innerText = "Monate:";
+    monthChips.appendChild(title);
     const chipsetEl = document.createElement("div");
     chipsetEl.classList.add("mdc-chip-set", "mdc-chip-set--filter");
     this.chipset = new MDCChipSet(chipsetEl);

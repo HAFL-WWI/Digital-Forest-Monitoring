@@ -191,11 +191,17 @@
   transition: transform, 0.3s;
 }
 
+.chips-title {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 12px;
+  padding: 8px 16px 0 16px;
+}
+
 .mdc-chip-set {
   border-bottom: 1px dotted grey;
   max-height: 170px;
   overflow-y: auto;
-  padding: 8px;
+  padding: 4px 8px 8px 8px;
 }
 
 .mdc-chip-set .mdc-chip {
