@@ -2,21 +2,19 @@
 # Function for automatic calculation of NBR-NDVI max composites 
 ############################################################
 
-build_composite_stack = function(main_path, out_path, tile="32TMT", year="2017", ref_date=as.Date("2017-08-19"), time_int_nbr=45, time_int_refstack=45, thr=0.99){
+build_composite_stack = function(main_path, out_path, tile="T32TLT", year="2017", ref_date=as.Date("2017-08-19"), time_int_nbr=45, time_int_refstack=45, thr=0.99){
   
   # load packages
   library(raster)
-  library(foreach)
   library(doParallel)
   
   # source functions
-  source("general/calc_veg_indices.R")
-  source("general/calc_max_composite.R")
   source("general/dir_exists_create_func.R")
   source("general/cleanup_files.R")
+  source("general/calc_veg_indices.R")
   
   # paths
-  stack_path = paste(main_path,tile,"/",year,"/", sep="")
+  stack_path = paste(main_path, substr(tile,2,6),"/",year,"/", sep="")
   out_path = dir_exist_create(out_path,paste(tile,"/",sep=""))
   out_path = dir_exist_create(out_path,paste(year,"/",sep=""))
   nbr_path = dir_exist_create(out_path,"nbr/")
@@ -36,38 +34,53 @@ build_composite_stack = function(main_path, out_path, tile="32TMT", year="2017",
   
   if (length(dates_todo)>0){
     
+    # define dates within time interval
+    date_to_do = as.Date(substring(lapply(strsplit(B8Names[dates_todo[length(dates_todo)]],"_"), "[[", 3),1,8), format = "%Y%m%d")
+    date_to_do_start = as.Date(substring(lapply(strsplit(B8Names[dates_todo[1]],"_"), "[[", 3),1,8), format = "%Y%m%d")
+    ind_dates = which((dates_all <= date_to_do) & (dates_all >= date_to_do_start - time_int_refstack))
+    dates_for_comp = gsub("-","",dates_all[ind_dates])
+    
+    b8 = list.files(stack_path, pattern="B08_10m", recursive=T, full.names=T)
+    b8 = b8[grepl(paste(dates_for_comp, collapse="|"), b8)]
+    b12 = list.files(stack_path, pattern="B12_20m", recursive=T, full.names=T)
+    b12 = b12[grepl(paste(dates_for_comp, collapse="|"), b12)]
+    b4 = list.files(stack_path, pattern="B04_10m", recursive=T, full.names=T)
+    b4 = b4[grepl(paste(dates_for_comp, collapse="|"), b4)]
+    
+    stk_b8 = stack(b8)
+    stk_b4 = stack(b4)
+    
+    ndvi_stk = calc_veg_indices (stk_1 = stk_b8, stk_2 = stk_b4, ndvi_raw_path, dates_for_comp, veg_ind="NDVI", tilename=tile, ext=NULL, thr=thr)
+    rm(stk_b4)
+    stk_b12 = disaggregate(stack(b12),2)
+    nbr_stk = calc_veg_indices (stk_1 = stk_b8, stk_2 = stk_b12, nbr_raw_path, dates_for_comp, veg_ind="NBR", tilename=tile, ext=NULL, thr=thr)
+    
+    rm(stk_b8, stk_b12)
+    gc(verbose = F)
+    
     # register for parallel processing
-    cl = makeCluster(detectCores() -1)
+    cl = makeForkCluster(detectCores() -1)
     registerDoParallel(cl)
     
     # build NBR-NDVImax composite stack
-    comp_stk = foreach(i=length(dates_todo):1, .packages = c("raster"), .combine = "addLayer") %dopar% {
+    comp_stk = foreach(i=length(dates_todo):1, .packages = c("raster"), .combine = "addLayer", .inorder = F) %dopar% {
       
-      # define dates within time interval
+      source("general/calc_max_composite.R")
+      
       date_to_do = as.Date(substring(lapply(strsplit(B8Names[dates_todo[i]],"_"), "[[", 3),1,8), format = "%Y%m%d")
       ind_dates = which((dates_all <= date_to_do) & (dates_all >= date_to_do - time_int_refstack))
       dates_for_comp = gsub("-","",dates_all[ind_dates])
+      start_ind = grep(dates_for_comp[1], names(ndvi_stk))
+      end_ind = grep(dates_for_comp[length(dates_for_comp)], names(ndvi_stk))
       
-      # call calc_pixel_comp function
-      source("general/calc_veg_indices.R")
-      source("general/calc_max_composite.R")
-      
-      b8 = list.files(stack_path, pattern="B08_10m", recursive=T, full.names=T)
-      b8 = b8[grepl(paste(dates_for_comp, collapse="|"), b8)]
-      b12 = list.files(stack_path, pattern="B12_20m", recursive=T, full.names=T)
-      b12 = b12[grepl(paste(dates_for_comp, collapse="|"), b12)]
-      b4 = list.files(stack_path, pattern="B04_10m", recursive=T, full.names=T)
-      b4 = b4[grepl(paste(dates_for_comp, collapse="|"), b4)]
-      
-      ndvi_stk = calc_veg_indices (stk_1 = stack(b8), stk_2 = stack(b4), ndvi_raw_path, dates_for_comp, veg_ind="NDVI", tilename=tile, ext=NULL, thr=thr)
-      nbr_stk = calc_veg_indices (stk_1 = stack(b8), stk_2 = disaggregate(stack(b12),2), nbr_raw_path, dates_for_comp, veg_ind="NBR", tilename=tile, ext=NULL, thr=thr)
-      
-      ind_ras = calc_max_composite (vi_stk=ndvi_stk, ext=NULL, calc_max=F, calc_ind=T)
+       # call calc_pixel_comp function
+      ind_ras = calc_max_composite (vi_stk=ndvi_stk[[start_ind:end_ind]], ext=NULL, calc_max=F, calc_ind=T)
       
       # only for testing, to be removed later
-      #writeRaster(ind_ras, paste("//home/eaa2/test_t32tmt/T32TMT/2017/ind_test_folder/ind",i,".tif",sep=""), overwrite=T)
+      #writeRaster(ind_ras, paste(out_path,"ind_test/ind", dates_for_comp[length(dates_for_comp)],".tif",sep=""), overwrite=T)
       
-      comp_tmp = stackSelect(nbr_stk, ind_ras)
+      comp_tmp = stackSelect(nbr_stk[[start_ind:end_ind]], ind_ras)
+      rm(ind_ras)
       
       comp_tmp_name = paste(tile, "_NBR_comp_", dates_for_comp[1], "_", dates_for_comp[length(dates_for_comp)], sep="")
       writeRaster(comp_tmp, paste(comp_path,comp_tmp_name,".tif",sep=""), overwrite=T, datatype='INT2S')
@@ -76,10 +89,13 @@ build_composite_stack = function(main_path, out_path, tile="32TMT", year="2017",
     }
     stopCluster(cl)
     
+    rm(ndvi_stk, nbr_stk, comp_stk)
+   
     # delete files if necessary
     cleanup (ndvi_raw_path, refdate = ref_date, timeint = time_int_nbr + time_int_refstack, path_vec_delete = c(nbr_raw_path, ndvi_raw_path), split_ind = 3)
     cleanup (comp_path, refdate = ref_date, timeint = time_int_nbr, path_vec_delete = comp_path, split_ind = 5)
     
+    gc(verbose = F)
     # return(comp_stk)
   }
 }
