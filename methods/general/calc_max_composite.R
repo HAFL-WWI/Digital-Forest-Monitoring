@@ -4,8 +4,8 @@
 # by Dominique Weber & Alexandra Erbach, HAFL, BFH
 ############################################################
 
-#' Pixel composites based on VI (NDVI) max
-#' @return Raster layer (ndvi max or index) or stack (ndvi max, index)
+# Pixel composites based on VI (NDVI) max
+# return Raster layer (ndvi max or index) or stack (ndvi max, index)
 calc_max_composite <- function(vi_stk, ext=NULL, calc_max=F, calc_ind=T) {
   
   # load packages
@@ -13,7 +13,9 @@ calc_max_composite <- function(vi_stk, ext=NULL, calc_max=F, calc_ind=T) {
 
   # crop
   if (!is.null(ext)) vi_stk = crop(vi_stk, ext)
-
+  
+  #which.max2 <- function(x, ...) ifelse(length(x) == sum(is.na(x)) | length(x)<1, 1, which.max(x))
+  
   # calc vegetation index max / max index
   if (calc_max){
     vi_max = calc(vi_stk, max, na.rm=T)
