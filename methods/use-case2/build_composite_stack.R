@@ -2,7 +2,7 @@
 # Function for automatic calculation of NBR-NDVI max composites 
 ############################################################
 
-build_composite_stack = function(main_path, out_path, tile="T32TMT", year="2017", ref_date=as.Date("2017-08-19"), time_int_nbr=45, time_int_refstack=45, thr=0.99){
+build_composite_stack = function(main_path, out_path, tile="32TMT", year="2017", ref_date=as.Date("2017-08-19"), time_int_nbr=45, time_int_refstack=45, thr=0.99){
   
   # load packages
   library(raster)
@@ -78,10 +78,7 @@ build_composite_stack = function(main_path, out_path, tile="T32TMT", year="2017"
     
     # delete files if necessary
     cleanup (ndvi_raw_path, refdate = ref_date, timeint = time_int_nbr + time_int_refstack, path_vec_delete = c(nbr_raw_path, ndvi_raw_path), split_ind = 3)
-    cleanup (nbr_path, refdate = ref_date, timeint = time_int_nbr, path_vec_delete = nbr_path, split_ind = 3)
     cleanup (comp_path, refdate = ref_date, timeint = time_int_nbr, path_vec_delete = comp_path, split_ind = 5)
-    cleanup (diff_path, refdate = ref_date, timeint = time_int_nbr, path_vec_delete = diff_path, split_ind = 4)
-    
     
     # return(comp_stk)
   }
