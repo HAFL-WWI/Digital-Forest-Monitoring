@@ -19,7 +19,7 @@ update_shapefile <- function(polys, shp, length_of_archive=NULL) {
     new = bind(existing, polys)
     
     # "length_of_archive" handling
-    new = new[(new$time >= max(new$time)-length_of_archive),]
+    new = new[(as.Date(new$time) >= max(as.Date(new$time))-length_of_archive),]
     
     shapefile(new, shp, overwrite=T)
   }
