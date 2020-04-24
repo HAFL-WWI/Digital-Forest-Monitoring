@@ -382,6 +382,8 @@ class ViewerControl {
     if (!layer.wmsLayer) {
       layer.wmsLayer = this.createWmsLayer(layer);
     }
+    layer.wmsLayer.setOpacity(1);
+    layer.wmsLayer.setVisible(true);
     this.map.addLayer(layer.wmsLayer);
     layer.domElement = this.createLayerControl(layer);
     domContainer.prepend(layer.domElement);
