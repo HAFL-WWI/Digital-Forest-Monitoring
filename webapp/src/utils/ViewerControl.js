@@ -18,6 +18,12 @@ class ViewerControl {
       auf Basis von Sentinel-2-Satellitenbildern. Die Werte in der Legende 
       beschreiben die Abnahme des <a href="https://de.wikipedia.org/wiki/Normalized_Difference_Vegetation_Index"> NDVI Vegetationsindex</a> zwischen den zwei 
       Zeitpunkten. Werte näher bei -1 weisen auf stärkere Waldveränderungen (z.B. Räumungen) hin.`;
+    this.uc2description = `Hinweiskarte für Sommersturmschäden auf Basis von Sentinel-2-Satellitenbildern. Die Werte in der Legende stellen die
+       <strong>Abnahme des NBR (Normalized Burn Ratio) Index</strong> multipliziert mit 100 dar, 
+       gemittelt pro Fläche. Die Differenzbildung erfolgt dabei jeweils aus dem Bild des <strong>ausgewählten 
+       Datums</strong> und einem wolkenfreien <strong>Referenz-Composite aller verfügbaren Bilder der vorhergehenden 45 Tage.</strong> 
+       Werte näher bei -100 weisen auf stärkere Schäden hin. Veränderungsflächen wurden ab einer 
+       Mindestgrösse von 500 m2 ausgeschieden.`;
     this.uc3description = `Hinweiskarte für die Veränderung der Vitalität in Bezug zum Medianwert seit 2015. 
     Dargestellt sind standardisierte NDVI-Werte (Sentinel-2-Satellitenbilder). Negative Werte deuten auf eine
      Abnahme der Vitalität hin, positive Werte deuten auf eine Zunahme der Vitalität hin. 
@@ -84,8 +90,8 @@ class ViewerControl {
     return {
       layername: this.nbr_change,
       time: date || "2017-08-25",
-      displayName: `Veränderung ${date}`,
-      description: `Veränderungsflächen vom <strong>${from}</strong> bis zum <strong>${to}</strong>.`,
+      displayName: `Veränderung vom <strong>${from}</strong> bis zum <strong>${to}</strong>.`,
+      description: this.uc2description,
       visible: true,
       toc: false
     };
