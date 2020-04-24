@@ -8,16 +8,16 @@ calc_nbr_differences = function(main_path, out_path, tile="T32TMT", year="2017",
   
   # load packages
   library(raster)
-  library(foreach)
   library(doParallel)
   library(velox)
   
   # source functions
   source("general/dir_exists_create_func.R")
   source("use-case2/calc_diff.R")
+  source("general/cleanup_files.R")
   
   # paths
-  stack_path = paste(main_path,tile,"/",year,"/", sep="")
+  stack_path = paste(main_path, substr(tile,2,6),"/",year,"/", sep="")
   out_path = dir_exist_create(out_path,paste(tile,"/",sep=""))
   out_path = dir_exist_create(out_path,paste(year,"/",sep=""))
   nbr_raw_path = dir_exist_create(out_path,"nbr_raw/")
@@ -44,16 +44,15 @@ calc_nbr_differences = function(main_path, out_path, tile="T32TMT", year="2017",
     sclNames = list.files(stack_path, pattern="SCL_20m", recursive=T, full.names = T)[dates_todo]
     
     # register for paralell processing
-    print("starting multi-core processing, applying stack function...")
-    cl = makeCluster(detectCores() -1)
+    print("starting multi-core processing, calculating masked NBRs...")
+    cl = makeForkCluster(detectCores() -1)
     registerDoParallel(cl)
     
     # build NBR stack & save NDVIs & NBRs
-    nbr_stk = foreach(i=length(dates_todo):1, .packages = c("raster", "velox"), .combine = "addLayer") %dopar% {
+    nbr_stk = foreach(i=length(dates_todo):1, .packages = c("raster", "velox"), .combine = "addLayer", .inorder = F) %dopar% {
       
-      if (length(grep(gsub("-","",dates_all[dates_todo[i]]), nbr_files))>0){
-        nbr_tmp = raster(list.files(nbr_path,full.names=T)[grep(gsub("-","",dates_all[dates_todo[i]]), nbr_files)])
-      } else {
+      if (length(grep(gsub("-","",dates_all[dates_todo[i]]), nbr_files))<1){
+        
         # calculate indices
         b8 = raster(B8Names[i])
         b12 = disaggregate(raster(B12Names[i]),2)
@@ -70,6 +69,7 @@ calc_nbr_differences = function(main_path, out_path, tile="T32TMT", year="2017",
         # calculate nbr
         nbr_tmp = (b8 - b12)/(b8 + b12)
         nbr_tmp = round(nbr_tmp*100)
+        rm(b8,b12,scl)
         
         # mask nodata
         nbr_tmp[scl_vx == nodata_value] = nodata_value
@@ -80,15 +80,19 @@ calc_nbr_differences = function(main_path, out_path, tile="T32TMT", year="2017",
         vx$sumFocal(weights=matrix(1,11,11), bands=1) # should be input parameter in function
         cloud_ras = vx$as.RasterLayer()
         nbr_tmp[cloud_ras > 0] = cloud_value
+        rm(cloud_ras)
         
         nbr_tmp_name = paste(tile, "_NBRc_", substring(lapply(strsplit(filesB8[i],"_"), "[[", 3),1,8), sep="")
         writeRaster(nbr_tmp, paste(nbr_path,nbr_tmp_name,".tif",sep=""), overwrite=T, datatype='INT2S')
       }
+      nbr_files = list.files(nbr_path)
+      nbr_tmp = raster(list.files(nbr_path,full.names=T)[grep(gsub("-","",dates_all[dates_todo[i]]), nbr_files)])
       return(nbr_tmp)
     }
     names(nbr_stk) = substring(lapply(strsplit(filesB8[nlayers(nbr_stk):1],"_"), "[[", 3),1,8)
     
     stopCluster(cl)
+    gc(verbose = F)
     
     # get composite stack
     comp_stk = stack(rev(list.files(comp_path, full.names=T)))[[1:length(dates_todo)]]
@@ -96,6 +100,12 @@ calc_nbr_differences = function(main_path, out_path, tile="T32TMT", year="2017",
     
     # calculate NBR difference raster(s) and return stack
     diff_stk = calc_diff (nbr_stk, comp_stk, cloud_value, nodata_value, out_path = diff_path, tile)
+    
+    rm(nbr_stk, comp_stk)
+    
+    # delete files if necessary
+    cleanup (nbr_path, refdate = ref_date, timeint = time_int_nbr, path_vec_delete = nbr_path, split_ind = 3)
+    cleanup (diff_path, refdate = ref_date, timeint = time_int_nbr, path_vec_delete = diff_path, split_ind = 4)
     
     return(diff_stk)
     } 

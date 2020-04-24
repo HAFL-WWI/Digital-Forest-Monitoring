@@ -12,8 +12,8 @@ calc_diff = function(nbr_stk, comp_stk, cloud_value, nodata_value, out_path, til
   library(doParallel)
   
   # register for paralell processing
-  print("starting multi-core processing, applying stack function...")
-  cl = makeCluster(detectCores() -1)
+  print("starting multi-core processing, calculating differences...")
+  cl = makeForkCluster(detectCores() -1)
   registerDoParallel(cl)
   
   # build NBR stack & save NDVIs & NBRs
@@ -44,8 +44,9 @@ calc_diff = function(nbr_stk, comp_stk, cloud_value, nodata_value, out_path, til
   }
   
   stopCluster(cl)
+  gc(verbose=F)
   
-  names(diff_stk) = paste(tile,"_NBR_diff_",substr(names(nbr_stk[[1:length(ind_comp)]]),2,9),sep="")
+  names(diff_stk) = paste(tile,"_NBR_diff_",substr(names(nbr_stk[[length(ind_comp):1]]),2,9),sep="")
   return(diff_stk)
   
 }
