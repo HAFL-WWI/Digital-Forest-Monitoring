@@ -82,15 +82,12 @@ class ViewerControl {
    * @returns {object} layer object to use in the createWmsLayer function.
    */
   getTimeLayerObject(date) {
-    date = date.substring(0, 10);
-    const fromDate = new Date(date);
-    fromDate.setDate(fromDate.getDate() - 45);
-    const from = fromDate.toLocaleDateString();
-    const to = new Date(date).toLocaleDateString();
+    const fromDate = new Date(date.substring(0, 10)).toLocaleDateString();
     return {
       layername: this.nbr_change,
       time: date || "2017-08-25",
-      displayName: `Veränderung vom <strong>${from}</strong> bis zum <strong>${to}</strong>.`,
+      infoTitle: `Hinweis auf Veränderungen gemäss Bild vom ${fromDate}`,
+      displayName: `Veränderung ${fromDate}`,
       description: this.uc2description,
       visible: true,
       toc: false
@@ -656,7 +653,9 @@ class ViewerControl {
     layerInfo.addEventListener("click", () => {
       const content = new DocumentFragment();
       const title = document.createElement("h3");
-      title.innerHTML = `${overlay.displayName}`;
+      title.innerHTML = overlay.infoTitle
+        ? overlay.infoTitle
+        : overlay.displayName;
       const description = document.createElement("div");
       description.innerHTML = getLayerInfo(overlay);
       content.appendChild(title);
