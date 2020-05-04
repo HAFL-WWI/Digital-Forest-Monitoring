@@ -712,7 +712,6 @@ class ViewerControl {
         `preset=1-NATURAL-COLOR&` +
         `layers=B01,B02,B03&` +
         `maxcc=100&` +
-        `gain=2.0&` +
         `gamma=1.0&` +
         `time=${layer.time}%7C${layer.time}&` +
         `showDates=true`;
