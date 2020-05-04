@@ -14,9 +14,8 @@ build_polygons <- function(r, th = -15, area_th = 500) {
   
   print("threshold and clouds...")
   change = ((r < th) & (r > -555)) # careful with use of absolute number...
-  change[is.na(change)] = 0
- 
-  #print("focal filtering...")
+  
+  print("focal filtering...")
   vx = velox(change)
   vx$medianFocal(wrow=5, wcol=5, bands=1)
   change = vx$as.RasterLayer()
@@ -48,7 +47,13 @@ build_polygons <- function(r, th = -15, area_th = 500) {
     polys$p90[polys$class==1] = as.vector(vx$extract(sp = polys[(polys$class==1),], fun = function(x) quantile(x, 0.1, na.rm = TRUE)))
   }
   
-  polys$time = as.Date(substr(names(r), 17, 24), format = "%Y%m%d")
+  # rounding and conversion
+  polys$p90 = round(as.numeric(polys$p90))
+  polys$mean = round(as.numeric(polys$mean))
+  polys$max = as.numeric(polys$max)
+  polys$area = as.numeric(polys$area)
+  
+  polys$time = as.Date(substr(names(r),2,9), format = "%Y%m%d")
   
   return(polys) 
 }
