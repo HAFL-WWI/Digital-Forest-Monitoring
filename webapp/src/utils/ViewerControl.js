@@ -13,7 +13,7 @@ class ViewerControl {
   constructor({ map, title }) {
     this.map = map;
     this.title = title;
-    this.nbr_change = "karten-werk:nbr_change_T32TMT";
+    this.nbr_change = "karten-werk:nbr_ch_2017";
     this.uc1description = `Hinweiskarte für Waldveränderungen (z.B. Holzschläge) 
       auf Basis von Sentinel-2-Satellitenbildern. Die Werte in der Legende 
       beschreiben die Abnahme des <a href="https://de.wikipedia.org/wiki/Normalized_Difference_Vegetation_Index"> NDVI Vegetationsindex</a> zwischen den zwei 
@@ -85,7 +85,7 @@ class ViewerControl {
     const fromDate = new Date(date.substring(0, 10)).toLocaleDateString();
     return {
       layername: this.nbr_change,
-      time: date || "2017-08-25",
+      time: date || "2017-08-18",
       infoTitle: `Hinweis auf Veränderungen gemäss Bild vom ${fromDate}`,
       displayName: `Veränderung ${fromDate}`,
       description: this.uc2description,
