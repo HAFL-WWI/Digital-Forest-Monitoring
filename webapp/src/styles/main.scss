@@ -117,7 +117,6 @@ body:after {
   position: absolute;
   top: 64px;
 }
-
 .sidebar {
   background-color: white;
   border: 1px solid $mdc-theme-primary;
@@ -139,14 +138,29 @@ body:after {
   box-shadow: 4px 0 4px 0 rgba(0, 0, 0, 0.75);
   /* the transition property is set under router.js */
 }
-
 .sidebar__close {
   width: 100%;
 }
-
 .sidebar__content {
   font-size: 0.9em;
   max-height: 100vh;
   overflow-y: auto;
   padding: 8px;
+}
+.mdc-dialog {
+  //change with/height via mixin
+  @include mdc-dialog-min-width(80vw);
+}
+//credits: https://css-tricks.com/fluid-width-video/
+.videoWrapper {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+}
+.videoWrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }

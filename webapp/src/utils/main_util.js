@@ -3,6 +3,10 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import GeoJSON from "ol/format/GeoJSON";
 import { getCenter } from "ol/extent";
+import { dialog } from "./init";
+export const topAppBarRight = document.querySelector(
+  ".top-app-bar__section--align-end"
+);
 const appBarTitle = document.getElementsByClassName("top-app-bar__title")[0];
 export const sidebar = document.querySelector(".sidebar");
 const sidebarContent = document.querySelector(".sidebar__content");
@@ -17,6 +21,59 @@ export const setTitle = title => {
   }
   appBarTitle.innerHTML = title;
   return true;
+};
+
+/*
+ * remove old video links from the top-app-bar and add add a new one.
+ * @param {object} params - function parameter object.
+ * @param {string} params.title - the video title.
+ * @param {string} params.id - youtube video id.
+ * @returns {boolean} - true in case of success, false otherwise.
+ */
+export const addVideoLink = ({ title, videoId } = {}) => {
+  if (!videoId) {
+    return false;
+  }
+  removeVideoLink();
+  topAppBarRight.appendChild(getVideoLink({ title, videoId }));
+  return true;
+};
+
+/*
+ * remove the video link from the top-app-bar
+ */
+export const removeVideoLink = () => {
+  if (topAppBarRight.children.length === 3) {
+    topAppBarRight.removeChild(topAppBarRight.children[2]);
+  }
+};
+
+/*
+ * creates a top-app-bar video link.
+ * @param {object} params - function parameter object.
+ * @param {string} params.title - the video title.
+ * @param {string} params.videoId - youtube video id.
+ * @returns {domElement} - image link which opens a modal with the video.
+ */
+export const getVideoLink = ({ title, videoId } = {}) => {
+  if (!videoId) {
+    return false;
+  }
+  const videoLink = document.createElement("button");
+  videoLink.classList.add(
+    "material-icons",
+    "mdc-top-app-bar__action-item",
+    "mdc-icon-button"
+  );
+  videoLink.ariaLabel = "video";
+  videoLink.innerHTML = "live_tv";
+  videoLink.title = "Erklärungsvideo";
+  videoLink.addEventListener("click", () => {
+    dialogTitle.innerHTML = `Dokumentation ${title}`;
+    dialogContent.innerHTML = `<div class="videoWrapper"><iframe width="560" height="349" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+    dialog.open();
+  });
+  return videoLink;
 };
 
 /*
@@ -94,10 +151,10 @@ export const positionSearchResultContainer = () => {
 
 export const debounce = (func, wait, immediate) => {
   var timeout;
-  return function() {
+  return function () {
     var context = this,
       args = arguments;
-    var later = function() {
+    var later = function () {
       timeout = null;
       if (!immediate) func.apply(context, args);
     };
@@ -187,7 +244,7 @@ const styles = {
  * @param {object} feature - geojson feature.
  * @returns {object} ol/Style object.
  */
-const styleFunction = function(feature) {
+const styleFunction = function (feature) {
   return styles[feature.getGeometry().getType()];
 };
 
