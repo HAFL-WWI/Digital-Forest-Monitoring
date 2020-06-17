@@ -1,6 +1,7 @@
 # Digital-Forest-Monitoring
 
 ### Forest monitoring remote sensing methods.
+Contact: Dominique Weber and Alexandra Erbach (BFH-HAFL)
 
 ## Data sources
 
@@ -11,8 +12,12 @@
 
 ### Use-Case 1
 
-Annual forest change maps based on NDVI greenest pixel composites.
+Annual forest change maps based on NDVI greenest pixel composites. Implementation in [R](https://www.r-project.org/) using the [BFH instastructure](https://web.bfh.science/) (data and server) and also within the [Google Earth Engine](https://earthengine.google.com).
 
 ### Use-Case 2
 
-Near real-time damage indication maps for natural disturbances based on fully pre-processed NBR difference maps for a specific time range.
+Near real-time damage indication maps for natural disturbances based on fully pre-processed NBR difference maps for a specific time range. Implementation in [R](https://www.r-project.org/) using the [BFH instastructure](https://web.bfh.science/) (data and server).
+
+### Use-Case 3
+
+Assessment of forest vitality with bi-monthly NDVI anomalies. Implementation within the [Google Earth Engine](https://earthengine.google.com).
