@@ -114,6 +114,8 @@
   background-color: rgba(255, 255, 255, 0.9);
   top: 2.5em;
   left: 0;
+  max-height: calc(100vh - 105px);
+  max-height: calc(var(--vh, 1vh) * 100 - 105px);
   transform: scale(1, 1);
   transform-origin: top left;
   transition: transform, opacity, 0.3s;
@@ -222,9 +224,9 @@
 }
 
 .layers {
-  max-height: calc(100vh - 213px);
-  max-height: calc(var(--vh, 1vh) * 100 - 213px);
+  max-height: calc(100vh - 270px);
+  max-height: calc(var(--vh, 1vh) * 100 - 270px);
   padding: 0 8px;
   overflow: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
