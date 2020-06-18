@@ -53,7 +53,10 @@ export const initRouter = () => {
         sidebar.style.transition = "transform 0.3s";
         hideTitle();
         textField.style.display = "inline-flex";
-        removeVideoLink();
+        addVideoLink({
+          title: "hinweiskarten zur Vitalität",
+          videoId: "wraBOBSfcdk"
+        });
         viewerUtil.controller.init({ title: "Vitalität der Wälder" });
         positionSearchResultContainer();
       },

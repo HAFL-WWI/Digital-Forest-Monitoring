@@ -1,6 +1,6 @@
-import veraenderungImage from "../img/jaehrl_veraenderung.jpg";
-import sturmschaedenImage from "../img/sturmschaeden.jpg";
-import vitalitaetImage from "../img/vitalitaet.jpg";
+import useCase1Image from "../img/Use-Case1_600.jpg";
+import useCase2Image from "../img/Use-Case2_600.jpg";
+import useCase3Image from "../img/Use-Case3_600.jpg";
 import geoservices from "../img/geoservices.jpg";
 import { router } from "./router";
 const homepageUtil = {
@@ -23,7 +23,7 @@ const homepageUtil = {
      */
     cards: {
       veraenderung: {
-        image: veraenderungImage,
+        image: useCase1Image,
         title: "Jährliche Veränderung",
         subtitle: "Geodaten: Dominique Weber, HAFL",
         description:
@@ -33,7 +33,7 @@ const homepageUtil = {
         route: "/veraenderung"
       },
       stoerung: {
-        image: sturmschaedenImage,
+        image: useCase2Image,
         title: "Test Sommersturmschäden 2017",
         subtitle: "Geodaten: Dominique Weber, HAFL",
         description:
@@ -43,12 +43,12 @@ const homepageUtil = {
         linktext: "zum viewer"
       },
       vitalitaet: {
-        image: vitalitaetImage,
+        image: useCase3Image,
         title: "Hinweiskarten zur Vitalität",
         subtitle: "Geodaten: Dominique Weber, HAFL",
         description:
-        "Trockenheit führte in den vergangen Jahren vermehrt zu Waldschäden. "+
-        "Hier finden Sie Hinweiskarten zur Vitalität der Wälder.",
+          "Trockenheit führte in den vergangen Jahren vermehrt zu Waldschäden. " +
+          "Hier finden Sie Hinweiskarten zur Vitalität der Wälder.",
         route: "/vitalitaet",
         linktext: "zum viewer"
       },
