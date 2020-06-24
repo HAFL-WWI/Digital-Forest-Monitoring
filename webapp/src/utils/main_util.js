@@ -112,9 +112,12 @@ export const impressum = {
   Geodiensten zu den entsprechenden Use-Cases.
 <br /></br />
 <strong>Zur Zeit sind die bereitgestellten Daten und Services ausschliesslich für Testzwecke gedacht.</strong>
-<br /></br />
-Ansprechperson BFH-HAFL: Dominique Weber (+41 31 910 29 32,
-<a href="mailto:dominique.weber@bfh.ch">dominique.weber@bfh.ch</a>)`
+<br />
+<h4 style="margin-bottom:8px">Ansprechpersonen:</h4>
+<strong>BFH-HAFL:</strong> Alexandra Erbach (+41 31 910 22 75,
+<a href="mailto:alexandra.erbach@bfh.ch">alexandra.erbach@bfh.ch</a>)<br />
+<strong>Website/Geoservices:</strong> Karten-Werk GmbH, Hanskaspar Frei, (+41 79 360 72 83,
+  <a href="mailto:hkfrei@karten-werk.ch">hkfrei@karten-werk.ch</a>)</p>`
 };
 
 export const getLayerInfo = overlay => {
