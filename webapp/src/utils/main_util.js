@@ -116,7 +116,7 @@ export const impressum = {
 <h4 style="margin-bottom:8px">Ansprechpersonen:</h4>
 <strong>BFH-HAFL:</strong> Alexandra Erbach (+41 31 910 22 75,
 <a href="mailto:alexandra.erbach@bfh.ch">alexandra.erbach@bfh.ch</a>)<br />
-<strong>Website/Geoservices:</strong> Karten-Werk GmbH, Hanskaspar Frei, (+41 79 360 72 83,
+<strong>Website/Geodienste:</strong> Karten-Werk GmbH, Hanskaspar Frei, (+41 79 360 72 83,
   <a href="mailto:hkfrei@karten-werk.ch">hkfrei@karten-werk.ch</a>)</p>`
 };
 
