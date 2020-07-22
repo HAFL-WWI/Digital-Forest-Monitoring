@@ -1,0 +1,24 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.assert = assert;
+
+var _AssertionError = _interopRequireDefault(require("./AssertionError.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * @module ol/asserts
+ */
+
+/**
+ * @param {*} assertion Assertion we expected to be truthy.
+ * @param {number} errorCode Error code.
+ */
+function assert(assertion, errorCode) {
+  if (!assertion) {
+    throw new _AssertionError.default(errorCode);
+  }
+}

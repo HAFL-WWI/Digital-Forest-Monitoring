@@ -1,7 +1,7 @@
-import useCase1Image from "../img/Use-Case1_600.jpg";
-import useCase2Image from "../img/Use-Case2_600.jpg";
-import useCase3Image from "../img/Use-Case3_600.jpg";
-import geoservices from "../img/geoservices.jpg";
+import useCase1Image from "url:../img/Use-Case1_600.jpg";
+import useCase2Image from "url:../img/Use-Case2_600.jpg";
+import useCase3Image from "url:../img/Use-Case3_600.jpg";
+import geoservices from "url:../img/geoservices.jpg";
 import { router } from "./router";
 const homepageUtil = {
   model: {

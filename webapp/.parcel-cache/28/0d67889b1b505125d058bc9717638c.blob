@@ -1,0 +1,103 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.disable = disable;
+exports.none = none;
+exports.createSnapToN = createSnapToN;
+exports.createSnapToZero = createSnapToZero;
+
+var _math = require("./math.js");
+
+/**
+ * @module ol/rotationconstraint
+ */
+
+/**
+ * @typedef {function((number|undefined), boolean=): (number|undefined)} Type
+ */
+
+/**
+ * @param {number|undefined} rotation Rotation.
+ * @return {number|undefined} Rotation.
+ */
+function disable(rotation) {
+  if (rotation !== undefined) {
+    return 0;
+  } else {
+    return undefined;
+  }
+}
+/**
+ * @param {number|undefined} rotation Rotation.
+ * @return {number|undefined} Rotation.
+ */
+
+
+function none(rotation) {
+  if (rotation !== undefined) {
+    return rotation;
+  } else {
+    return undefined;
+  }
+}
+/**
+ * @param {number} n N.
+ * @return {Type} Rotation constraint.
+ */
+
+
+function createSnapToN(n) {
+  var theta = 2 * Math.PI / n;
+  return (
+    /**
+     * @param {number|undefined} rotation Rotation.
+     * @param {boolean=} opt_isMoving True if an interaction or animation is in progress.
+     * @return {number|undefined} Rotation.
+     */
+    function (rotation, opt_isMoving) {
+      if (opt_isMoving) {
+        return rotation;
+      }
+
+      if (rotation !== undefined) {
+        rotation = Math.floor(rotation / theta + 0.5) * theta;
+        return rotation;
+      } else {
+        return undefined;
+      }
+    }
+  );
+}
+/**
+ * @param {number=} opt_tolerance Tolerance.
+ * @return {Type} Rotation constraint.
+ */
+
+
+function createSnapToZero(opt_tolerance) {
+  var tolerance = opt_tolerance || (0, _math.toRadians)(5);
+  return (
+    /**
+     * @param {number|undefined} rotation Rotation.
+     * @param {boolean} opt_isMoving True if an interaction or animation is in progress.
+     * @return {number|undefined} Rotation.
+     */
+    function (rotation, opt_isMoving) {
+      if (opt_isMoving) {
+        return rotation;
+      }
+
+      if (rotation !== undefined) {
+        if (Math.abs(rotation) <= tolerance) {
+          return 0;
+        } else {
+          return rotation;
+        }
+      } else {
+        return undefined;
+      }
+    }
+  );
+}

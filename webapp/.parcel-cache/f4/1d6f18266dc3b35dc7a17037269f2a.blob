@@ -1,0 +1,28 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+/**
+ * @module ol/TileState
+ */
+
+/**
+ * @enum {number}
+ */
+var _default = {
+  IDLE: 0,
+  LOADING: 1,
+  LOADED: 2,
+
+  /**
+   * Indicates that tile loading failed
+   * @type {number}
+   */
+  ERROR: 3,
+  EMPTY: 4,
+  ABORT: 5
+};
+exports.default = _default;

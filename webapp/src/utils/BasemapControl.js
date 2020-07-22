@@ -1,6 +1,6 @@
 import { Control } from "ol/control";
-import orthoImage from "../img/basemapOrtho.jpg";
-import sw from "../img/sw.jpg";
+import orthoImage from "url:../img/basemapOrtho.jpg";
+import sw from "url:../img/sw.jpg";
 import { orthoBasemap, swBasemap } from "./basemap_util";
 class BasemapControl {
   constructor(map = null, active = "Orthofoto") {

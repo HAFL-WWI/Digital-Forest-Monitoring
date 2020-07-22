@@ -30,12 +30,12 @@ export const init = () => {
     document.documentElement.style.setProperty("--vh", `${vh}px`);
   });
 };
-const ripples = [].map.call(
-  document.querySelectorAll(".mdc-button, .mdc-card__primary-action"),
-  el => {
+
+document
+  .querySelectorAll(".mdc-button, .mdc-card__primary-action")
+  .forEach(el => {
     return new MDCRipple(el);
-  }
-);
+  });
 
 /*
  * init and handle events for the search input

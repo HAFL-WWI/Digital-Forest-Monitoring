@@ -1,0 +1,106 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.initRouter = exports.router = void 0;
+
+var _navigo = _interopRequireDefault(require("navigo"));
+
+var _homepage_util = _interopRequireDefault(require("./homepage_util"));
+
+var _viewer_util = _interopRequireDefault(require("./viewer_util"));
+
+var _services_util = _interopRequireDefault(require("./services_util"));
+
+var _main_util = require("./main_util");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const router = new _navigo.default(null, false, "#");
+exports.router = router;
+
+const initRouter = () => {
+  router.on({
+    "/": () => {
+      textField.style.display = "none";
+
+      _homepage_util.default.controller.init();
+
+      (0, _main_util.setTitle)((0, _main_util.getTitle)());
+      (0, _main_util.showTitle)();
+      (0, _main_util.removeVideoLink)();
+    },
+    "/veraenderung": () => {
+      // we dont't want a short sidebar transition on startup
+      // that's why we add it here, after the app has loaded.
+      _main_util.sidebar.style.transition = "transform 0.3s";
+      (0, _main_util.hideTitle)();
+      textField.style.display = "inline-flex";
+      (0, _main_util.addVideoLink)({
+        title: "jährliche Veränderung",
+        videoId: "mYK2KJqgrhM"
+      });
+
+      _viewer_util.default.controller.init({
+        title: "Jährliche Veränderung"
+      });
+
+      (0, _main_util.positionSearchResultContainer)();
+    },
+    "/stoerungen": () => {
+      // we dont't want a short sidebar transition on startup
+      // that's why we add it here, after the app has loaded.
+      _main_util.sidebar.style.transition = "transform 0.3s";
+      (0, _main_util.hideTitle)();
+      textField.style.display = "inline-flex";
+      (0, _main_util.addVideoLink)({
+        title: "natürliche Störungen",
+        videoId: "aamvbhKXoNU"
+      });
+
+      _viewer_util.default.controller.init({
+        title: "Natürliche Störungen"
+      });
+
+      (0, _main_util.positionSearchResultContainer)();
+    },
+    "/vitalitaet": () => {
+      // we dont't want a short sidebar transition on startup
+      // that's why we add it here, after the app has loaded.
+      _main_util.sidebar.style.transition = "transform 0.3s";
+      (0, _main_util.hideTitle)();
+      textField.style.display = "inline-flex";
+      (0, _main_util.addVideoLink)({
+        title: "hinweiskarten zur Vitalität",
+        videoId: "wraBOBSfcdk"
+      });
+
+      _viewer_util.default.controller.init({
+        title: "Vitalität der Wälder"
+      });
+
+      (0, _main_util.positionSearchResultContainer)();
+    },
+    "/services": () => {
+      (0, _main_util.removeVideoLink)();
+
+      _services_util.default.controller.init();
+
+      (0, _main_util.setTitle)("Geodienste");
+    }
+  }).resolve();
+  router.notFound(() => _homepage_util.default.controller.createHomepageCards());
+  /* register the click event listener for the home button
+   * this event listener is currently in this place, because here it has access to the router.
+   * normally this belongs to init.js and will probably be moved in the future
+   */
+
+  document.querySelector("#home-button").addEventListener("click", () => {
+    (0, _main_util.closeSidebar)();
+    router.navigate("/");
+  });
+};
+
+exports.initRouter = initRouter;
+const textField = document.querySelector(".mdc-text-field");

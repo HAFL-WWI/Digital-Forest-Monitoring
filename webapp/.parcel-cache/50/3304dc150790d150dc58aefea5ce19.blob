@@ -1,0 +1,19 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+/**
+ * @module ol/ViewHint
+ */
+
+/**
+ * @enum {number}
+ */
+var _default = {
+  ANIMATING: 0,
+  INTERACTING: 1
+};
+exports.default = _default;

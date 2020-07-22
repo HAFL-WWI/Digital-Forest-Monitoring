@@ -1,0 +1,118 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _MapBrowserEventType = _interopRequireDefault(require("../MapBrowserEventType.js"));
+
+var _Interaction = _interopRequireWildcard(require("./Interaction.js"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+/**
+ * @module ol/interaction/DoubleClickZoom
+ */
+
+
+/**
+ * @typedef {Object} Options
+ * @property {number} [duration=250] Animation duration in milliseconds.
+ * @property {number} [delta=1] The zoom delta applied on each double click.
+ */
+
+/**
+ * @classdesc
+ * Allows the user to zoom by double-clicking on the map.
+ * @api
+ */
+var DoubleClickZoom =
+/** @class */
+function (_super) {
+  __extends(DoubleClickZoom, _super);
+  /**
+   * @param {Options=} opt_options Options.
+   */
+
+
+  function DoubleClickZoom(opt_options) {
+    var _this = _super.call(this, {
+      handleEvent: handleEvent
+    }) || this;
+
+    var options = opt_options ? opt_options : {};
+    /**
+     * @private
+     * @type {number}
+     */
+
+    _this.delta_ = options.delta ? options.delta : 1;
+    /**
+     * @private
+     * @type {number}
+     */
+
+    _this.duration_ = options.duration !== undefined ? options.duration : 250;
+    return _this;
+  }
+
+  return DoubleClickZoom;
+}(_Interaction.default);
+/**
+ * Handles the {@link module:ol/MapBrowserEvent map browser event} (if it was a
+ * doubleclick) and eventually zooms the map.
+ * @param {import("../MapBrowserEvent.js").default} mapBrowserEvent Map browser event.
+ * @return {boolean} `false` to stop event propagation.
+ * @this {DoubleClickZoom}
+ */
+
+
+function handleEvent(mapBrowserEvent) {
+  var stopEvent = false;
+
+  if (mapBrowserEvent.type == _MapBrowserEventType.default.DBLCLICK) {
+    var browserEvent =
+    /** @type {MouseEvent} */
+    mapBrowserEvent.originalEvent;
+    var map = mapBrowserEvent.map;
+    var anchor = mapBrowserEvent.coordinate;
+    var delta = browserEvent.shiftKey ? -this.delta_ : this.delta_;
+    var view = map.getView();
+    (0, _Interaction.zoomByDelta)(view, delta, anchor, this.duration_);
+    mapBrowserEvent.preventDefault();
+    stopEvent = true;
+  }
+
+  return !stopEvent;
+}
+
+var _default = DoubleClickZoom;
+exports.default = _default;

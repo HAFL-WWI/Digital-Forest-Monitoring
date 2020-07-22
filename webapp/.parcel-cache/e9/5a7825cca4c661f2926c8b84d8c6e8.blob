@@ -1,0 +1,21 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+/**
+ * @module ol/format/FormatType
+ */
+
+/**
+ * @enum {string}
+ */
+var _default = {
+  ARRAY_BUFFER: 'arraybuffer',
+  JSON: 'json',
+  TEXT: 'text',
+  XML: 'xml'
+};
+exports.default = _default;

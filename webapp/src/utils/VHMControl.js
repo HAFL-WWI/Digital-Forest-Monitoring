@@ -1,5 +1,5 @@
 import { Control } from "ol/control";
-import vegetationImage from "../img/basemapVegetation.jpg";
+import vegetationImage from "url:../img/basemapVegetation.jpg";
 import { vegetationBasemap } from "./basemap_util";
 class VHMControl {
   constructor(map = null) {

@@ -1,0 +1,69 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _Filter = _interopRequireDefault(require("./Filter.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __extends = void 0 && (void 0).__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+/**
+ * @module ol/format/filter/Not
+ */
+
+
+/**
+ * @classdesc
+ * Represents a logical `<Not>` operator for a filter condition.
+ * @api
+ */
+var Not =
+/** @class */
+function (_super) {
+  __extends(Not, _super);
+  /**
+   * @param {!import("./Filter.js").default} condition Filter condition.
+   */
+
+
+  function Not(condition) {
+    var _this = _super.call(this, 'Not') || this;
+    /**
+     * @type {!import("./Filter.js").default}
+     */
+
+
+    _this.condition = condition;
+    return _this;
+  }
+
+  return Not;
+}(_Filter.default);
+
+var _default = Not;
+exports.default = _default;

@@ -1,0 +1,24 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.DEFAULT_TILE_SIZE = exports.DEFAULT_MAX_ZOOM = void 0;
+
+/**
+ * @module ol/tilegrid/common
+ */
+
+/**
+ * Default maximum zoom for default tile grids.
+ * @type {number}
+ */
+var DEFAULT_MAX_ZOOM = 42;
+/**
+ * Default tile size.
+ * @type {number}
+ */
+
+exports.DEFAULT_MAX_ZOOM = DEFAULT_MAX_ZOOM;
+var DEFAULT_TILE_SIZE = 256;
+exports.DEFAULT_TILE_SIZE = DEFAULT_TILE_SIZE;
