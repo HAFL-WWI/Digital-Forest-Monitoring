@@ -109,6 +109,7 @@ dist
 .vscode-test
 
 yarn.lock
+.DS_Store
 
 # yarn v2
 .yarn/cache
