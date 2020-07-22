@@ -1,1 +1,0 @@
-module.exports = require('./bundle-url').getBundleURL() + require('./relative-path')("adc24ec7a2aeedb1", "bc6c8e13615eea75");
