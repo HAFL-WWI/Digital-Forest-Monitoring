@@ -1,4 +1,4 @@
-import {content, removeContent} from "./main_util"
+import { content, removeContent, createGrid } from "./main_util";
 const servicesUtil = {
   model: {
     /*
@@ -65,7 +65,7 @@ const servicesUtil = {
      * @returns {DocumentFragment} - The grid with all the cards that were attached to the DOM.
      */
     createServiceCards: () => {
-      const grid = servicesUtil.view.createGrid();
+      const grid = createGrid();
       const cards = document.createDocumentFragment();
       for (const card in servicesUtil.model.cards) {
         const cardElement = servicesUtil.view.createCard(
@@ -92,18 +92,6 @@ const servicesUtil = {
       jumbotronText.innerHTML = text;
       jumbotron.appendChild(jumbotronText);
       return jumbotron;
-    },
-    /*
-     * creates the grid layout containing the cards.
-     * @returns {HTMLElement} grid - a div with a MDCGrid inside.
-     */
-    createGrid: () => {
-      const grid = document.createElement("div");
-      const gridInner = document.createElement("div");
-      grid.classList.add("mdc-layout-grid");
-      gridInner.classList.add("mdc-layout-grid__inner");
-      grid.appendChild(gridInner);
-      return grid;
     },
     /*
      creates a html card element.

@@ -20,6 +20,19 @@ export const removeContent = () => {
 };
 
 /*
+ * creates the grid layout containing description.
+ * @returns {HTMLElement} grid - a div with a MDCGrid inside.
+ */
+export const createGrid = () => {
+  const grid = document.createElement("div");
+  const gridInner = document.createElement("div");
+  grid.classList.add("mdc-layout-grid");
+  gridInner.classList.add("mdc-layout-grid__inner");
+  grid.appendChild(gridInner);
+  return grid;
+};
+
+/*
  * changes the top appbar title.
  * @param {string} title - the new title to display.
  * @returns {boolean} - true if title changed successfully, false otherwise.

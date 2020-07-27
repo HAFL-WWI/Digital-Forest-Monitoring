@@ -4,6 +4,7 @@ import useCase3Image from "url:../img/Use-Case3_600.jpg";
 import geoservices from "url:../img/geoservices.jpg";
 import projektbeschriebImage from "url:../img/projektbeschrieb.jpg";
 import { router } from "./router";
+import { createGrid } from "./main_util";
 const homepageUtil = {
   model: {
     /*
@@ -68,7 +69,7 @@ const homepageUtil = {
         title: "Projektbeschrieb",
         subtitle: "Hintergrundwissen und Videoanleitungen",
         description:
-          "Auf dieser Seite finden Sie Hinweise zur korrekten Verwendung der Kartenviewer und Geodienste "+
+          "Auf dieser Seite finden Sie Hinweise zur korrekten Verwendung der Kartenviewer und Geodienste " +
           "sowie Videoanleitungen und Hintergrundinformationen.",
         route: "/projektbeschrieb",
         linktext: "zum Projektbeschrieb"
@@ -105,7 +106,7 @@ const homepageUtil = {
      * @returns {DocumentFragment} - The grid with all the cards that were attached to the DOM.
      */
     createHomepageCards: () => {
-      const grid = homepageUtil.view.createGrid();
+      const grid = createGrid();
       const cards = document.createDocumentFragment();
       for (const card in homepageUtil.model.cards) {
         const cardElement = homepageUtil.view.createCard(
@@ -132,18 +133,6 @@ const homepageUtil = {
       jumbotronText.innerHTML = text;
       jumbotron.appendChild(jumbotronText);
       return jumbotron;
-    },
-    /*
-     * creates the grid layout containing the cards.
-     * @returns {HTMLElement} grid - a div with a MDCGrid inside.
-     */
-    createGrid: () => {
-      const grid = document.createElement("div");
-      const gridInner = document.createElement("div");
-      grid.classList.add("mdc-layout-grid");
-      gridInner.classList.add("mdc-layout-grid__inner");
-      grid.appendChild(gridInner);
-      return grid;
     },
     /*
      creates a html card element.
