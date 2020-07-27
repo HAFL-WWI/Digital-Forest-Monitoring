@@ -2,6 +2,7 @@ import Navigo from "navigo";
 import homepageUtil from "./homepage_util";
 import viewerUtil from "./viewer_util";
 import servicesUtil from "./services_util";
+import descriptionUtil from "./description_util"
 import {
   setTitle,
   getTitle,
@@ -64,6 +65,11 @@ export const initRouter = () => {
         removeVideoLink();
         servicesUtil.controller.init();
         setTitle("Geodienste");
+      },
+      "/projektbeschrieb": () => {
+        removeVideoLink();
+        setTitle("Projektbeschrieb")
+        descriptionUtil.controller.init()
       }
     })
     .resolve();

@@ -1,9 +1,6 @@
+import {content, removeContent} from "./main_util"
 const servicesUtil = {
   model: {
-    /*
-     * the element with the homepage content.
-     */
-    content: document.getElementsByClassName("content")[0],
     /*
      * homepage jumbotron text.
      */
@@ -49,15 +46,9 @@ const servicesUtil = {
      * calls the necessary functions to display the hompage.
      */
     init: () => {
-      servicesUtil.controller.removeContent();
+      removeContent();
       servicesUtil.controller.createJumbotron();
       servicesUtil.controller.createServiceCards();
-    },
-    /*
-     * removes 'old' content like viewers, services etc.
-     */
-    removeContent: () => {
-      servicesUtil.model.content.innerHTML = "";
     },
     /*
      * displays the jumbotron.
@@ -66,7 +57,7 @@ const servicesUtil = {
       const jumbotron = servicesUtil.view.createJumbotron(
         servicesUtil.model.jumbotronText
       );
-      servicesUtil.model.content.appendChild(jumbotron);
+      content.appendChild(jumbotron);
     },
     /*
      * creates all the grid with the cards on the homepage.
@@ -83,7 +74,7 @@ const servicesUtil = {
         cards.appendChild(cardElement);
       }
       grid.firstChild.appendChild(cards);
-      servicesUtil.model.content.appendChild(grid);
+      content.appendChild(grid);
       return grid;
     }
   },

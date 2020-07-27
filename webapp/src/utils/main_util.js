@@ -8,8 +8,17 @@ export const topAppBarRight = document.querySelector(
   ".top-app-bar__section--align-end"
 );
 const appBarTitle = document.getElementsByClassName("top-app-bar__title")[0];
-export const sidebar = document.querySelector(".sidebar");
 const sidebarContent = document.querySelector(".sidebar__content");
+export const sidebar = document.querySelector(".sidebar");
+export const content = document.getElementsByClassName("content")[0];
+
+/*
+ * removes the content below the appBar.
+ */
+export const removeContent = () => {
+  content.innerHTML = "";
+};
+
 /*
  * changes the top appbar title.
  * @param {string} title - the new title to display.
