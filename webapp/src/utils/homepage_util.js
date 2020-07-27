@@ -2,6 +2,7 @@ import useCase1Image from "url:../img/Use-Case1_600.jpg";
 import useCase2Image from "url:../img/Use-Case2_600.jpg";
 import useCase3Image from "url:../img/Use-Case3_600.jpg";
 import geoservices from "url:../img/geoservices.jpg";
+import projektbeschriebImage from "url:../img/projektbeschrieb.jpg";
 import { router } from "./router";
 const homepageUtil = {
   model: {
@@ -61,6 +62,16 @@ const homepageUtil = {
           "importieren und mit Ihren eigenen Geodaten kombinieren.",
         route: "/services",
         linktext: "zu den Services"
+      },
+      projektbeschrieb: {
+        image: projektbeschriebImage,
+        title: "Projektbeschrieb",
+        subtitle: "Hintergrundwissen und Videoanleitungen",
+        description:
+          "Auf dieser Seite finden Sie Hinweise zur korrekten Verwendung der Kartenviewer und Geodienste "+
+          "sowie Videoanleitungen und Hintergrundinformationen.",
+        route: "/projektbeschrieb",
+        linktext: "zum Projektbeschrieb"
       }
     }
   },
