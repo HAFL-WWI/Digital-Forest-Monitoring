@@ -92,11 +92,14 @@ export const getVideoLink = ({ title, videoId } = {}) => {
   videoLink.title = "Erklärungsvideo";
   videoLink.addEventListener("click", () => {
     dialogTitle.innerHTML = `Dokumentation ${title}`;
-    dialogContent.innerHTML = `<div class="videoWrapper"><iframe width="560" height="349" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+    dialogContent.innerHTML = getVideoElement(videoId);
     dialog.open();
   });
   return videoLink;
 };
+
+export const getVideoElement = videoId =>
+  `<div class="videoWrapper"><iframe width="560" height="349" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
 
 /*
  * calculates the title based on the window.width.
