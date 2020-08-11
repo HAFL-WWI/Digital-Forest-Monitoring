@@ -69,7 +69,7 @@ const homepageUtil = {
         title: "Projektbeschrieb",
         subtitle: "Hintergrundwissen und Videoanleitungen",
         description:
-          "Auf dieser Seite finden Sie Hinweise zur korrekten Verwendung der Kartenviewer und Geodienste " +
+          "Auf dieser Seite finden Sie Hinweise zur Verwendung der Kartenviewer und Geodienste " +
           "sowie Videoanleitungen und Hintergrundinformationen.",
         route: "/projektbeschrieb",
         linktext: "zum Projektbeschrieb"
