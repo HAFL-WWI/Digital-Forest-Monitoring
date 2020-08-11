@@ -5,6 +5,7 @@ import sentinel_orbits from "url:../img/sentinel_orbits.jpg";
 import sommersturm2017Image from "url:../img/sommersturm_2017.jpg";
 import nbrDiff from "url:../img/nbr_diff.jpg";
 import ndviAnomalienImage from "url:../img/ndvi_anomalien.jpg";
+import SchlussberichtWeb from "url:../assets/Schlussbericht_Web.pdf";
 import { getVideoElement } from "./main_util";
 
 const descriptionContent = {
@@ -347,6 +348,8 @@ const descriptionContent = {
       In diesem Rahmen sollen unter anderem konkrete Einsatzbeispiele zur effektiven Verwendung der Daten und Tools in der 
       Praxis gesammelt, dokumentiert und bereitgestellt werden. Wer dazu beitragen möchte, weitere Anregungen oder generell 
       Interesse hat, aktiver Teil der User Community zu werden, kann sich sehr gerne jederzeit bei Alexandra Erbach (<a href="mailto:alexandra.erbach@bfh.ch">alexandra.erbach@bfh.ch</a>) melden.
+      <div style="height:18px"></div>
+      <div><a href="${SchlussberichtWeb}">Download Schlussbericht als PDF</a></div>
       <div style="height:24px"></div>
       `
     }
