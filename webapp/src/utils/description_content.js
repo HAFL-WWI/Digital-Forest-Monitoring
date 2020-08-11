@@ -1,10 +1,10 @@
-import reflectanceImage from "url:../img/projektbeschrieb.jpg";
-import ndviZeitreiheImage from "url:../img/ndvi_zeitreihe.jpg";
+import reflectanceImage from "url:../img/projektbeschrieb.png";
+import ndviZeitreiheImage from "url:../img/ndvi_zeitreihe.png";
 import useCase2Viewer from "url:../img/uc2_viewer_screenshot.jpg";
 import sentinel_orbits from "url:../img/sentinel_orbits.jpg";
 import sommersturm2017Image from "url:../img/sommersturm_2017.jpg";
-import nbrDiff from "url:../img/nbr_diff.jpg";
-import ndviAnomalienImage from "url:../img/ndvi_anomalien.jpg";
+import nbrDiff from "url:../img/nbr_diff.png";
+import ndviAnomalienImage from "url:../img/ndvi_anomalien.PNG";
 import SchlussberichtWeb from "url:../assets/Schlussbericht_Web.pdf";
 import { getVideoElement } from "./main_util";
 
@@ -16,18 +16,13 @@ const descriptionContent = {
     <div>Auf dieser Seite werden die Ergebnisse des Forschungsprojektes <strong>«Einsatz von Fernerkundungsdaten in Forstbetrieben und Forstdiensten anhand von konkreten Use-Cases»</strong> vorgestellt, 
     welches von der Fachhochschule für Agrar-, Forst- und Lebensmittelwissenschaften BFH-HAFL im Auftrag und mit Unterstützung des Bundesamtes für Umwelt (BAFU) und KARTEN-WERK GmbH durchgeführt wurde.</div>
     <div style="height:16px"></div>
-    <div>Das Hauptziel des Projektes war die Implementierung von Kartenviewern sowie Geodiensten (Erklärung dazu siehe z.B. <a href="https://www.geo.admin.ch/de/geo-dienstleistungen/geodienste.html">hier</a>) für konkrete Use-Cases mit existierenden, 
-    möglichst frei verfügbaren Fernerkundungsdaten. Dazu wurden folgende Schritte unternommen:</div>
-    <ul>
-    <li style="padding:12px 0">Ausarbeitung von 3 konkreten Use-Cases zusammen mit VertreterInnen aus der Praxis (Abgleich von Angebot und Nachfrage)</li>
-    <li>Bedarfsgerechte Informationsbereitstellung und Implementierung webbasierter Kartenviewer sowie Bereitstellung der Ergebnisse als Geodienste</li>
-    </ul>
-    <div style="height:16px"></div>
-    <div>Folgende Anwendungsfälle wurden bearbeitet:</div>
-    <ul>
-    <li style="padding:12px 0">Use-Case 1 - <strong>Monitoring jährlicher Waldveränderungen (forstliche Eingriffe und andere)</strong></li>
+    <div>Das Hauptziel des Projektes war die Implementierung von Kartenviewern sowie Geodiensten (Erklärung dazu siehe z.B. <a href="https://www.geo.admin.ch/de/geo-dienstleistungen/geodienste.html" rel="noopener noreferrer" target="_blank">hier</a>) für konkrete Use-Cases mit existierenden, 
+    möglichst frei verfügbaren Fernerkundungsdaten. Es wurden 3 Use-Cases zusammen mit VertreterInnen aus der Praxis ausgearbeitet 
+    (Abgleich von Angebot und Nachfrage), und die Informationen, Daten und Resultate bedarfsgerecht bereitgestellt.</div>
+    <ul style="margin-block-start: 8px; margin-block-end:8px">
+    <li style="padding:4px 0">Use-Case 1 - <strong>Monitoring jährlicher Waldveränderungen (forstliche Eingriffe und andere)</strong></li>
     <li>Use-Case 2 - <strong>Rasche Erfassung von Sommersturmschäden</strong></li>
-    <li style="padding:12px 0">Use-Case 3 - <strong>Hinweiskarten zur Vitalität von Waldflächen</strong></li>
+    <li style="padding:4px 0">Use-Case 3 - <strong>Hinweiskarten zur Vitalität von Waldflächen</strong></li>
     </ul>
   
     <div>Auf dieser Seite finden Sie Hinweise zur korrekten Verwendung der Kartenviewer und Geodienste sowie Videoanleitungen 
@@ -59,9 +54,9 @@ const descriptionContent = {
       Forschungsprojektes eine Expertengruppe mit je drei VertreterInnen von Forstbetrieben und Forstdiensten gebildet. 
       Die drei Use-Cases wurden in enger Zusammenarbeit mit den Praxispersonen ausgebarbeitet.
     <div style="height:16px"></div>
-    Dieses Projekt baut auf den Resultaten der Projekte <a href="https://www.planfor.ch/de/content/schlussbericht-waldmonitoring-mit-sentinel-2-satellitenbildern">
+    Dieses Projekt baut auf den Resultaten der Projekte <a href="https://www.planfor.ch/de/content/schlussbericht-waldmonitoring-mit-sentinel-2-satellitenbildern" rel="noopener noreferrer" target="_blank">
     «Waldmonitoring mit Sentinel-2 Satellitenbildern»</a> und 
-    <a href="https://www.planfor.ch/de/content/schlussbericht-praxistauglicher-einsatz-von-fernerkundung-im-waldbereich-zustand-entwicklung">
+    <a href="https://www.planfor.ch/de/content/schlussbericht-praxistauglicher-einsatz-von-fernerkundung-im-waldbereich-zustand-entwicklung" rel="noopener noreferrer" target="_blank">
     «Praxistauglicher Einsatz von Fernerkundung im Waldbereich»</a> auf.
     <div style="height:24px"></div>
     `
@@ -70,8 +65,8 @@ const descriptionContent = {
       title: "2 Daten",
       content: `Im Fokus dieses Projektes lag die Nutzung von schweizweit frei verfügbaren Daten. Dafür eignen sich insbesondere die Sentinel-2-Satellitenbilder, 
       deren Mehrwert für die Waldwirtschaft bereits aufgezeigt werden konnte
-      (<a href="https://www.szf-jfs.org/doi/abs/10.3188/szf.2018.0026">SZF Artikel</a>, 
-      <a href="https://www.planfor.ch/de/content/april-mai-2019-sentinel-2-kursreihe">FOWALA Kurs</a>).
+      (<a href="https://www.szf-jfs.org/doi/abs/10.3188/szf.2018.0026" rel="noopener noreferrer" target="_blank">SZF Artikel</a>, 
+      <a href="https://www.planfor.ch/de/content/april-mai-2019-sentinel-2-kursreihe" rel="noopener noreferrer" target="_blank">FOWALA Kurs</a>).
       Zusätzlich wurde die nationale Waldmaske (swissTLM3D) verwendet und es können verschiedene Hintergrundkarten 
       (z.B. Luftbilder) dargestellt werden.
       <div style="height:16px"></div>
@@ -79,7 +74,7 @@ const descriptionContent = {
       Seit Ende 2015 sind Sentinel-2-Satellitenbilder frei erhältlich und grossflächig verfügbar. 
       Die häufige Wiederholung der Aufnahmen (alle 2-5 Tage) in für Vegetationsanalysen wichtigen 
       pektralbändern bietet dabei ein grosses Potenzial für die Nutzung im Waldbereich. In einem bereits 
-      abgeschlossenen Projekt (<a href="https://www.planfor.ch/de/content/schlussbericht-waldmonitoring-mit-sentinel-2-satellitenbildern">
+      abgeschlossenen Projekt (<a href="https://www.planfor.ch/de/content/schlussbericht-waldmonitoring-mit-sentinel-2-satellitenbildern" rel="noopener noreferrer" target="_blank">
       Weber & Rosset, 2019</a>) konnte aufgezeigt werden, dass sich starke Waldveränderungen 
       wie Holzschläge oder Sommersturmschäden zeitnah erfassen lassen. Auch für die Klassifizierung von Hauptbaumarten 
       und die Beurteilung der Vitalität wurde ein grosses Potenzial festgestellt.
@@ -93,7 +88,7 @@ const descriptionContent = {
       für die Dichte, Produktivität und Vitalität der Vegetation und eignen sich somit für das <strong>Monitoring von Waldveränderungen</strong>.
       <ol>
       <li>
-      <strong>NDVI</strong> (<a href="https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index">Normalized Difference Vegetation Index</a>): Der NDVI ist der am 
+      <strong>NDVI</strong> (<a href="https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index" rel="noopener noreferrer" target="_blank">Normalized Difference Vegetation Index</a>): Der NDVI ist der am 
       häufigsten verwendete Vegetationsindex. Er berechnet sich aus den Reflexionswerten 
       im nahen Infrarotbereich (NIR) und im roten sichtbaren Bereich (Rot) des Lichtspektrums:<br /><br />
       
@@ -110,7 +105,7 @@ const descriptionContent = {
       <div style="font-size:12px">Abb. 1 : Reflexionsgrad der Vegetation [%] in Abhängigkeit von der Wellenlänge des Lichtes [nm]. 
       Der starke Anstieg der Reflexion innerhalb des roten und nahen infraroten Spektralbereichs ist ein Indikator für die 
       Vitalität von Pflanzen und eignet sich zur Unterscheidung von gesunder (grüne Kurve) und gestresster (schwarze Kurve) Vegetation. 
-      (Bildquelle: <a href="https://www.micasense.com/faq">https://www.micasense.com/faq</a>)</div>
+      (Bildquelle: <a href="https://www.micasense.com/faq" rel="noopener noreferrer" target="_blank">https://www.micasense.com/faq</a>)</div>
       </li>
       <li>
       <div style="height:24px"></div>
@@ -125,11 +120,11 @@ const descriptionContent = {
       <div style="height:16px"></div>
       <strong>Waldmaske</strong><br />
       Die Waldmaske wurde aus dem topografischen Landschaftsmodell der Schweiz (swissTLM3D) abgeleitet 
-      (<a href="https://shop.swisstopo.admin.ch/de/products/landscape/tlm3D">https://shop.swisstopo.admin.ch/de/products/landscape/tlm3D</a>).
+      (<a href="https://shop.swisstopo.admin.ch/de/products/landscape/tlm3D" rel="noopener noreferrer" target="_blank">https://shop.swisstopo.admin.ch/de/products/landscape/tlm3D</a>).
       <div style="height:16px"></div>
       <strong>Hintergrundkarten</strong><br />
       Als Hintergrundkarten werden die Luftbilder und Landeskarten von swisstopo, sowie das Vegetationshöhenmodell 
-      des LFI als <a href="https://shop.swisstopo.admin.ch/de/products/geoservice/swisstopo_geoservices/WMTS_info">swisstopo Geodienste</a> eingebunden.
+      des LFI als <a href="https://shop.swisstopo.admin.ch/de/products/geoservice/swisstopo_geoservices/WMTS_info" rel="noopener noreferrer" target="_blank">swisstopo Geodienste</a> eingebunden.
       <div style="height:24px"></div>
     `
     },
@@ -171,8 +166,8 @@ const descriptionContent = {
       title: "4 Use-Case 2 - Test Sommersturmschäden 2017",
       content: `Im Rahmen des zweiten Use-Cases wurde eine Methode für die automatische Bereitstellung von 
       schweizweiten <strong>Hinweiskarten für Sommersturmschäden</strong> auf Basis von Sentinel-2-Satellitenbildern entwickelt. 
-      Als Beispiel und für den Praxistest wurden die Sommerstürme (Ende <a href="http://www.sturmarchiv.ch/index.php?title=Extremereignisse_2017#Juli">
-      Juli</a> und Anfang <a href="http://www.sturmarchiv.ch/index.php?title=Extremereignisse_2017%23August">August</a>) im Jahr 2017 ausgewählt. 
+      Als Beispiel und für den Praxistest wurden die Sommerstürme (Ende <a href="http://www.sturmarchiv.ch/index.php?title=Extremereignisse_2017#Juli" rel="noopener noreferrer" target="_blank">
+      Juli</a> und Anfang <a href="http://www.sturmarchiv.ch/index.php?title=Extremereignisse_2017%23August" rel="noopener noreferrer" target="_blank">August</a>) im Jahr 2017 ausgewählt. 
       Zwischen dem 5.7.2017 und dem 19.8.2017 können alle verfügbaren Sentinel-2-Aufnahmen, welche mindestens einen Teil 
       der Schweiz abdecken, vom Benutzer/Benutzerin ausgewählt werden. So kann nach einem Sturmereignis rasch geprüft werden, 
       ob eine brauchbare, sprich <strong>möglichst wolkenfreie</strong>, Aufnahme zur Verfügung steht. Daraufhin werden im Kartenviewer potenzielle 
@@ -180,7 +175,7 @@ const descriptionContent = {
 
       Diese ausgewiesenen Veränderungsflächen basieren auf der Abnahme des Normalized Burn Ratio Vegetationsindexes 
       (NBR; siehe Abschnitt 2). In einem Vorgängerprojekt 
-      (<a href="https://www.planfor.ch/de/content/schlussbericht-waldmonitoring-mit-sentinel-2-satellitenbildern">Weber & Rosset, 2019</a>) 
+      (<a href="https://www.planfor.ch/de/content/schlussbericht-waldmonitoring-mit-sentinel-2-satellitenbildern" rel="noopener noreferrer" target="_blank">Weber & Rosset, 2019</a>) 
       hat sich dieser Index als geeignet für die Detektion von Sturmschadflächen erwiesen.<br /><br />
 
       Die Werte in der Legende des Kartenviewers stellen die <strong>Abnahme des NBR</strong> multipliziert mit 100 dar, 
@@ -241,7 +236,7 @@ const descriptionContent = {
     <u>Hintergrundinformationen zur Methode</u><br /><br />
     Für jede Sentinel-2-Aufnahme innerhalb der definierten Zeitspanne (5.7. bis 19.8.2017) wurde zuerst der NBR berechnet 
     (<strong style="color:green">NBR<sub>Aktuell</sub></strong>), siehe Abb. 6). Wolken wurden dabei mittels der 
-    <a href="https://sentinel.esa.int/web/sentinel/technical-guides/sentinel-2-msi/level-1c/cloud-masks">ESA Wolkenmaske</a> 
+    <a href="https://sentinel.esa.int/web/sentinel/technical-guides/sentinel-2-msi/level-1c/cloud-masks" rel="noopener noreferrer" target="_blank">ESA Wolkenmaske</a> 
     ausgeschieden. Daraufhin wurde der NBR für die <strong>Referenzperiode</strong> berechnet, welche als das <strong>45-Tages-Fenster</strong> 
     vor dem ausgewählten Aufnahmedatum definiert wurde. <br />
     Zu diesem Zweck wurde zuerst mittels der in Abschnitt 3 beschriebenen <i>NDVI Maximum Komposit Methode</i> aus allen verfügbaren 
@@ -266,7 +261,7 @@ const descriptionContent = {
     Eine anspruchsvolle Situation stellt sich jedoch im Winter: Vegetationszustand, Beleuchtungsintensität, Wolken, Schatten und Schnee 
     stellen zusätzliche Herausforderungen dar. Ein möglicher Lösungsansatz wäre eine Kombination mit Sentinel-1 Daten, welche von 
     Bewölkungs- und Beleuchtungsintensität nicht beeinflusst werden 
-    (siehe dazu ein <a href="https://www.wsl.ch/de/projekte/sturmhinweiskarte.html">laufendes Projekt an der WSL</a>).
+    (siehe dazu ein <a href="https://www.wsl.ch/de/projekte/sturmhinweiskarte.html" rel="noopener noreferrer" target="_blank">laufendes Projekt an der WSL</a>).
     <div style="height:24px"></div>`
     },
     {
@@ -295,8 +290,8 @@ const descriptionContent = {
       ${getVideoElement("wraBOBSfcdk")}
       <div style="height:16px"></div>
       <u>Hintergrundinformationen zur Methode</u><br /><br />
-      Die Berechnung der NDVI-Anomalien basiert auf dem sogenannten <a href="https://de.wikipedia.org/wiki/Standardisierung_(Statistik)">Z-Wert</a> 
-      (siehe z.B. <a href="https://www.sciencedirect.com/science/article/pii/S0034425718305509">Meroni et al., 2019</a>):<br /><br />
+      Die Berechnung der NDVI-Anomalien basiert auf dem sogenannten <a href="https://de.wikipedia.org/wiki/Standardisierung_(Statistik)" rel="noopener noreferrer" target="_blank">Z-Wert</a> 
+      (siehe z.B. <a href="https://www.sciencedirect.com/science/article/pii/S0034425718305509" rel="noopener noreferrer" target="_blank">Meroni et al., 2019</a>):<br /><br />
 
       Z<sub>i</sub> = (NDVI<sub>median,i</sub> - NDVI<sub>median,ref</sub>) / NDVI<sub>sd,ref</sub>
       <div style="height:16px"></div>
@@ -333,7 +328,7 @@ const descriptionContent = {
       Die dargestellten Karten können auch als <strong>Geodienste</strong> (WMS, WMTS, WFS) in eine GIS-Umgebung eingebunden werden. 
       Durch Klick auf die Kachel „<a href="https://forestmonitoring.lab.karten-werk.ch/services">Geodienste</a>“ 
       erfahren Sie mehr darüber. Einfache Video-Tutorials zeigen anhand von Beispielen, wie Sie die Services in QGIS einbinden können.<br /><br />
-      Die gesamte Webapplikation ist Open Source und unter: <a href="https://github.com/HAFL-FWI/Digital-Forest-Monitoring/tree/master/webapp">https://github.com/HAFL-FWI/Digital-Forest-Monitoring/tree/master/webapp</a> verfügbar.  
+      Die gesamte Webapplikation ist Open Source und unter: <a href="https://github.com/HAFL-FWI/Digital-Forest-Monitoring/tree/master/webapp" rel="noopener noreferrer" target="_blank">https://github.com/HAFL-FWI/Digital-Forest-Monitoring/tree/master/webapp</a> verfügbar.  
       Bei Fragen oder Verbesserungswünschen wenden Sie sich bitte an untenstehenden Kontakt.<br /><br />
       Hanskaspar Frei von KARTEN-WERK GmbH, <a href="mailto:hkfrei@karten-werk.ch">hkfrei@karten-werk.ch</a>
       <div style="height:24px"></div>
@@ -349,7 +344,7 @@ const descriptionContent = {
       Praxis gesammelt, dokumentiert und bereitgestellt werden. Wer dazu beitragen möchte, weitere Anregungen oder generell 
       Interesse hat, aktiver Teil der User Community zu werden, kann sich sehr gerne jederzeit bei Alexandra Erbach (<a href="mailto:alexandra.erbach@bfh.ch">alexandra.erbach@bfh.ch</a>) melden.
       <div style="height:18px"></div>
-      <div><a href="${SchlussberichtWeb}">Download Schlussbericht als PDF</a></div>
+      <div><a href="${SchlussberichtWeb}" rel="noopener noreferrer" target="_blank">Download Schlussbericht als PDF</a></div>
       <div style="height:24px"></div>
       `
     }

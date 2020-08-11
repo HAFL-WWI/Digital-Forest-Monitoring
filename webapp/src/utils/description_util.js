@@ -61,6 +61,7 @@ const description_util = {
     getAuthors: () => {
       const wrapper = description_util.view.getWrapper();
       const authors = document.createElement("span");
+      authors.style.fontSize = "14px";
       authors.innerText = descriptionContent.authors;
       wrapper.appendChild(authors);
       return wrapper;
