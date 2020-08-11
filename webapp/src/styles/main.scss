@@ -114,9 +114,15 @@ body:after {
   z-index: 1;
 }
 .content {
+  line-height: 140%;
   position: absolute;
   top: 64px;
   width: 100%;
+}
+.contents {
+  border-bottom: 1px dashed grey;
+  cursor: pointer;
+  padding: 8px 0;
 }
 .sidebar {
   background-color: white;

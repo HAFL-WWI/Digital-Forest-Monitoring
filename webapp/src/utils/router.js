@@ -2,7 +2,7 @@ import Navigo from "navigo";
 import homepageUtil from "./homepage_util";
 import viewerUtil from "./viewer_util";
 import servicesUtil from "./services_util";
-import descriptionUtil from "./description_util"
+import descriptionUtil from "./description_util";
 import {
   setTitle,
   getTitle,
@@ -68,8 +68,9 @@ export const initRouter = () => {
       },
       "/projektbeschrieb": () => {
         removeVideoLink();
-        setTitle("Projektbeschrieb")
-        descriptionUtil.controller.init()
+        setTitle("Projektbeschrieb");
+        descriptionUtil.controller.init();
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
       }
     })
     .resolve();

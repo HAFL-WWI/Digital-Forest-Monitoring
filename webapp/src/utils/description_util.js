@@ -8,17 +8,18 @@ const description_util = {
     init: () => {
       removeContent();
       description_util.controller.composeDescription();
+      description_util.controller.addContentsEventListeners();
     },
     composeDescription: () => {
       const grid = createGrid();
       const gridContainer = document.createElement("div");
-      gridContainer.style.maxWidth = "1200px";
+      gridContainer.style.maxWidth = "992px";
       gridContainer.style.margin = "0 auto";
       grid.appendChild(gridContainer);
       gridContainer.appendChild(description_util.view.getTitle());
       gridContainer.appendChild(description_util.view.getAuthors());
       gridContainer.appendChild(description_util.view.getHint());
-      for (var i = 0; i < 6; i++) {
+      for (var i = 0; i < 8; i++) {
         gridContainer.appendChild(
           description_util.view.getBlock({
             title: descriptionContent.blocks[i].title,
@@ -27,6 +28,21 @@ const description_util = {
         );
       }
       content.appendChild(grid);
+    },
+    addContentsEventListeners: () => {
+      const contents = document.getElementsByClassName("contents");
+      for (var i = 0; i < contents.length; i++) {
+        const id = contents.item(i).innerText.split(" ")[0];
+        contents.item(i).addEventListener("click", e => {
+          let elem = document.getElementById(id);
+          const yOffset = -70;
+          const y =
+            elem.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+          //elem.scrollIntoView({ left: 0, block: "start", behavior: "smooth" });
+          e.preventDefault();
+        });
+      }
     }
   },
   view: {
@@ -45,7 +61,6 @@ const description_util = {
     getAuthors: () => {
       const wrapper = description_util.view.getWrapper();
       const authors = document.createElement("span");
-      authors.style.fontSize = "12px";
       authors.innerText = descriptionContent.authors;
       wrapper.appendChild(authors);
       return wrapper;
@@ -58,6 +73,7 @@ const description_util = {
     getBlock: ({ title, content }) => {
       const wrapper = description_util.view.getWrapper();
       const blockTitle = document.createElement("h2");
+      blockTitle.id = title.split(" ")[0];
       blockTitle.innerText = title;
       const blockContent = document.createElement("div");
       blockContent.innerHTML = content;
