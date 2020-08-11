@@ -15,6 +15,7 @@ const description_util = {
       const gridContainer = document.createElement("div");
       gridContainer.style.maxWidth = "992px";
       gridContainer.style.margin = "0 auto";
+      gridContainer.style.lineHeight = "140%";
       grid.appendChild(gridContainer);
       gridContainer.appendChild(description_util.view.getTitle());
       gridContainer.appendChild(description_util.view.getAuthors());
