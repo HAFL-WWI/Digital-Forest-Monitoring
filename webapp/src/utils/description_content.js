@@ -75,7 +75,7 @@ const descriptionContent = {
       <strong>Sentinel-2</strong><br />
       Seit Ende 2015 sind Sentinel-2-Satellitenbilder frei erhältlich und grossflächig verfügbar. 
       Die häufige Wiederholung der Aufnahmen (alle 2-5 Tage) in für Vegetationsanalysen wichtigen 
-      pektralbändern bietet dabei ein grosses Potenzial für die Nutzung im Waldbereich. In einem bereits 
+      Spektralbändern bietet dabei ein grosses Potenzial für die Nutzung im Waldbereich. In einem bereits 
       abgeschlossenen Projekt (<a href="https://www.planfor.ch/de/content/schlussbericht-waldmonitoring-mit-sentinel-2-satellitenbildern" rel="noopener noreferrer" target="_blank">
       Weber & Rosset, 2019</a>) konnte aufgezeigt werden, dass sich starke Waldveränderungen 
       wie Holzschläge oder Sommersturmschäden zeitnah erfassen lassen. Auch für die Klassifizierung von Hauptbaumarten 
