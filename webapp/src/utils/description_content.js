@@ -19,6 +19,8 @@ const descriptionContent = {
     <div>Das Hauptziel des Projektes war die Implementierung von Kartenviewern sowie Geodiensten (Erklärung dazu siehe z.B. <a href="https://www.geo.admin.ch/de/geo-dienstleistungen/geodienste.html" rel="noopener noreferrer" target="_blank">hier</a>) für konkrete Use-Cases mit existierenden, 
     möglichst frei verfügbaren Fernerkundungsdaten. Es wurden 3 Use-Cases zusammen mit VertreterInnen aus der Praxis ausgearbeitet 
     (Abgleich von Angebot und Nachfrage), und die Informationen, Daten und Resultate bedarfsgerecht bereitgestellt.</div>
+    <div style="height:8px"></div>
+    <div>Folgende Anwendungsfälle wurden bearbeitet:</div>
     <ul style="margin-block-start: 8px; margin-block-end:8px">
     <li style="padding:4px 0">Use-Case 1 - <strong>Monitoring jährlicher Waldveränderungen (forstliche Eingriffe und andere)</strong></li>
     <li>Use-Case 2 - <strong>Rasche Erfassung von Sommersturmschäden</strong></li>
