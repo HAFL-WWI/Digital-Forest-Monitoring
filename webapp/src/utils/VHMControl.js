@@ -8,9 +8,7 @@ class VHMControl {
   }
 
   createVHMControl() {
-    const vhmFragment = new DocumentFragment();
     const vhmControl = document.createElement("div");
-    vhmFragment.appendChild(vhmControl);
     vhmControl.className = "vhmControl";
     vhmControl.style.backgroundImage = `url(${vegetationImage})`;
     const vhmTitle = document.createElement("div");
@@ -45,7 +43,7 @@ class VHMControl {
       },
       false
     );
-    const vhmSwitch = new Control({ element: vhmFragment });
+    const vhmSwitch = new Control({ element: vhmControl });
     return vhmSwitch;
   }
 }

@@ -170,3 +170,15 @@ body:after {
   width: 100%;
   height: 100%;
 }
+.chip {
+  background-color: #e0dddc;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 11px;
+  margin: 0 4px 0 0;
+  padding: 8px;
+  transition: background-color,0.2s ease-out;
+}
+.chip--selected {
+  background-color: #f9aa33;
+}

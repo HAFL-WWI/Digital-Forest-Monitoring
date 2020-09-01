@@ -21,12 +21,12 @@ class BasemapControl {
     const [activeBasemap, iconBasemap] = this.getBasemapState(this.active);
     //show the currently active basemap
     activeBasemap.layer.setVisible(true);
-    const basemapFragment = new DocumentFragment();
+    const basemapContainer = document.createElement("div")
     this.basemapControl = document.createElement("div");
     this.basemapControl.appendChild(this.createBasemap(iconBasemap));
-    basemapFragment.appendChild(this.basemapControl);
+    basemapContainer.appendChild(this.basemapControl);
     this.basemapControl.className = "basemapControl";
-    const basemapSwitch = new Control({ element: basemapFragment });
+    const basemapSwitch = new Control({ element: basemapContainer });
     return basemapSwitch;
   }
   /*

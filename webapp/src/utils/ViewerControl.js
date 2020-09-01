@@ -69,9 +69,10 @@ class ViewerControl {
     this.vitalityLayers = [
       {
         year: "2019",
-        month: this.month.slice(5, 8)
+        month: this.month.slice(5, 8),
+        layers: []
       },
-      { year: "2018", month: this.month.slice(5, 8) }
+      { year: "2018", month: this.month.slice(5, 8), layers: [] }
     ];
     this.activeLayers = [];
   }
@@ -116,7 +117,7 @@ class ViewerControl {
    * @returns {HTMLElement} veraenderungControlElement - a div with all the necessary children.
    */
   createControl({ type }) {
-    const veraenderungFragment = new DocumentFragment();
+    const veraenderungContainer = document.createElement("div");
     //title section
     const viewerTitle = document.createElement("div");
     viewerTitle.classList.add("viewerControl__title");
@@ -160,12 +161,12 @@ class ViewerControl {
       default:
         return;
     }
-    veraenderungFragment.appendChild(viewerTitle);
+    veraenderungContainer.appendChild(viewerTitle);
     if (this.viewerControls) {
-      veraenderungFragment.appendChild(this.viewerControls);
+      veraenderungContainer.appendChild(this.viewerControls);
     }
     const veraenderungControl = new Control({
-      element: veraenderungFragment
+      element: veraenderungContainer
     });
     return veraenderungControl;
   }
@@ -321,26 +322,27 @@ class ViewerControl {
    * @param {domElement} chipset - container for the chips.
    * @returns {domElement} dropdown menu with years to choose.
    */
-  createVitalityDropdown(years, chipset) {
+  createVitalityDropdown(years, chipsetEl) {
     const { dropdownContainer, mdcSelect } = this.createMDCDropdown(
       "Jahr wählen"
     );
     const callback = e => {
-      chipset.innerHTML = "";
+      chipsetEl.innerHTML = "";
       const year = e.detail.value;
       const selectedYear = this.vitalityLayers.filter(
         layer => layer.year.toString() === year.toString()
       )[0];
-      selectedYear.month.forEach(month => {
-        const monthChipElement = this.createMonthChip(year, month);
-        const layer = this.getVitalityLayerObject({ year, month });
-        layer.chip = new MDCChip(monthChipElement);
-        layer.chip.listen("click", () => {
-          this.handleChipClick({ layer, singleLayer: false });
+      // only create the layers once
+      if (selectedYear.layers.length === 0) {
+        selectedYear.month.forEach(month => {
+          const layer = this.getVitalityLayerObject({ year, month });
+          layer.chip = this.createChip({ label: month.text, layer });
+          selectedYear.layers.push(layer);
+          chipsetEl.appendChild(layer.chip);
         });
-        chipset.appendChild(monthChipElement);
-        this.chipset.addChip(monthChipElement);
-      });
+      } else {
+        selectedYear.layers.forEach(layer => chipsetEl.appendChild(layer.chip));
+      }
     };
     const select = this.createSelectMenu({
       items: years,
@@ -377,11 +379,14 @@ class ViewerControl {
    * @returns {htmlElement} layerElement - html layer element.
    */
   addLayer({ layer, domContainer } = {}) {
+    console.log("add layer called");
+    console.log(layer, domContainer);
     if (!layer || !domContainer) {
       return false;
     }
     layer.toc = true;
     layer.visible = true;
+    this.activeLayers.push(layer);
     if (!layer.wmsLayer) {
       layer.wmsLayer = this.createWmsLayer(layer);
     }
@@ -406,6 +411,7 @@ class ViewerControl {
     if (layers.contains(layer.domElement)) {
       layers.removeChild(layer.domElement);
     }
+    this.activeLayers.splice(this.activeLayers.indexOf(layer), 1);
     return layer;
   }
 
@@ -490,7 +496,6 @@ class ViewerControl {
         layer,
         domContainer
       });
-      this.activeLayers.push(layer);
     } else {
       this.removeLayer(layer);
     }
@@ -577,6 +582,33 @@ class ViewerControl {
     chipContent.innerHTML = month.text;
     chip.appendChild(checkmark);
     chip.appendChild(chipContent);
+    return chip;
+  }
+  /*
+   * create a chip for the "Vitalität der Wälder" viewer.
+   * @param {number} year - 2018, 2019....
+   * @param {object} month - {monthNumber:"06-07":monthText:"Jun/Jul"}.
+   * @returns {htmlElement} chip.
+   */
+  createChip({ label, layer } = {}) {
+    label = label ? label : "unbekannt";
+    const chip = document.createElement("div");
+    chip.classList.add("chip");
+    const chipContent = document.createElement("span");
+    chipContent.classList.add("chip__content");
+    chipContent.innerHTML = label;
+    chip.appendChild(chipContent);
+    chip.addEventListener("click", e => {
+      chip.classList.toggle("chip--selected");
+      if (layer.toc === true) {
+        this.removeLayer(layer);
+      } else {
+        this.addLayer({
+          layer,
+          domContainer: document.querySelector(".layers")
+        });
+      }
+    });
     return chip;
   }
 

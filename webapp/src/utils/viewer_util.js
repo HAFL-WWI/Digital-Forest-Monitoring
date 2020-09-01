@@ -192,12 +192,6 @@ const viewerUtil = {
     removeViewerControls() {
       if (viewerUtil.model.viewerControl) {
         viewerUtil.model.map.removeControl(viewerUtil.model.viewerControl);
-        const viewerTitle = document.querySelector(".viewerControl__title");
-        const viewerControls = document.querySelector(
-          ".viewerControl__controls"
-        );
-        viewerTitle.parentNode.removeChild(viewerTitle);
-        viewerControls.parentNode.removeChild(viewerControls);
       }
     }
   }

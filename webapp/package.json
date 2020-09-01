@@ -10,7 +10,7 @@
   "devDependencies": {
     "eslint": "^7.5.0",
     "parcel": "^2.0.0-beta.1",
-    "prettier": "^2.0.5",
+    "prettier": "^2.1.1",
     "sass": "^1.26.10"
   },
   "scripts": {
@@ -36,7 +36,7 @@
     "@material/top-app-bar": "^4.0.0",
     "@material/typography": "^4.0.0",
     "navigo": "^7.1.2",
-    "ol": "^6.1.1"
+    "ol": "^6.4.3"
   },
   "comments": {
     "sass": {
