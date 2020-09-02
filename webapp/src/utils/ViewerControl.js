@@ -453,12 +453,12 @@ class ViewerControl {
       response.forEach(date => {
         const layer = this.getTimeLayerObject(date);
         const printDate = date.substring(0, 10);
-        const chip = this.createChip({
+        layer.chip = this.createChip({
           label: this.formatDateString(printDate),
           layer,
           singleLayer: true
         });
-        chipsetEl.appendChild(chip);
+        chipsetEl.appendChild(layer.chip);
       });
     });
     const layers = document.createElement("div");
@@ -622,7 +622,7 @@ class ViewerControl {
     return layerInfo;
   }
 
-  getLayerRemoveButton(overlay) {
+  getLayerRemoveButton(layer) {
     const removeLayer = document.createElement("button");
     removeLayer.title = "Layer entfernen";
     removeLayer.classList.add(
@@ -632,9 +632,9 @@ class ViewerControl {
     );
     removeLayer.innerHTML = "remove_circle";
     removeLayer.addEventListener("click", () => {
-      this.removeLayer(overlay);
-      if (overlay.chip) {
-        overlay.chip.selected = false;
+      this.removeLayer(layer);
+      if (layer.chip) {
+        layer.chip.classList.remove("chip--selected");
       }
     });
     return removeLayer;
