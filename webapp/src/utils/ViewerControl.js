@@ -200,7 +200,7 @@ class ViewerControl {
     const monthChips = document.createElement("div");
     monthChips.classList.add("monthchips");
     const title = document.createElement("div");
-    title.classList.add("chips-title");
+    title.classList.add("viewerControl__yearinfo");
     title.innerText = "Monate:";
     monthChips.appendChild(title);
     const chipsetEl = document.createElement("div");
