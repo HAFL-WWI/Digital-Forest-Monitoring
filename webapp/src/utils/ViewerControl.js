@@ -391,6 +391,9 @@ class ViewerControl {
     this.map.addLayer(layer.wmsLayer);
     layer.domElement = this.createLayerControl(layer);
     domContainer.prepend(layer.domElement);
+    if (layer.chip) {
+      layer.chip.classList.add("chip--selected");
+    }
     return layer;
   }
 
@@ -408,6 +411,9 @@ class ViewerControl {
       layers.removeChild(layer.domElement);
     }
     this.activeLayers.splice(this.activeLayers.indexOf(layer), 1);
+    if (layer.chip) {
+      layer.chip.classList.remove("chip--selected");
+    }
     return layer;
   }
 
@@ -524,7 +530,6 @@ class ViewerControl {
         this.removeMapOverlays(this.activeLayers);
         this.unselectChips();
       }
-      chip.classList.toggle("chip--selected");
       if (layer.toc === true) {
         this.removeLayer(layer);
       } else {
@@ -633,9 +638,6 @@ class ViewerControl {
     removeLayer.innerHTML = "remove_circle";
     removeLayer.addEventListener("click", () => {
       this.removeLayer(layer);
-      if (layer.chip) {
-        layer.chip.classList.remove("chip--selected");
-      }
     });
     return removeLayer;
   }
