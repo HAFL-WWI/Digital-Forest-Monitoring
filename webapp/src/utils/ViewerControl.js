@@ -504,53 +504,6 @@ class ViewerControl {
   }
 
   /*
-   * create a single date chip for the "Natürliche Störungen" viewer.
-   * @param {string} date - the text content of the chip.
-   * @returns {htmlElement} chip - MDCChip markup.
-   */
-  createDateChip(date) {
-    const printDate = date.substring(0, 10);
-    const chip = document.createElement("button");
-    chip.setAttribute("data-name", `${printDate}`);
-    chip.classList.add("mdc-chip");
-    const checkmark = document.createElement("span");
-    checkmark.classList.add("mdc-chip__checkmark");
-    checkmark.innerHTML = `<svg class="mdc-chip__checkmark-svg" viewBox="-2 -3 30 30">
-    <path class="mdc-chip__checkmark-path" fill="none" stroke="black"
-          d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
-  </svg>`;
-    const content = document.createElement("span");
-    content.classList.add("mdc-chip__text");
-    content.innerHTML = this.formatDateString(printDate);
-    chip.appendChild(checkmark);
-    chip.appendChild(content);
-    return chip;
-  }
-
-  /*
-   * create a single month chip for the "Vitalität der Wälder" viewer.
-   * @param {number} year - 2018, 2019....
-   * @param {object} month - {monthNumber:"06-07":monthText:"Jun/Jul"}.
-   * @returns {htmlElement} chip - MDCChip markup.
-   */
-  createMonthChip(year, month) {
-    const chip = document.createElement("button");
-    chip.setAttribute("data-month", `${year}_${month.number}`);
-    chip.classList.add("mdc-chip");
-    const checkmark = document.createElement("span");
-    checkmark.classList.add("mdc-chip__checkmark");
-    checkmark.innerHTML = `<svg class="mdc-chip__checkmark-svg" viewBox="-2 -3 30 30">
-    <path class="mdc-chip__checkmark-path" fill="none" stroke="black"
-          d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
-  </svg>`;
-    const chipContent = document.createElement("span");
-    chipContent.classList.add("mdc-chip__text");
-    chipContent.innerHTML = month.text;
-    chip.appendChild(checkmark);
-    chip.appendChild(chipContent);
-    return chip;
-  }
-  /*
    * create a chip for the "Vitalität der Wälder" viewer.
    * @param {number} year - 2018, 2019....
    * @param {object} month - {monthNumber:"06-07":monthText:"Jun/Jul"}.
