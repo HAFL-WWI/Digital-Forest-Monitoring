@@ -192,41 +192,10 @@
   transform-origin: top left;
   transition: transform, 0.3s;
 }
-
-.chips-title {
-  color: rgba(0, 0, 0, 0.6);
-  font-size: 12px;
-  padding: 8px 16px 0 16px;
-}
-
-.mdc-chip-set {
-  border-bottom: 1px dotted grey;
-  max-height: 170px;
-  overflow-y: auto;
-  padding: 4px 8px 8px 8px;
-}
-
-.mdc-chip-set .mdc-chip {
-  padding: 0 8px;
-  margin: 4px 2px;
-}
-
-.mdc-chip__text {
-  font-size: 11px;
-}
-
-.mdc-chip--selected {
-  background-color: $mdc-theme-secondary;
-}
-
-.monthchips {
-  width: 100%;
-}
-
 .layers {
   max-height: calc(100vh - 270px);
   max-height: calc(var(--vh, 1vh) * 100 - 270px);
-  padding: 0 8px;
+  padding: 8px 8px 0 8px;
   overflow: hidden;
   overflow-y: auto;
 }

@@ -5,7 +5,6 @@ import TileLayer from "ol/layer/Tile";
 import { TileWMS } from "ol/source";
 import { MDCSlider } from "@material/slider";
 import { MDCSwitch } from "@material/switch";
-import { MDCChipSet, MDCChip } from "@material/chips";
 import { MDCSelect } from "@material/select";
 import { getLayerInfo, openSidebar } from "./main_util";
 
@@ -206,7 +205,6 @@ class ViewerControl {
     monthChips.appendChild(title);
     const chipsetEl = document.createElement("div");
     chipsetEl.classList.add("mdc-chip-set", "mdc-chip-set--filter");
-    this.chipset = new MDCChipSet(chipsetEl);
     monthChips.appendChild(chipsetEl);
     const dropdown = this.createVitalityDropdown(yearObjects, chipsetEl);
     controls.appendChild(dropdown);
@@ -379,8 +377,6 @@ class ViewerControl {
    * @returns {htmlElement} layerElement - html layer element.
    */
   addLayer({ layer, domContainer } = {}) {
-    console.log("add layer called");
-    console.log(layer, domContainer);
     if (!layer || !domContainer) {
       return false;
     }
@@ -451,19 +447,18 @@ class ViewerControl {
     dateChips.classList.add("datechips");
     const chipsetEl = document.createElement("div");
     chipsetEl.classList.add("mdc-chip-set", "mdc-chip-set--filter");
-    this.chipset = new MDCChipSet(chipsetEl);
     this.getDimensions().then(response => {
       const year = response[0].split("-")[0];
       yearInfo.innerHTML = `Jahr ${year}`;
       response.forEach(date => {
         const layer = this.getTimeLayerObject(date);
-        const chipEl = this.createDateChip(date);
-        layer.chip = new MDCChip(chipEl);
-        layer.chip.listen("click", () => {
-          this.handleChipClick({ layer });
+        const printDate = date.substring(0, 10);
+        const chip = this.createChip({
+          label: this.formatDateString(printDate),
+          layer,
+          singleLayer: true
         });
-        chipsetEl.appendChild(chipEl);
-        this.chipset.addChip(chipEl);
+        chipsetEl.appendChild(chip);
       });
     });
     const layers = document.createElement("div");
@@ -474,47 +469,18 @@ class ViewerControl {
   }
 
   /*
-   * handles klick events on a chip.
-   * @paran {object} layer - layer object to use in the createWmsLayer function.
-   * @returns {void}
-   */
-  handleChipClick({ layer, singleLayer = true } = {}) {
-    if (!layer) {
-      return;
-    }
-    const { chip } = layer;
-    const domContainer = document.querySelector(".layers");
-    // remove the layer from the dom and the map if we are in singleLayer mode
-    if (singleLayer) {
-      domContainer.innerHTML = "";
-      this.removeMapOverlays(this.activeLayers);
-      this.unselectChips({ chipset: this.chipset, id: chip.id });
-    }
-    chip.selected = !chip.selected;
-    if (chip.selected === false) {
-      this.addLayer({
-        layer,
-        domContainer
-      });
-    } else {
-      this.removeLayer(layer);
-    }
-  }
-
-  /*
    * unselect all chips, except the one with the id from the function parameter.
    * @param {object} params - function parameter object.
    * @param {MDLChipset} params.chipset - the set with all the chips.
    * @param {string} params.id - the id of the string that should be selected.
    * @returns {MDLChipset} - chipset with updated chips.
    */
-  unselectChips({ chipset, id }) {
-    chipset.chips.forEach(chip => {
-      if (chip.id !== id) {
-        chip.selected = false;
-      }
-    });
-    return chipset;
+  unselectChips() {
+    const chips = document.getElementsByClassName("chip");
+    for (var i = 0; i < chips.length; i++) {
+      chips.item(i).classList.remove("chip--selected");
+    }
+    return chips;
   }
 
   /*
@@ -590,7 +556,7 @@ class ViewerControl {
    * @param {object} month - {monthNumber:"06-07":monthText:"Jun/Jul"}.
    * @returns {htmlElement} chip.
    */
-  createChip({ label, layer } = {}) {
+  createChip({ label, layer, singleLayer = false } = {}) {
     label = label ? label : "unbekannt";
     const chip = document.createElement("div");
     chip.classList.add("chip");
@@ -599,13 +565,19 @@ class ViewerControl {
     chipContent.innerHTML = label;
     chip.appendChild(chipContent);
     chip.addEventListener("click", e => {
+      const domContainer = document.querySelector(".layers");
+      if (singleLayer) {
+        domContainer.innerHTML = "";
+        this.removeMapOverlays(this.activeLayers);
+        this.unselectChips();
+      }
       chip.classList.toggle("chip--selected");
       if (layer.toc === true) {
         this.removeLayer(layer);
       } else {
         this.addLayer({
           layer,
-          domContainer: document.querySelector(".layers")
+          domContainer
         });
       }
     });

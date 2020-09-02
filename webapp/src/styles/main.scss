@@ -175,9 +175,9 @@ body:after {
   border-radius: 16px;
   cursor: pointer;
   font-size: 11px;
-  margin: 0 4px 0 0;
+  margin: 4px 2px;
   padding: 8px;
-  transition: background-color,0.2s ease-out;
+  transition: background-color, 0.2s ease-out;
 }
 .chip--selected {
   background-color: #f9aa33;
