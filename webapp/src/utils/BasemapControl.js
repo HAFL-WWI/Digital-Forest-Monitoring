@@ -2,6 +2,7 @@ import { Control } from "ol/control";
 import orthoImage from "url:../img/basemapOrtho.jpg";
 import sw from "url:../img/sw.jpg";
 import { orthoBasemap, swBasemap } from "./basemap_util";
+import { updateUrl } from "./url_util";
 class BasemapControl {
   constructor(map = null, active = "Orthofoto") {
     this.map = map;
@@ -21,7 +22,7 @@ class BasemapControl {
     const [activeBasemap, iconBasemap] = this.getBasemapState(this.active);
     //show the currently active basemap
     activeBasemap.layer.setVisible(true);
-    const basemapContainer = document.createElement("div")
+    const basemapContainer = document.createElement("div");
     this.basemapControl = document.createElement("div");
     this.basemapControl.appendChild(this.createBasemap(iconBasemap));
     basemapContainer.appendChild(this.basemapControl);
@@ -58,6 +59,7 @@ class BasemapControl {
         const [newBasemap, iconBasemap] = this.getBasemapState(
           basemapObject.name
         );
+        updateUrl({ basemap: newBasemap.name });
         this.basemapControl.firstChild.remove();
         this.basemapControl.appendChild(this.createBasemap(iconBasemap));
         iconBasemap.layer.setVisible(false);

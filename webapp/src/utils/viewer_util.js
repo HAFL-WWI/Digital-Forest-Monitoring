@@ -8,6 +8,7 @@ import { textField } from "./init";
 import BasemapControl from "./BasemapControl";
 import VHMControl from "./VHMControl";
 import ViewerControl from "./ViewerControl";
+import { updateUrl, getQueryParams, removeParam } from "./url_util";
 
 const viewerUtil = {
   model: {
@@ -27,6 +28,7 @@ const viewerUtil = {
       viewerUtil.controller.removeContent();
       viewerUtil.controller.createContainer();
       viewerUtil.controller.showViewer(title);
+      viewerUtil.controller.attachEventListeners();
       viewerUtil.model.searchList = new MDCList(
         document.querySelector(".mdc-list")
       );
@@ -86,12 +88,14 @@ const viewerUtil = {
     showViewer: title => {
       // we only have to create a new map object, if no one exists.
       if (viewerUtil.model.map === undefined) {
+        const urlParams = getQueryParams();
         viewerUtil.model.map = new Map({
           view: new View({
-            center: [829300, 5933555], //Bern
-            zoom: 13,
+            center: [urlParams.x || 829300, urlParams.y || 5933555], //defaults to Bern
+            zoom: urlParams.zoom || 13,
             minZoom: 9,
-            maxZoom: 21
+            maxZoom: 20,
+            rotation: parseFloat(urlParams.rotation) || 0
           }),
           layers: [orthoBasemap, swBasemap, vegetationBasemap],
           target: "map",
@@ -99,7 +103,10 @@ const viewerUtil = {
             attributionOptions: { collapsible: false }
           })
         });
-        const basemapSwitch = new BasemapControl(viewerUtil.model.map);
+        const basemapSwitch = new BasemapControl(
+          viewerUtil.model.map,
+          urlParams.basemap || "Orthofoto"
+        );
         const vhmControl = new VHMControl(viewerUtil.model.map);
         viewerUtil.model.map.addControl(basemapSwitch.createBasemapControl());
         viewerUtil.model.map.addControl(vhmControl.createVHMControl());
@@ -174,7 +181,25 @@ const viewerUtil = {
         };
         request.send();
       }
-    }, 250)
+    }, 250),
+    attachEventListeners: () => {
+      viewerUtil.model.map.on("moveend", event => {
+        const view = event.map.getView();
+        const center = view.getCenter();
+        const rotation = parseFloat(view.getRotation()).toFixed(6);
+        const queryParams = {
+          zoom: parseFloat(view.getZoom()).toFixed(4),
+          x: parseInt(center[0]),
+          y: parseInt(center[1])
+        };
+        if (rotation > 0) {
+          queryParams.rotation = rotation;
+        } else {
+          removeParam("rotation");
+        }
+        updateUrl(queryParams);
+      });
+    }
   },
   view: {
     /*

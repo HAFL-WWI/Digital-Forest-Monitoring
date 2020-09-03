@@ -389,6 +389,17 @@ body:after {
   left: unset !important;
 }
 
+.ol-zoom-in,
+.ol-zoom-out,
+.ol-rotate-reset {
+  cursor: pointer !important;
+}
+
+.ol-rotate {
+  bottom: 7em !important;
+  top: unset !important;
+}
+
 .autocomplete {
   background-color: white;
   max-height: 400px;
