@@ -7,6 +7,11 @@ import { MDCSlider } from "@material/slider";
 import { MDCSwitch } from "@material/switch";
 import { MDCSelect } from "@material/select";
 import { getLayerInfo, openSidebar } from "./main_util";
+import {
+  addLayerToUrl,
+  removeLayerFromUrl,
+  updateUrlVisibilityOpacity
+} from "./url_util";
 
 class ViewerControl {
   constructor({ map, title }) {
@@ -220,7 +225,9 @@ class ViewerControl {
    * @param {array} layers - array of layer objects.
    */
   removeMapOverlays(layers) {
-    layers.forEach(layer => this.map.removeLayer(layer.wmsLayer));
+    layers.forEach(layer => {
+      this.removeLayer(layer);
+    });
   }
 
   /*
@@ -394,6 +401,7 @@ class ViewerControl {
     if (layer.chip) {
       layer.chip.classList.add("chip--selected");
     }
+    addLayerToUrl({ ...layer, opacity: layer.wmsLayer.getOpacity() });
     return layer;
   }
 
@@ -414,6 +422,7 @@ class ViewerControl {
     if (layer.chip) {
       layer.chip.classList.remove("chip--selected");
     }
+    removeLayerFromUrl(layer);
     return layer;
   }
 
@@ -427,7 +436,7 @@ class ViewerControl {
     layerControl.classList.add("viewerControl__controls-control");
     layerControl.appendChild(this.getSwitch({ overlay: layer }));
     layerControl.appendChild(this.getLayerRemoveButton(layer));
-    layerControl.appendChild(this.getSlider(layer.wmsLayer));
+    layerControl.appendChild(this.getSlider(layer));
     if (this.title === "Natürliche Störungen") {
       layerControl.appendChild(this.getSentinelLink(layer));
     }
@@ -526,9 +535,7 @@ class ViewerControl {
     chip.addEventListener("click", e => {
       const domContainer = document.querySelector(".layers");
       if (singleLayer) {
-        domContainer.innerHTML = "";
         this.removeMapOverlays(this.activeLayers);
-        this.unselectChips();
       }
       if (layer.toc === true) {
         this.removeLayer(layer);
@@ -707,7 +714,12 @@ class ViewerControl {
     if (overlay.wmsLayer && overlay.displayName) {
       input.addEventListener("change", e => {
         overlay.wmsLayer.setVisible(e.target.checked);
+        overlay.visible = e.target.checked;
         input.setAttribute("aria-checked", e.target.checked.toString());
+        updateUrlVisibilityOpacity({
+          ...overlay,
+          opacity: overlay.wmsLayer.getOpacity()
+        });
       });
     }
     label.setAttribute("for", `${overlay.layername}_switch`);
@@ -729,10 +741,11 @@ class ViewerControl {
 
   /*
    * creates the layer transparency slider.
-   * @param {ol/TileLayer} - openlayers tile overlay.
-   * @returns {DocumentFragment} slider - transparency slider.
+   * @param {object} layer - layer object.
+   * @returns {Div Element} sliderContainer - transparency slider.
    */
-  getSlider(wmsLayer) {
+  getSlider(layer) {
+    const { wmsLayer } = layer;
     const sliderContainer = document.createElement("div");
     sliderContainer.classList.add("slidercontainer");
     const opacityIcon = document.createElement("i");
@@ -766,13 +779,20 @@ class ViewerControl {
     slider.appendChild(thumbContainer);
     sliderContainer.appendChild(opacityIcon);
     sliderContainer.appendChild(slider);
+    let opacity = 1;
     window.requestAnimationFrame(() => {
       const mdcslider = new MDCSlider(slider);
       mdcslider.listen("MDCSlider:input", e => {
-        const opacity = parseFloat(
-          e.target.getAttribute("aria-valuenow") / 100
-        );
+        opacity = parseFloat(e.target.getAttribute("aria-valuenow") / 100);
         wmsLayer.setOpacity(opacity);
+      });
+      // wait for the change to be commited before
+      // updating the url.
+      mdcslider.listen("MDCSlider:change", e => {
+        updateUrlVisibilityOpacity({
+          ...layer,
+          opacity
+        });
       });
     });
 
