@@ -107,7 +107,10 @@ const viewerUtil = {
           viewerUtil.model.map,
           urlParams.basemap || "Orthofoto"
         );
-        const vhmControl = new VHMControl(viewerUtil.model.map);
+        const vhmControl = new VHMControl(
+          viewerUtil.model.map,
+          urlParams.vhm ? true : false
+        );
         viewerUtil.model.map.addControl(basemapSwitch.createBasemapControl());
         viewerUtil.model.map.addControl(vhmControl.createVHMControl());
       } else {
