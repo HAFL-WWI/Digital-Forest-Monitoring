@@ -484,23 +484,24 @@ class ViewerControl {
     const { dropdownContainer, mdcSelect } = this.createMDCDropdown(
       "Jahr wählen"
     );
+    // create all potential layers
+    this.vitalityLayers.forEach(element => {
+      element.month.forEach(month => {
+        const layer = this.getVitalityLayerObject({
+          year: element.year,
+          month
+        });
+        layer.chip = this.createChip({ label: month.text, layer });
+        element.layers.push(layer);
+      });
+    });
     const callback = e => {
       chipsetEl.innerHTML = "";
       const year = e.detail.value;
       const selectedYear = this.vitalityLayers.filter(
         layer => layer.year.toString() === year.toString()
       )[0];
-      // only create the layers once
-      if (selectedYear.layers.length === 0) {
-        selectedYear.month.forEach(month => {
-          const layer = this.getVitalityLayerObject({ year, month });
-          layer.chip = this.createChip({ label: month.text, layer });
-          selectedYear.layers.push(layer);
-          chipsetEl.appendChild(layer.chip);
-        });
-      } else {
-        selectedYear.layers.forEach(layer => chipsetEl.appendChild(layer.chip));
-      }
+      selectedYear.layers.forEach(layer => chipsetEl.appendChild(layer.chip));
     };
     const select = this.createSelectMenu({
       items: years,
