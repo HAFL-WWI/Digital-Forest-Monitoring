@@ -14,9 +14,10 @@ import {
 } from "./url_util";
 
 class ViewerControl {
-  constructor({ map, title }) {
+  constructor({ map, title, urlParams }) {
     this.map = map;
     this.title = title;
+    this.urlParams = urlParams;
     this.nbr_change = "karten-werk:nbr_ch_2017";
     this.uc1description = `Hinweiskarte für Waldveränderungen (z.B. Holzschläge) 
       auf Basis von Sentinel-2-Satellitenbildern. Die Werte in der Legende 
@@ -39,6 +40,7 @@ class ViewerControl {
         displayName: "Juni 2018 - Juni 2019",
         description: this.uc1description,
         visible: true,
+        opacity: 1,
         toc: false
       },
       {
@@ -46,6 +48,7 @@ class ViewerControl {
         displayName: "Juni 2017 - Juni 2018",
         description: this.uc1description,
         visible: false,
+        opacity: 1,
         toc: false
       },
       {
@@ -53,6 +56,7 @@ class ViewerControl {
         displayName: "Juni 2016 - Juni 2017",
         description: this.uc1description,
         visible: false,
+        opacity: 1,
         toc: false
       }
     ];
@@ -78,15 +82,18 @@ class ViewerControl {
       },
       { year: "2018", month: this.month.slice(5, 8), layers: [] }
     ];
+    this.stoerungslayers = [];
     this.activeLayers = [];
   }
 
   /*
    * creates an object which can be used to create a time based wms.
    * @param {string} time - iso date format e.g. "2017-08-25".
+   * @param {boolean} visibility - visibility of the layer (on/off).
+   * @param {float} opacity - layer opacity (value between 0 an 1).
    * @returns {object} layer object to use in the createWmsLayer function.
    */
-  getTimeLayerObject(date) {
+  getTimeLayerObject(date, visibility = true, opacity = 1) {
     const fromDate = new Date(date.substring(0, 10)).toLocaleDateString();
     return {
       layername: this.nbr_change,
@@ -94,7 +101,8 @@ class ViewerControl {
       infoTitle: `Hinweis auf Veränderungen gemäss Bild vom ${fromDate}`,
       displayName: `Veränderung ${fromDate}`,
       description: this.uc2description,
-      visible: true,
+      visible: visibility,
+      opacity,
       toc: false
     };
   }
@@ -104,14 +112,17 @@ class ViewerControl {
    * @param {object} params - function parameter object.
    * @param {number} params.year - year of the vitality layer e.g. 2018.
    * @param {object} params.month - month of the vitality layer as number and text.
+   * @param {boolean} params.visibility - visibility of the layer (on/off).
+   * @param {float} parmas.opacity - layer opacity (value between 0 an 1).
    * @returns {object} layer object to use in the createWmsLayer function.
    */
-  getVitalityLayerObject({ year, month }) {
+  getVitalityLayerObject({ year, month, visibility = true, opacity = 1 }) {
     return {
       layername: `kartenwerk:ndvi_anomaly_${year}_${month.number}`,
       displayName: `NDVI Anomalien ${month.number} ${year}`,
       description: this.uc3description,
-      visible: true,
+      visible: visibility,
+      opacity,
       toc: false
     };
   }
@@ -154,13 +165,16 @@ class ViewerControl {
     // add the necessary controls for every viewer.
     switch (type) {
       case "Natürliche Störungen":
-        this.viewerControls = this.getStoerungControls();
+        this.viewerControls = this.getStoerungControls(this.urlParams);
         break;
       case "Jährliche Veränderung":
-        this.viewerControls = this.getVeraenderungControls();
+        this.viewerControls = this.getVeraenderungControls(this.urlParams);
         break;
       case "Vitalität der Wälder":
-        this.viewerControls = this.getVitalityControls(this.vitalityLayers);
+        this.viewerControls = this.getVitalityControls(
+          this.vitalityLayers,
+          this.urlParams
+        );
         break;
       default:
         return;
@@ -179,7 +193,7 @@ class ViewerControl {
    * create the controls for the "Jährliche Veranderung" viewer.
    * @returns {htmlElement} - a div element with all the controls for the viewer.
    */
-  getVeraenderungControls() {
+  getVeraenderungControls(urlParams) {
     const controls = document.createElement("div");
     controls.classList.add("viewerControl__controls");
     const dropdown = this.createLayerDropdown(this.changeOverlays);
@@ -187,9 +201,140 @@ class ViewerControl {
     const layers = document.createElement("div");
     layers.classList.add("layers");
     controls.appendChild(layers);
-    // add the first layer to the toc and the map
-    this.addLayer({ layer: this.changeOverlays[0], domContainer: layers });
+    // check if there are layers in the url params
+    if (urlParams.layers) {
+      this.addLayersFromUrlParams({
+        urlParams,
+        layerType: "veraenderung",
+        domContainer: layers
+      });
+    }
+    if (this.activeLayers.length === 0) {
+      // if no layers in the urlParams, add the first layer to the toc and the map
+      this.addLayer({ layer: this.changeOverlays[0], domContainer: layers });
+    }
     return controls;
+  }
+
+  /*
+   * add layers from url parameters to the map
+   */
+  addLayersFromUrlParams({ urlParams, layerType, domContainer } = {}) {
+    const layersToAdd = this.getLayersFromUrlParams({
+      urlParams,
+      layerType
+    });
+    if (layersToAdd.length > 0) {
+      for (var i = layersToAdd.length; i >= 0; i--) {
+        this.addLayer({ layer: layersToAdd[i], domContainer });
+      }
+    }
+  }
+
+  /*
+   * get layer objects from url parameters
+   * @param {object} urlParams - url parameter object
+   * @returns {array} layersToAdd - layer objects which can be added to the map.
+   */
+  getLayersFromUrlParams({ urlParams, layerType } = {}) {
+    const layerArr = urlParams.layers.split(",");
+    const visibilities = urlParams.visibility
+      ? urlParams.visibility.split(",")
+      : [];
+    const opacities = urlParams.opacity ? urlParams.opacity.split(",") : [];
+    const times = urlParams.time ? urlParams.time.split(",") : [];
+    if (layerArr.length > 0) {
+      const layersToAdd = [];
+      // get the right veraenderung layer and add it to the viewer
+      layerArr.forEach((layername, index) => {
+        switch (layerType) {
+          case "veraenderung":
+            for (var i = 0; i < this.changeOverlays.length; i++) {
+              if (this.changeOverlays[i].layername === layername) {
+                this.changeOverlays[i].visible = this.getVisibility(
+                  visibilities,
+                  index
+                );
+                this.changeOverlays[i].opacity = this.getOpacity(
+                  opacities,
+                  index
+                );
+                layersToAdd.push(this.changeOverlays[i]);
+              }
+            }
+            break;
+          case "vitalitaet":
+            const splitted = layername.split("_");
+            const year = splitted[2];
+            const month = splitted[3];
+            for (var i = 0; i < this.vitalityLayers.length; i++) {
+              if (
+                this.vitalityLayers[i].year === year &&
+                this.vitalityLayers[i].layers.length > 0
+              ) {
+                this.vitalityLayers[i].layers.forEach(layer => {
+                  const layerMonth = layer.layername.split("_")[3];
+                  if (month === layerMonth) {
+                    layer.visible = this.getVisibility(visibilities, index);
+                    layer.opacity = this.getOpacity(opacities, index);
+                    layersToAdd.push(layer);
+                  }
+                });
+              }
+            }
+            break;
+          case "stoerungen":
+            if (Array.isArray(times) && times.length > 0) {
+              for (var i = 0; i < this.stoerungslayers.length; i++) {
+                if (
+                  layername === this.stoerungslayers[i].layername &&
+                  times[index] === this.stoerungslayers[i].time.substring(0, 10)
+                ) {
+                  this.stoerungslayers[i].visible = this.getVisibility(
+                    visibilities,
+                    index
+                  );
+                  this.stoerungslayers[i].opacity = this.getOpacity(
+                    opacities,
+                    index
+                  );
+                  layersToAdd.push(this.stoerungslayers[i]);
+                }
+              }
+            }
+          default:
+            return layersToAdd;
+        }
+      });
+      return layersToAdd;
+    } else {
+      return [];
+    }
+  }
+  /*
+   * used to get a usable visibility value for a layer
+   * which is loaded via url.
+   * @param {array} visibilities - from url param.
+   * @param {number} index - index in visibilities to check.
+   */
+  getVisibility(visibilities, index) {
+    if (!visibilities || !Array.isArray(visibilities) || index < 0) {
+      return true;
+    }
+    return visibilities[index] === "false" ? false : true;
+  }
+
+  /*
+   * used to get a usable opacity value for a layer
+   * which is loaded via url.
+   * @param {array} opacities - from url param.
+   * @param {number} index - index in opacities to check.
+   */
+  getOpacity(opacities, index) {
+    if (!opacities || !Array.isArray(opacities) || index < 0) {
+      return 1;
+    }
+    return opacities[index] ? parseFloat(opacities[index]) : 1;
   }
 
   /*
@@ -197,7 +342,7 @@ class ViewerControl {
    * @param {array} years - the years to display in the dropdown [{displayName:2019},...].
    * @returns {htmlElement} - a div element with all the controls for the viewer.
    */
-  getVitalityControls(years) {
+  getVitalityControls(years, urlParams) {
     const yearObjects = [];
     years.forEach(yearObj => yearObjects.push({ displayName: yearObj.year }));
     const controls = document.createElement("div");
@@ -217,6 +362,14 @@ class ViewerControl {
     layers.classList.add("layers");
     controls.appendChild(monthChips);
     controls.appendChild(layers);
+    // check if there are layers in the url params
+    if (urlParams.layers) {
+      this.addLayersFromUrlParams({
+        urlParams,
+        layerType: "vitalitaet",
+        domContainer: layers
+      });
+    }
     return controls;
   }
 
@@ -388,13 +541,12 @@ class ViewerControl {
       return false;
     }
     layer.toc = true;
-    layer.visible = true;
     this.activeLayers.push(layer);
     if (!layer.wmsLayer) {
       layer.wmsLayer = this.createWmsLayer(layer);
     }
-    layer.wmsLayer.setOpacity(1);
-    layer.wmsLayer.setVisible(true);
+    layer.wmsLayer.setOpacity(layer.opacity);
+    layer.wmsLayer.setVisible(layer.visible);
     this.map.addLayer(layer.wmsLayer);
     layer.domElement = this.createLayerControl(layer);
     domContainer.prepend(layer.domElement);
@@ -412,7 +564,6 @@ class ViewerControl {
    */
   removeLayer(layer) {
     layer.toc = false;
-    layer.visible = false;
     this.map.removeLayer(layer.wmsLayer);
     const layers = document.querySelector(".layers");
     if (layers.contains(layer.domElement)) {
@@ -447,7 +598,7 @@ class ViewerControl {
   /*
    * create the controls for the "Natürliche Störungen" viewer.
    */
-  getStoerungControls() {
+  getStoerungControls(urlParams) {
     const controls = document.createElement("div");
     controls.classList.add("viewerControl__controls");
     const intro = document.createElement("div");
@@ -462,6 +613,10 @@ class ViewerControl {
     dateChips.classList.add("datechips");
     const chipsetEl = document.createElement("div");
     chipsetEl.classList.add("mdc-chip-set", "mdc-chip-set--filter");
+    const layers = document.createElement("div");
+    layers.classList.add("layers");
+    controls.appendChild(chipsetEl);
+    controls.appendChild(layers);
     this.getDimensions().then(response => {
       const year = response[0].split("-")[0];
       yearInfo.innerHTML = `Jahr ${year}`;
@@ -474,12 +629,17 @@ class ViewerControl {
           singleLayer: true
         });
         chipsetEl.appendChild(layer.chip);
+        // we need this to add the layer when it was in the url.
+        this.stoerungslayers.push(layer);
       });
+      if (urlParams.layers) {
+        this.addLayersFromUrlParams({
+          urlParams,
+          layerType: "stoerungen",
+          domContainer: layers
+        });
+      }
     });
-    const layers = document.createElement("div");
-    layers.classList.add("layers");
-    controls.appendChild(chipsetEl);
-    controls.appendChild(layers);
     return controls;
   }
 
@@ -761,7 +921,7 @@ class ViewerControl {
     slider.setAttribute("role", "slider");
     slider.setAttribute("aria-valuemin", "0");
     slider.setAttribute("aria-valuemax", "100");
-    slider.setAttribute("aria-valuenow", "100");
+    slider.setAttribute("aria-valuenow", `${layer.opacity * 100}`);
     slider.setAttribute("ariaLabel", "transparency slider");
     const trackContainer = document.createElement("div");
     const track = document.createElement("div");
@@ -785,6 +945,7 @@ class ViewerControl {
       mdcslider.listen("MDCSlider:input", e => {
         opacity = parseFloat(e.target.getAttribute("aria-valuenow") / 100);
         wmsLayer.setOpacity(opacity);
+        layer.opacity = opacity;
       });
       // wait for the change to be commited before
       // updating the url.

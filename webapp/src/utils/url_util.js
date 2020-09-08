@@ -85,14 +85,18 @@ export const addLayerToUrl = layer => {
   }
   // in case there are already layers loaded
   else {
-    const layers = currentParams.layers.split(",");
+    const layers = currentParams.layers ? currentParams.layers.split(",") : [];
     if (layers.indexOf(layer.layername) !== -1) {
       return;
     }
     layers.unshift(layer.layername);
-    const visibilities = currentParams.visibility.split(",");
+    const visibilities = currentParams.visibility
+      ? currentParams.visibility.split(",")
+      : [];
     visibilities.unshift(layer.visible.toString());
-    const opacities = currentParams.opacity.split(",");
+    const opacities = currentParams.opacity
+      ? currentParams.opacity.split(",")
+      : [];
     opacities.unshift(layer.opacity.toString());
     const newParams = {
       layers: layers.join(","),
@@ -118,8 +122,12 @@ export const removeLayerFromUrl = layer => {
     return false;
   }
   const layers = currentParams.layers.split(",");
-  const visibilities = currentParams.visibility.split(",");
-  const opacities = currentParams.opacity.split(",");
+  const visibilities = currentParams.visibility
+    ? currentParams.visibility.split(",")
+    : [];
+  const opacities = currentParams.opacity
+    ? currentParams.opacity.split(",")
+    : [];
   // search for the array index of the particular layer
   const index = layers.indexOf(layer.layername);
   if (index !== -1) {

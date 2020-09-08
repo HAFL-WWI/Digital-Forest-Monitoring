@@ -86,9 +86,9 @@ const viewerUtil = {
      * @param {string} title - the title to display on top of the layer control.
      */
     showViewer: title => {
+      const urlParams = getQueryParams();
       // we only have to create a new map object, if no one exists.
       if (viewerUtil.model.map === undefined) {
-        const urlParams = getQueryParams();
         viewerUtil.model.map = new Map({
           view: new View({
             center: [urlParams.x || 829300, urlParams.y || 5933555], //defaults to Bern
@@ -121,7 +121,8 @@ const viewerUtil = {
       }
       const viewerControl = new ViewerControl({
         map: viewerUtil.model.map,
-        title
+        title,
+        urlParams
       });
       viewerUtil.model.viewerControl = viewerControl.createControl({
         type: title
