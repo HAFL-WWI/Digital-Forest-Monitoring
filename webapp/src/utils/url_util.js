@@ -87,6 +87,11 @@ export const addLayerToUrl = layer => {
   else {
     const layers = currentParams.layers ? currentParams.layers.split(",") : [];
     if (layers.indexOf(layer.layername) !== -1) {
+      // in case no time parameter is in the url but the layer has one.
+      if (layer.time && !currentParams.time) {
+        currentParams.time = layer.time.substring(0, 10);
+      }
+      updateUrl(currentParams);
       return;
     }
     layers.unshift(layer.layername);
@@ -104,7 +109,6 @@ export const addLayerToUrl = layer => {
       opacity: opacities.join(",")
     };
     if (layer.time) {
-      console.log("update the time attribute...");
       newParams.time = layer.time.substring(0, 10);
     }
     return updateUrl(newParams);
