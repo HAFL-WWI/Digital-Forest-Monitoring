@@ -1,5 +1,5 @@
 import { Map, View } from "ol";
-import { defaults as defaultControls } from "ol/control";
+import { defaults as defaultControls, Control } from "ol/control";
 import { MDCList } from "@material/list";
 import "ol/ol.css";
 import { orthoBasemap, swBasemap, vegetationBasemap } from "./basemap_util";
@@ -9,6 +9,7 @@ import BasemapControl from "./BasemapControl";
 import VHMControl from "./VHMControl";
 import ViewerControl from "./ViewerControl";
 import { updateUrl, getQueryParams, removeParam } from "./url_util";
+import GpsPosition from "./positionUtil";
 
 const viewerUtil = {
   model: {
@@ -70,7 +71,9 @@ const viewerUtil = {
     removeOverlayLayers: () => {
       const currentLayers = viewerUtil.model.map.getLayers().getArray();
       for (var i = currentLayers.length - 1; i > 2; i--) {
-        viewerUtil.model.map.removeLayer(currentLayers[i]);
+        if (!currentLayers[i].name === "gps") {
+          viewerUtil.model.map.removeLayer(currentLayers[i]);
+        }
       }
       return currentLayers;
     },
@@ -113,6 +116,12 @@ const viewerUtil = {
         );
         viewerUtil.model.map.addControl(basemapSwitch.createBasemapControl());
         viewerUtil.model.map.addControl(vhmControl.createVHMControl());
+        // add the positioning control
+        viewerUtil.model.positioning = new GpsPosition(viewerUtil.model.map);
+        const positioning = new Control({
+          element: viewerUtil.model.positioning.getPositionElement()
+        });
+        viewerUtil.model.map.addControl(positioning);
       } else {
         // if we allready have a map object, only set the target.
         viewerUtil.model.map.setTarget(viewerUtil.model.viewerContainer);

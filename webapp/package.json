@@ -36,6 +36,7 @@
     "@material/typography": "^4.0.0",
     "navigo": "^7.1.2",
     "ol": "^6.4.3",
+    "proj4": "^2.6.2",
     "query-string": "^6.13.1"
   },
   "comments": {

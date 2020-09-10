@@ -14,8 +14,11 @@ import {
   closeSidebar
 } from "./main_util";
 import viewerUtil from "./viewer_util";
+import { register } from "ol/proj/proj4";
+import { registerProjections } from "./projectionUtil";
 
 export const init = () => {
+  registerProjections(register);
   initRouter();
   /*
    * normalize css vh to have correct height on mobile devices.

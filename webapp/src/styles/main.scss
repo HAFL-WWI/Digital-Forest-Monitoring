@@ -410,3 +410,19 @@ body:after {
   transform-origin: top left;
   transition: transform, 0.3s;
 }
+
+/*
+* position button animation
+*/
+.animatePositionButton {
+  animation: pulse 1.5s alternate infinite;
+  border: 3px solid red;
+}
+@keyframes pulse {
+  0% {
+    transform: scale(0.75);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
