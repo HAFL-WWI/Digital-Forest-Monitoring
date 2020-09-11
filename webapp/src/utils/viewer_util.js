@@ -137,6 +137,7 @@ const viewerUtil = {
         type: title
       });
       viewerUtil.model.map.addControl(viewerUtil.model.viewerControl);
+      viewerUtil.controller.updateUrlParams(viewerUtil.model.map);
       viewerUtil.model.map.addEventListener("click", e => console.log(e));
     },
     /*
@@ -197,21 +198,29 @@ const viewerUtil = {
     }, 250),
     attachEventListeners: () => {
       viewerUtil.model.map.on("moveend", event => {
-        const view = event.map.getView();
-        const center = view.getCenter();
-        const rotation = parseFloat(view.getRotation()).toFixed(6);
-        const queryParams = {
-          zoom: parseFloat(view.getZoom()).toFixed(4),
-          x: parseInt(center[0]),
-          y: parseInt(center[1])
-        };
-        if (rotation > 0) {
-          queryParams.rotation = rotation;
-        } else {
-          removeParam("rotation");
-        }
-        updateUrl(queryParams);
+        viewerUtil.controller.updateUrlParams(event.map);
       });
+    },
+    /*
+     * update x, y, zoom and rotation url params.
+     * @param {object} map - ol/map instance.
+     * @returns {string} the updatet url
+     */
+    updateUrlParams(map) {
+      const view = map.getView();
+      const center = view.getCenter();
+      const rotation = parseFloat(view.getRotation()).toFixed(6);
+      const queryParams = {
+        zoom: parseFloat(view.getZoom()).toFixed(4),
+        x: parseInt(center[0]),
+        y: parseInt(center[1])
+      };
+      if (rotation > 0) {
+        queryParams.rotation = rotation;
+      } else {
+        removeParam("rotation");
+      }
+      return updateUrl(queryParams);
     }
   },
   view: {

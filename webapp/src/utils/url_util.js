@@ -91,8 +91,7 @@ export const addLayerToUrl = layer => {
       if (layer.time && !currentParams.time) {
         currentParams.time = layer.time.substring(0, 10);
       }
-      updateUrl(currentParams);
-      return;
+      return updateUrl(currentParams);
     }
     layers.unshift(layer.layername);
     const visibilities = currentParams.visibility
