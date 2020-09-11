@@ -71,7 +71,7 @@ const viewerUtil = {
     removeOverlayLayers: () => {
       const currentLayers = viewerUtil.model.map.getLayers().getArray();
       for (var i = currentLayers.length - 1; i > 2; i--) {
-        if (!currentLayers[i].name === "gps") {
+        if (currentLayers[i].name !== "gps") {
           viewerUtil.model.map.removeLayer(currentLayers[i]);
         }
       }
