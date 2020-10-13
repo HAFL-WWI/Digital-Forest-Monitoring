@@ -36,10 +36,18 @@ class ViewerControl {
      Potenzielle Fehlerquellen sind Wolken und andere atmosphärische Störungen.`;
     this.changeOverlays = [
       {
+        layername: "karten-werk:ndvi_decrease_2020_2019",
+        displayName: "Juni 2019 - Juni 2020",
+        description: this.uc1description,
+        visible: true,
+        opacity: 1,
+        toc: false
+      },
+      {
         layername: "karten-werk:ndvi_decrease_2019_2018",
         displayName: "Juni 2018 - Juni 2019",
         description: this.uc1description,
-        visible: true,
+        visible: false,
         opacity: 1,
         toc: false
       },
@@ -75,6 +83,7 @@ class ViewerControl {
       { number: "12-01", text: "Dez/Jan" }
     ];
     this.vitalityLayers = [
+      { year: "2020", month: this.month.slice(5, 8), layers: [] },
       {
         year: "2019",
         month: this.month.slice(5, 8),
