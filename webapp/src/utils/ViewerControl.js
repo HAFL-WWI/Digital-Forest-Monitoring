@@ -681,8 +681,6 @@ class ViewerControl {
         const result = parser.read(text);
         const layers = result.Capability.Layer.Layer;
         const nbr = layers.filter(layer => layer.Name === this.nbr_change)[0];
-        //center the map to Nussbaumen TG.
-        this.map.getView().setCenter([981812.91, 6044778.75]);
         const dimensions = nbr.Dimension[0].values.split(",");
         return dimensions;
       });
