@@ -5,15 +5,20 @@ import TileLayer from "ol/layer/Tile";
 import { TileWMS } from "ol/source";
 import { MDCSlider } from "@material/slider";
 import { MDCSwitch } from "@material/switch";
-import { MDCChipSet, MDCChip } from "@material/chips";
 import { MDCSelect } from "@material/select";
 import { getLayerInfo, openSidebar } from "./main_util";
+import {
+  addLayerToUrl,
+  removeLayerFromUrl,
+  updateUrlVisibilityOpacity
+} from "./url_util";
 
 class ViewerControl {
-  constructor({ map, title }) {
+  constructor({ map, title, urlParams }) {
     this.map = map;
     this.title = title;
-    this.nbr_change = "karten-werk:nbr_change_T32TMT";
+    this.urlParams = urlParams;
+    this.nbr_change = "karten-werk:nbr_ch_2017";
     this.uc1description = `Hinweiskarte für Waldveränderungen (z.B. Holzschläge) 
       auf Basis von Sentinel-2-Satellitenbildern. Die Werte in der Legende 
       beschreiben die Abnahme des <a href="https://de.wikipedia.org/wiki/Normalized_Difference_Vegetation_Index"> NDVI Vegetationsindex</a> zwischen den zwei 
@@ -31,10 +36,19 @@ class ViewerControl {
      Potenzielle Fehlerquellen sind Wolken und andere atmosphärische Störungen.`;
     this.changeOverlays = [
       {
+        layername: "karten-werk:ndvi_decrease_2020_2019",
+        displayName: "Juni 2019 - Juni 2020",
+        description: this.uc1description,
+        visible: true,
+        opacity: 1,
+        toc: false
+      },
+      {
         layername: "karten-werk:ndvi_decrease_2019_2018",
         displayName: "Juni 2018 - Juni 2019",
         description: this.uc1description,
-        visible: true,
+        visible: false,
+        opacity: 1,
         toc: false
       },
       {
@@ -42,6 +56,7 @@ class ViewerControl {
         displayName: "Juni 2017 - Juni 2018",
         description: this.uc1description,
         visible: false,
+        opacity: 1,
         toc: false
       },
       {
@@ -49,6 +64,7 @@ class ViewerControl {
         displayName: "Juni 2016 - Juni 2017",
         description: this.uc1description,
         visible: false,
+        opacity: 1,
         toc: false
       }
     ];
@@ -67,29 +83,35 @@ class ViewerControl {
       { number: "12-01", text: "Dez/Jan" }
     ];
     this.vitalityLayers = [
+      { year: "2020", month: this.month.slice(5, 8), layers: [] },
       {
         year: "2019",
-        month: this.month.slice(5, 8)
+        month: this.month.slice(5, 8),
+        layers: []
       },
-      { year: "2018", month: this.month.slice(5, 8) }
+      { year: "2018", month: this.month.slice(5, 8), layers: [] }
     ];
+    this.stoerungslayers = [];
     this.activeLayers = [];
   }
 
   /*
    * creates an object which can be used to create a time based wms.
    * @param {string} time - iso date format e.g. "2017-08-25".
+   * @param {boolean} visibility - visibility of the layer (on/off).
+   * @param {float} opacity - layer opacity (value between 0 an 1).
    * @returns {object} layer object to use in the createWmsLayer function.
    */
-  getTimeLayerObject(date) {
+  getTimeLayerObject(date, visibility = true, opacity = 1) {
     const fromDate = new Date(date.substring(0, 10)).toLocaleDateString();
     return {
       layername: this.nbr_change,
-      time: date || "2017-08-25",
+      time: date || "2017-08-18",
       infoTitle: `Hinweis auf Veränderungen gemäss Bild vom ${fromDate}`,
       displayName: `Veränderung ${fromDate}`,
       description: this.uc2description,
-      visible: true,
+      visible: visibility,
+      opacity,
       toc: false
     };
   }
@@ -99,14 +121,17 @@ class ViewerControl {
    * @param {object} params - function parameter object.
    * @param {number} params.year - year of the vitality layer e.g. 2018.
    * @param {object} params.month - month of the vitality layer as number and text.
+   * @param {boolean} params.visibility - visibility of the layer (on/off).
+   * @param {float} parmas.opacity - layer opacity (value between 0 an 1).
    * @returns {object} layer object to use in the createWmsLayer function.
    */
-  getVitalityLayerObject({ year, month }) {
+  getVitalityLayerObject({ year, month, visibility = true, opacity = 1 }) {
     return {
       layername: `kartenwerk:ndvi_anomaly_${year}_${month.number}`,
       displayName: `NDVI Anomalien ${month.number} ${year}`,
       description: this.uc3description,
-      visible: true,
+      visible: visibility,
+      opacity,
       toc: false
     };
   }
@@ -116,7 +141,7 @@ class ViewerControl {
    * @returns {HTMLElement} veraenderungControlElement - a div with all the necessary children.
    */
   createControl({ type }) {
-    const veraenderungFragment = new DocumentFragment();
+    const veraenderungContainer = document.createElement("div");
     //title section
     const viewerTitle = document.createElement("div");
     viewerTitle.classList.add("viewerControl__title");
@@ -149,23 +174,26 @@ class ViewerControl {
     // add the necessary controls for every viewer.
     switch (type) {
       case "Natürliche Störungen":
-        this.viewerControls = this.getStoerungControls();
+        this.viewerControls = this.getStoerungControls(this.urlParams);
         break;
       case "Jährliche Veränderung":
-        this.viewerControls = this.getVeraenderungControls();
+        this.viewerControls = this.getVeraenderungControls(this.urlParams);
         break;
       case "Vitalität der Wälder":
-        this.viewerControls = this.getVitalityControls(this.vitalityLayers);
+        this.viewerControls = this.getVitalityControls(
+          this.vitalityLayers,
+          this.urlParams
+        );
         break;
       default:
         return;
     }
-    veraenderungFragment.appendChild(viewerTitle);
+    veraenderungContainer.appendChild(viewerTitle);
     if (this.viewerControls) {
-      veraenderungFragment.appendChild(this.viewerControls);
+      veraenderungContainer.appendChild(this.viewerControls);
     }
     const veraenderungControl = new Control({
-      element: veraenderungFragment
+      element: veraenderungContainer
     });
     return veraenderungControl;
   }
@@ -174,7 +202,7 @@ class ViewerControl {
    * create the controls for the "Jährliche Veranderung" viewer.
    * @returns {htmlElement} - a div element with all the controls for the viewer.
    */
-  getVeraenderungControls() {
+  getVeraenderungControls(urlParams) {
     const controls = document.createElement("div");
     controls.classList.add("viewerControl__controls");
     const dropdown = this.createLayerDropdown(this.changeOverlays);
@@ -182,9 +210,140 @@ class ViewerControl {
     const layers = document.createElement("div");
     layers.classList.add("layers");
     controls.appendChild(layers);
-    // add the first layer to the toc and the map
-    this.addLayer({ layer: this.changeOverlays[0], domContainer: layers });
+    // check if there are layers in the url params
+    if (urlParams.layers) {
+      this.addLayersFromUrlParams({
+        urlParams,
+        layerType: "veraenderung",
+        domContainer: layers
+      });
+    }
+    if (this.activeLayers.length === 0) {
+      // if no layers in the urlParams, add the first layer to the toc and the map
+      this.addLayer({ layer: this.changeOverlays[0], domContainer: layers });
+    }
     return controls;
+  }
+
+  /*
+   * add layers from url parameters to the map
+   */
+  addLayersFromUrlParams({ urlParams, layerType, domContainer } = {}) {
+    const layersToAdd = this.getLayersFromUrlParams({
+      urlParams,
+      layerType
+    });
+    if (layersToAdd.length > 0) {
+      for (var i = layersToAdd.length; i >= 0; i--) {
+        this.addLayer({ layer: layersToAdd[i], domContainer });
+      }
+    }
+  }
+
+  /*
+   * get layer objects from url parameters
+   * @param {object} urlParams - url parameter object
+   * @returns {array} layersToAdd - layer objects which can be added to the map.
+   */
+  getLayersFromUrlParams({ urlParams, layerType } = {}) {
+    const layerArr = urlParams.layers.split(",");
+    const visibilities = urlParams.visibility
+      ? urlParams.visibility.split(",")
+      : [];
+    const opacities = urlParams.opacity ? urlParams.opacity.split(",") : [];
+    const times = urlParams.time ? urlParams.time.split(",") : [];
+    if (layerArr.length > 0) {
+      const layersToAdd = [];
+      // get the right veraenderung layer and add it to the viewer
+      layerArr.forEach((layername, index) => {
+        switch (layerType) {
+          case "veraenderung":
+            for (var i = 0; i < this.changeOverlays.length; i++) {
+              if (this.changeOverlays[i].layername === layername) {
+                this.changeOverlays[i].visible = this.getVisibility(
+                  visibilities,
+                  index
+                );
+                this.changeOverlays[i].opacity = this.getOpacity(
+                  opacities,
+                  index
+                );
+                layersToAdd.push(this.changeOverlays[i]);
+              }
+            }
+            break;
+          case "vitalitaet":
+            const splitted = layername.split("_");
+            const year = splitted[2];
+            const month = splitted[3];
+            for (var i = 0; i < this.vitalityLayers.length; i++) {
+              if (
+                this.vitalityLayers[i].year === year &&
+                this.vitalityLayers[i].layers.length > 0
+              ) {
+                this.vitalityLayers[i].layers.forEach(layer => {
+                  const layerMonth = layer.layername.split("_")[3];
+                  if (month === layerMonth) {
+                    layer.visible = this.getVisibility(visibilities, index);
+                    layer.opacity = this.getOpacity(opacities, index);
+                    layersToAdd.push(layer);
+                  }
+                });
+              }
+            }
+            break;
+          case "stoerungen":
+            if (Array.isArray(times) && times.length > 0) {
+              for (var i = 0; i < this.stoerungslayers.length; i++) {
+                if (
+                  layername === this.stoerungslayers[i].layername &&
+                  times[index] === this.stoerungslayers[i].time.substring(0, 10)
+                ) {
+                  this.stoerungslayers[i].visible = this.getVisibility(
+                    visibilities,
+                    index
+                  );
+                  this.stoerungslayers[i].opacity = this.getOpacity(
+                    opacities,
+                    index
+                  );
+                  layersToAdd.push(this.stoerungslayers[i]);
+                }
+              }
+            }
+          default:
+            return layersToAdd;
+        }
+      });
+      return layersToAdd;
+    } else {
+      return [];
+    }
+  }
+  /*
+   * used to get a usable visibility value for a layer
+   * which is loaded via url.
+   * @param {array} visibilities - from url param.
+   * @param {number} index - index in visibilities to check.
+   */
+  getVisibility(visibilities, index) {
+    if (!visibilities || !Array.isArray(visibilities) || index < 0) {
+      return true;
+    }
+    return visibilities[index] === "false" ? false : true;
+  }
+
+  /*
+   * used to get a usable opacity value for a layer
+   * which is loaded via url.
+   * @param {array} opacities - from url param.
+   * @param {number} index - index in opacities to check.
+   */
+  getOpacity(opacities, index) {
+    if (!opacities || !Array.isArray(opacities) || index < 0) {
+      return 1;
+    }
+    return opacities[index] ? parseFloat(opacities[index]) : 1;
   }
 
   /*
@@ -192,7 +351,7 @@ class ViewerControl {
    * @param {array} years - the years to display in the dropdown [{displayName:2019},...].
    * @returns {htmlElement} - a div element with all the controls for the viewer.
    */
-  getVitalityControls(years) {
+  getVitalityControls(years, urlParams) {
     const yearObjects = [];
     years.forEach(yearObj => yearObjects.push({ displayName: yearObj.year }));
     const controls = document.createElement("div");
@@ -200,12 +359,11 @@ class ViewerControl {
     const monthChips = document.createElement("div");
     monthChips.classList.add("monthchips");
     const title = document.createElement("div");
-    title.classList.add("chips-title");
+    title.classList.add("viewerControl__yearinfo");
     title.innerText = "Monate:";
     monthChips.appendChild(title);
     const chipsetEl = document.createElement("div");
     chipsetEl.classList.add("mdc-chip-set", "mdc-chip-set--filter");
-    this.chipset = new MDCChipSet(chipsetEl);
     monthChips.appendChild(chipsetEl);
     const dropdown = this.createVitalityDropdown(yearObjects, chipsetEl);
     controls.appendChild(dropdown);
@@ -213,6 +371,14 @@ class ViewerControl {
     layers.classList.add("layers");
     controls.appendChild(monthChips);
     controls.appendChild(layers);
+    // check if there are layers in the url params
+    if (urlParams.layers) {
+      this.addLayersFromUrlParams({
+        urlParams,
+        layerType: "vitalitaet",
+        domContainer: layers
+      });
+    }
     return controls;
   }
 
@@ -221,7 +387,9 @@ class ViewerControl {
    * @param {array} layers - array of layer objects.
    */
   removeMapOverlays(layers) {
-    layers.forEach(layer => this.map.removeLayer(layer.wmsLayer));
+    layers.forEach(layer => {
+      this.removeLayer(layer);
+    });
   }
 
   /*
@@ -321,26 +489,28 @@ class ViewerControl {
    * @param {domElement} chipset - container for the chips.
    * @returns {domElement} dropdown menu with years to choose.
    */
-  createVitalityDropdown(years, chipset) {
+  createVitalityDropdown(years, chipsetEl) {
     const { dropdownContainer, mdcSelect } = this.createMDCDropdown(
       "Jahr wählen"
     );
+    // create all potential layers
+    this.vitalityLayers.forEach(element => {
+      element.month.forEach(month => {
+        const layer = this.getVitalityLayerObject({
+          year: element.year,
+          month
+        });
+        layer.chip = this.createChip({ label: month.text, layer });
+        element.layers.push(layer);
+      });
+    });
     const callback = e => {
-      chipset.innerHTML = "";
+      chipsetEl.innerHTML = "";
       const year = e.detail.value;
       const selectedYear = this.vitalityLayers.filter(
         layer => layer.year.toString() === year.toString()
       )[0];
-      selectedYear.month.forEach(month => {
-        const monthChipElement = this.createMonthChip(year, month);
-        const layer = this.getVitalityLayerObject({ year, month });
-        layer.chip = new MDCChip(monthChipElement);
-        layer.chip.listen("click", () => {
-          this.handleChipClick({ layer, singleLayer: false });
-        });
-        chipset.appendChild(monthChipElement);
-        this.chipset.addChip(monthChipElement);
-      });
+      selectedYear.layers.forEach(layer => chipsetEl.appendChild(layer.chip));
     };
     const select = this.createSelectMenu({
       items: years,
@@ -381,15 +551,19 @@ class ViewerControl {
       return false;
     }
     layer.toc = true;
-    layer.visible = true;
+    this.activeLayers.push(layer);
     if (!layer.wmsLayer) {
       layer.wmsLayer = this.createWmsLayer(layer);
     }
-    layer.wmsLayer.setOpacity(1);
-    layer.wmsLayer.setVisible(true);
+    layer.wmsLayer.setOpacity(layer.opacity);
+    layer.wmsLayer.setVisible(layer.visible);
     this.map.addLayer(layer.wmsLayer);
     layer.domElement = this.createLayerControl(layer);
     domContainer.prepend(layer.domElement);
+    if (layer.chip) {
+      layer.chip.classList.add("chip--selected");
+    }
+    addLayerToUrl({ ...layer, opacity: layer.wmsLayer.getOpacity() });
     return layer;
   }
 
@@ -400,12 +574,16 @@ class ViewerControl {
    */
   removeLayer(layer) {
     layer.toc = false;
-    layer.visible = false;
     this.map.removeLayer(layer.wmsLayer);
     const layers = document.querySelector(".layers");
     if (layers.contains(layer.domElement)) {
       layers.removeChild(layer.domElement);
     }
+    this.activeLayers.splice(this.activeLayers.indexOf(layer), 1);
+    if (layer.chip) {
+      layer.chip.classList.remove("chip--selected");
+    }
+    removeLayerFromUrl(layer);
     return layer;
   }
 
@@ -419,7 +597,7 @@ class ViewerControl {
     layerControl.classList.add("viewerControl__controls-control");
     layerControl.appendChild(this.getSwitch({ overlay: layer }));
     layerControl.appendChild(this.getLayerRemoveButton(layer));
-    layerControl.appendChild(this.getSlider(layer.wmsLayer));
+    layerControl.appendChild(this.getSlider(layer));
     if (this.title === "Natürliche Störungen") {
       layerControl.appendChild(this.getSentinelLink(layer));
     }
@@ -430,7 +608,7 @@ class ViewerControl {
   /*
    * create the controls for the "Natürliche Störungen" viewer.
    */
-  getStoerungControls() {
+  getStoerungControls(urlParams) {
     const controls = document.createElement("div");
     controls.classList.add("viewerControl__controls");
     const intro = document.createElement("div");
@@ -445,55 +623,34 @@ class ViewerControl {
     dateChips.classList.add("datechips");
     const chipsetEl = document.createElement("div");
     chipsetEl.classList.add("mdc-chip-set", "mdc-chip-set--filter");
-    this.chipset = new MDCChipSet(chipsetEl);
+    const layers = document.createElement("div");
+    layers.classList.add("layers");
+    controls.appendChild(chipsetEl);
+    controls.appendChild(layers);
     this.getDimensions().then(response => {
       const year = response[0].split("-")[0];
       yearInfo.innerHTML = `Jahr ${year}`;
       response.forEach(date => {
         const layer = this.getTimeLayerObject(date);
-        const chipEl = this.createDateChip(date);
-        layer.chip = new MDCChip(chipEl);
-        layer.chip.listen("click", () => {
-          this.handleChipClick({ layer });
+        const printDate = date.substring(0, 10);
+        layer.chip = this.createChip({
+          label: this.formatDateString(printDate),
+          layer,
+          singleLayer: true
         });
-        chipsetEl.appendChild(chipEl);
-        this.chipset.addChip(chipEl);
+        chipsetEl.appendChild(layer.chip);
+        // we need this to add the layer when it was in the url.
+        this.stoerungslayers.push(layer);
       });
+      if (urlParams.layers) {
+        this.addLayersFromUrlParams({
+          urlParams,
+          layerType: "stoerungen",
+          domContainer: layers
+        });
+      }
     });
-    const layers = document.createElement("div");
-    layers.classList.add("layers");
-    controls.appendChild(chipsetEl);
-    controls.appendChild(layers);
     return controls;
-  }
-
-  /*
-   * handles klick events on a chip.
-   * @paran {object} layer - layer object to use in the createWmsLayer function.
-   * @returns {void}
-   */
-  handleChipClick({ layer, singleLayer = true } = {}) {
-    if (!layer) {
-      return;
-    }
-    const { chip } = layer;
-    const domContainer = document.querySelector(".layers");
-    // remove the layer from the dom and the map if we are in singleLayer mode
-    if (singleLayer) {
-      domContainer.innerHTML = "";
-      this.removeMapOverlays(this.activeLayers);
-      this.unselectChips({ chipset: this.chipset, id: chip.id });
-    }
-    chip.selected = !chip.selected;
-    if (chip.selected === false) {
-      this.addLayer({
-        layer,
-        domContainer
-      });
-      this.activeLayers.push(layer);
-    } else {
-      this.removeLayer(layer);
-    }
   }
 
   /*
@@ -503,13 +660,12 @@ class ViewerControl {
    * @param {string} params.id - the id of the string that should be selected.
    * @returns {MDLChipset} - chipset with updated chips.
    */
-  unselectChips({ chipset, id }) {
-    chipset.chips.forEach(chip => {
-      if (chip.id !== id) {
-        chip.selected = false;
-      }
-    });
-    return chipset;
+  unselectChips() {
+    const chips = document.getElementsByClassName("chip");
+    for (var i = 0; i < chips.length; i++) {
+      chips.item(i).classList.remove("chip--selected");
+    }
+    return chips;
   }
 
   /*
@@ -525,58 +681,39 @@ class ViewerControl {
         const result = parser.read(text);
         const layers = result.Capability.Layer.Layer;
         const nbr = layers.filter(layer => layer.Name === this.nbr_change)[0];
-        //center the map to Nussbaumen TG.
-        this.map.getView().setCenter([981812.91, 6044778.75]);
         const dimensions = nbr.Dimension[0].values.split(",");
         return dimensions;
       });
   }
 
   /*
-   * create a single date chip for the "Natürliche Störungen" viewer.
-   * @param {string} date - the text content of the chip.
-   * @returns {htmlElement} chip - MDCChip markup.
-   */
-  createDateChip(date) {
-    const printDate = date.substring(0, 10);
-    const chip = document.createElement("button");
-    chip.setAttribute("data-name", `${printDate}`);
-    chip.classList.add("mdc-chip");
-    const checkmark = document.createElement("span");
-    checkmark.classList.add("mdc-chip__checkmark");
-    checkmark.innerHTML = `<svg class="mdc-chip__checkmark-svg" viewBox="-2 -3 30 30">
-    <path class="mdc-chip__checkmark-path" fill="none" stroke="black"
-          d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
-  </svg>`;
-    const content = document.createElement("span");
-    content.classList.add("mdc-chip__text");
-    content.innerHTML = this.formatDateString(printDate);
-    chip.appendChild(checkmark);
-    chip.appendChild(content);
-    return chip;
-  }
-
-  /*
-   * create a single month chip for the "Vitalität der Wälder" viewer.
+   * create a chip for the "Vitalität der Wälder" viewer.
    * @param {number} year - 2018, 2019....
    * @param {object} month - {monthNumber:"06-07":monthText:"Jun/Jul"}.
-   * @returns {htmlElement} chip - MDCChip markup.
+   * @returns {htmlElement} chip.
    */
-  createMonthChip(year, month) {
-    const chip = document.createElement("button");
-    chip.setAttribute("data-month", `${year}_${month.number}`);
-    chip.classList.add("mdc-chip");
-    const checkmark = document.createElement("span");
-    checkmark.classList.add("mdc-chip__checkmark");
-    checkmark.innerHTML = `<svg class="mdc-chip__checkmark-svg" viewBox="-2 -3 30 30">
-    <path class="mdc-chip__checkmark-path" fill="none" stroke="black"
-          d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
-  </svg>`;
+  createChip({ label, layer, singleLayer = false } = {}) {
+    label = label ? label : "unbekannt";
+    const chip = document.createElement("div");
+    chip.classList.add("chip");
     const chipContent = document.createElement("span");
-    chipContent.classList.add("mdc-chip__text");
-    chipContent.innerHTML = month.text;
-    chip.appendChild(checkmark);
+    chipContent.classList.add("chip__content");
+    chipContent.innerHTML = label;
     chip.appendChild(chipContent);
+    chip.addEventListener("click", e => {
+      const domContainer = document.querySelector(".layers");
+      if (singleLayer) {
+        this.removeMapOverlays(this.activeLayers);
+      }
+      if (layer.toc === true) {
+        this.removeLayer(layer);
+      } else {
+        this.addLayer({
+          layer,
+          domContainer
+        });
+      }
+    });
     return chip;
   }
 
@@ -665,7 +802,7 @@ class ViewerControl {
     return layerInfo;
   }
 
-  getLayerRemoveButton(overlay) {
+  getLayerRemoveButton(layer) {
     const removeLayer = document.createElement("button");
     removeLayer.title = "Layer entfernen";
     removeLayer.classList.add(
@@ -675,10 +812,7 @@ class ViewerControl {
     );
     removeLayer.innerHTML = "remove_circle";
     removeLayer.addEventListener("click", () => {
-      this.removeLayer(overlay);
-      if (overlay.chip) {
-        overlay.chip.selected = false;
-      }
+      this.removeLayer(layer);
     });
     return removeLayer;
   }
@@ -748,7 +882,12 @@ class ViewerControl {
     if (overlay.wmsLayer && overlay.displayName) {
       input.addEventListener("change", e => {
         overlay.wmsLayer.setVisible(e.target.checked);
+        overlay.visible = e.target.checked;
         input.setAttribute("aria-checked", e.target.checked.toString());
+        updateUrlVisibilityOpacity({
+          ...overlay,
+          opacity: overlay.wmsLayer.getOpacity()
+        });
       });
     }
     label.setAttribute("for", `${overlay.layername}_switch`);
@@ -770,10 +909,11 @@ class ViewerControl {
 
   /*
    * creates the layer transparency slider.
-   * @param {ol/TileLayer} - openlayers tile overlay.
-   * @returns {DocumentFragment} slider - transparency slider.
+   * @param {object} layer - layer object.
+   * @returns {Div Element} sliderContainer - transparency slider.
    */
-  getSlider(wmsLayer) {
+  getSlider(layer) {
+    const { wmsLayer } = layer;
     const sliderContainer = document.createElement("div");
     sliderContainer.classList.add("slidercontainer");
     const opacityIcon = document.createElement("i");
@@ -789,7 +929,7 @@ class ViewerControl {
     slider.setAttribute("role", "slider");
     slider.setAttribute("aria-valuemin", "0");
     slider.setAttribute("aria-valuemax", "100");
-    slider.setAttribute("aria-valuenow", "100");
+    slider.setAttribute("aria-valuenow", `${layer.opacity * 100}`);
     slider.setAttribute("ariaLabel", "transparency slider");
     const trackContainer = document.createElement("div");
     const track = document.createElement("div");
@@ -807,13 +947,21 @@ class ViewerControl {
     slider.appendChild(thumbContainer);
     sliderContainer.appendChild(opacityIcon);
     sliderContainer.appendChild(slider);
+    let opacity = 1;
     window.requestAnimationFrame(() => {
       const mdcslider = new MDCSlider(slider);
       mdcslider.listen("MDCSlider:input", e => {
-        const opacity = parseFloat(
-          e.target.getAttribute("aria-valuenow") / 100
-        );
+        opacity = parseFloat(e.target.getAttribute("aria-valuenow") / 100);
         wmsLayer.setOpacity(opacity);
+        layer.opacity = opacity;
+      });
+      // wait for the change to be commited before
+      // updating the url.
+      mdcslider.listen("MDCSlider:change", e => {
+        updateUrlVisibilityOpacity({
+          ...layer,
+          opacity
+        });
       });
     });
 

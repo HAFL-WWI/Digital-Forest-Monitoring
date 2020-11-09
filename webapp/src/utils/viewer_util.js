@@ -1,5 +1,5 @@
 import { Map, View } from "ol";
-import { defaults as defaultControls } from "ol/control";
+import { defaults as defaultControls, Control } from "ol/control";
 import { MDCList } from "@material/list";
 import "ol/ol.css";
 import { orthoBasemap, swBasemap, vegetationBasemap } from "./basemap_util";
@@ -8,6 +8,8 @@ import { textField } from "./init";
 import BasemapControl from "./BasemapControl";
 import VHMControl from "./VHMControl";
 import ViewerControl from "./ViewerControl";
+import { updateUrl, getQueryParams, removeParam } from "./url_util";
+import GpsPosition from "./positionUtil";
 
 const viewerUtil = {
   model: {
@@ -27,6 +29,7 @@ const viewerUtil = {
       viewerUtil.controller.removeContent();
       viewerUtil.controller.createContainer();
       viewerUtil.controller.showViewer(title);
+      viewerUtil.controller.attachEventListeners();
       viewerUtil.model.searchList = new MDCList(
         document.querySelector(".mdc-list")
       );
@@ -68,7 +71,9 @@ const viewerUtil = {
     removeOverlayLayers: () => {
       const currentLayers = viewerUtil.model.map.getLayers().getArray();
       for (var i = currentLayers.length - 1; i > 2; i--) {
-        viewerUtil.model.map.removeLayer(currentLayers[i]);
+        if (currentLayers[i].name !== "gps") {
+          viewerUtil.model.map.removeLayer(currentLayers[i]);
+        }
       }
       return currentLayers;
     },
@@ -84,14 +89,16 @@ const viewerUtil = {
      * @param {string} title - the title to display on top of the layer control.
      */
     showViewer: title => {
+      const urlParams = getQueryParams();
       // we only have to create a new map object, if no one exists.
       if (viewerUtil.model.map === undefined) {
         viewerUtil.model.map = new Map({
           view: new View({
-            center: [829300, 5933555], //Bern
-            zoom: 13,
+            center: [urlParams.x || 829300, urlParams.y || 5933555], //defaults to Bern
+            zoom: urlParams.zoom || 13,
             minZoom: 9,
-            maxZoom: 21
+            maxZoom: 20,
+            rotation: parseFloat(urlParams.rotation) || 0
           }),
           layers: [orthoBasemap, swBasemap, vegetationBasemap],
           target: "map",
@@ -99,10 +106,22 @@ const viewerUtil = {
             attributionOptions: { collapsible: false }
           })
         });
-        const basemapSwitch = new BasemapControl(viewerUtil.model.map);
-        const vhmControl = new VHMControl(viewerUtil.model.map);
+        const basemapSwitch = new BasemapControl(
+          viewerUtil.model.map,
+          urlParams.basemap || "Orthofoto"
+        );
+        const vhmControl = new VHMControl(
+          viewerUtil.model.map,
+          urlParams.vhm ? true : false
+        );
         viewerUtil.model.map.addControl(basemapSwitch.createBasemapControl());
         viewerUtil.model.map.addControl(vhmControl.createVHMControl());
+        // add the positioning control
+        viewerUtil.model.positioning = new GpsPosition(viewerUtil.model.map);
+        const positioning = new Control({
+          element: viewerUtil.model.positioning.getPositionElement()
+        });
+        viewerUtil.model.map.addControl(positioning);
       } else {
         // if we allready have a map object, only set the target.
         viewerUtil.model.map.setTarget(viewerUtil.model.viewerContainer);
@@ -111,12 +130,14 @@ const viewerUtil = {
       }
       const viewerControl = new ViewerControl({
         map: viewerUtil.model.map,
-        title
+        title,
+        urlParams
       });
       viewerUtil.model.viewerControl = viewerControl.createControl({
         type: title
       });
       viewerUtil.model.map.addControl(viewerUtil.model.viewerControl);
+      viewerUtil.controller.updateUrlParams(viewerUtil.model.map);
       viewerUtil.model.map.addEventListener("click", e => console.log(e));
     },
     /*
@@ -174,7 +195,33 @@ const viewerUtil = {
         };
         request.send();
       }
-    }, 250)
+    }, 250),
+    attachEventListeners: () => {
+      viewerUtil.model.map.on("moveend", event => {
+        viewerUtil.controller.updateUrlParams(event.map);
+      });
+    },
+    /*
+     * update x, y, zoom and rotation url params.
+     * @param {object} map - ol/map instance.
+     * @returns {string} the updatet url
+     */
+    updateUrlParams(map) {
+      const view = map.getView();
+      const center = view.getCenter();
+      const rotation = parseFloat(view.getRotation()).toFixed(6);
+      const queryParams = {
+        zoom: parseFloat(view.getZoom()).toFixed(4),
+        x: parseInt(center[0]),
+        y: parseInt(center[1])
+      };
+      if (rotation > 0) {
+        queryParams.rotation = rotation;
+      } else {
+        removeParam("rotation");
+      }
+      return updateUrl(queryParams);
+    }
   },
   view: {
     /*
@@ -192,12 +239,6 @@ const viewerUtil = {
     removeViewerControls() {
       if (viewerUtil.model.viewerControl) {
         viewerUtil.model.map.removeControl(viewerUtil.model.viewerControl);
-        const viewerTitle = document.querySelector(".viewerControl__title");
-        const viewerControls = document.querySelector(
-          ".viewerControl__controls"
-        );
-        viewerTitle.parentNode.removeChild(viewerTitle);
-        viewerControls.parentNode.removeChild(viewerControls);
       }
     }
   }

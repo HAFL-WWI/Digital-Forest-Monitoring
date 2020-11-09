@@ -3,9 +3,35 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import GeoJSON from "ol/format/GeoJSON";
 import { getCenter } from "ol/extent";
+import { dialog } from "./init";
+export const topAppBarRight = document.querySelector(
+  ".top-app-bar__section--align-end"
+);
 const appBarTitle = document.getElementsByClassName("top-app-bar__title")[0];
-export const sidebar = document.querySelector(".sidebar");
 const sidebarContent = document.querySelector(".sidebar__content");
+export const sidebar = document.querySelector(".sidebar");
+export const content = document.getElementsByClassName("content")[0];
+
+/*
+ * removes the content below the appBar.
+ */
+export const removeContent = () => {
+  content.innerHTML = "";
+};
+
+/*
+ * creates the grid layout containing description.
+ * @returns {HTMLElement} grid - a div with a MDCGrid inside.
+ */
+export const createGrid = () => {
+  const grid = document.createElement("div");
+  const gridInner = document.createElement("div");
+  grid.classList.add("mdc-layout-grid");
+  gridInner.classList.add("mdc-layout-grid__inner");
+  grid.appendChild(gridInner);
+  return grid;
+};
+
 /*
  * changes the top appbar title.
  * @param {string} title - the new title to display.
@@ -18,6 +44,62 @@ export const setTitle = title => {
   appBarTitle.innerHTML = title;
   return true;
 };
+
+/*
+ * remove old video links from the top-app-bar and add add a new one.
+ * @param {object} params - function parameter object.
+ * @param {string} params.title - the video title.
+ * @param {string} params.id - youtube video id.
+ * @returns {boolean} - true in case of success, false otherwise.
+ */
+export const addVideoLink = ({ title, videoId } = {}) => {
+  if (!videoId) {
+    return false;
+  }
+  removeVideoLink();
+  topAppBarRight.appendChild(getVideoLink({ title, videoId }));
+  return true;
+};
+
+/*
+ * remove the video link from the top-app-bar
+ */
+export const removeVideoLink = () => {
+  if (topAppBarRight.children.length === 3) {
+    topAppBarRight.removeChild(topAppBarRight.children[2]);
+  }
+};
+
+/*
+ * creates a top-app-bar video link.
+ * @param {object} params - function parameter object.
+ * @param {string} params.title - the video title.
+ * @param {string} params.videoId - youtube video id.
+ * @returns {domElement} - image link which opens a modal with the video.
+ */
+export const getVideoLink = ({ title, videoId } = {}) => {
+  if (!videoId) {
+    return false;
+  }
+  const videoLink = document.createElement("button");
+  videoLink.classList.add(
+    "material-icons",
+    "mdc-top-app-bar__action-item",
+    "mdc-icon-button"
+  );
+  videoLink.ariaLabel = "video";
+  videoLink.innerHTML = "live_tv";
+  videoLink.title = "Erklärungsvideo";
+  videoLink.addEventListener("click", () => {
+    dialogTitle.innerHTML = `Dokumentation ${title}`;
+    dialogContent.innerHTML = getVideoElement(videoId);
+    dialog.open();
+  });
+  return videoLink;
+};
+
+export const getVideoElement = videoId =>
+  `<div class="videoWrapper"><iframe width="560" height="349" src="https://www.youtube.com/embed/${videoId}?rel=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
 
 /*
  * calculates the title based on the window.width.
@@ -55,9 +137,12 @@ export const impressum = {
   Geodiensten zu den entsprechenden Use-Cases.
 <br /></br />
 <strong>Zur Zeit sind die bereitgestellten Daten und Services ausschliesslich für Testzwecke gedacht.</strong>
-<br /></br />
-Ansprechperson BFH-HAFL: Dominique Weber (+41 31 910 29 32,
-<a href="mailto:dominique.weber@bfh.ch">dominique.weber@bfh.ch</a>)`
+<br />
+<h4 style="margin-bottom:8px">Ansprechpersonen:</h4>
+<strong>BFH-HAFL:</strong> Alexandra Erbach (+41 31 910 22 75,
+<a href="mailto:alexandra.erbach@bfh.ch">alexandra.erbach@bfh.ch</a>)<br />
+<strong>Website/Geodienste:</strong> Karten-Werk GmbH, Hanskaspar Frei, (+41 79 360 72 83,
+  <a href="mailto:hkfrei@karten-werk.ch">hkfrei@karten-werk.ch</a>)</p>`
 };
 
 export const getLayerInfo = overlay => {
@@ -94,10 +179,10 @@ export const positionSearchResultContainer = () => {
 
 export const debounce = (func, wait, immediate) => {
   var timeout;
-  return function() {
+  return function () {
     var context = this,
       args = arguments;
-    var later = function() {
+    var later = function () {
       timeout = null;
       if (!immediate) func.apply(context, args);
     };
@@ -187,7 +272,7 @@ const styles = {
  * @param {object} feature - geojson feature.
  * @returns {object} ol/Style object.
  */
-const styleFunction = function(feature) {
+const styleFunction = function (feature) {
   return styles[feature.getGeometry().getType()];
 };
 

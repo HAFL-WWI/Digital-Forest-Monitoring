@@ -2,6 +2,7 @@ import Navigo from "navigo";
 import homepageUtil from "./homepage_util";
 import viewerUtil from "./viewer_util";
 import servicesUtil from "./services_util";
+import descriptionUtil from "./description_util";
 import {
   setTitle,
   getTitle,
@@ -9,7 +10,9 @@ import {
   hideTitle,
   positionSearchResultContainer,
   closeSidebar,
-  sidebar
+  sidebar,
+  addVideoLink,
+  removeVideoLink
 } from "./main_util";
 export const router = new Navigo(null, false, "#");
 export const initRouter = () => {
@@ -20,6 +23,7 @@ export const initRouter = () => {
         homepageUtil.controller.init();
         setTitle(getTitle());
         showTitle();
+        removeVideoLink();
       },
       "/veraenderung": () => {
         // we dont't want a short sidebar transition on startup
@@ -27,6 +31,10 @@ export const initRouter = () => {
         sidebar.style.transition = "transform 0.3s";
         hideTitle();
         textField.style.display = "inline-flex";
+        addVideoLink({
+          title: "jährliche Veränderung",
+          videoId: "mYK2KJqgrhM"
+        });
         viewerUtil.controller.init({ title: "Jährliche Veränderung" });
         positionSearchResultContainer();
       },
@@ -36,6 +44,7 @@ export const initRouter = () => {
         sidebar.style.transition = "transform 0.3s";
         hideTitle();
         textField.style.display = "inline-flex";
+        addVideoLink({ title: "natürliche Störungen", videoId: "aamvbhKXoNU" });
         viewerUtil.controller.init({ title: "Natürliche Störungen" });
         positionSearchResultContainer();
       },
@@ -45,12 +54,23 @@ export const initRouter = () => {
         sidebar.style.transition = "transform 0.3s";
         hideTitle();
         textField.style.display = "inline-flex";
+        addVideoLink({
+          title: "hinweiskarten zur Vitalität",
+          videoId: "wraBOBSfcdk"
+        });
         viewerUtil.controller.init({ title: "Vitalität der Wälder" });
         positionSearchResultContainer();
       },
       "/services": () => {
+        removeVideoLink();
         servicesUtil.controller.init();
         setTitle("Geodienste");
+      },
+      "/projektbeschrieb": () => {
+        removeVideoLink();
+        setTitle("Projektbeschrieb");
+        descriptionUtil.controller.init();
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
       }
     })
     .resolve();

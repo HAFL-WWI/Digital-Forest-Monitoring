@@ -1,8 +1,10 @@
-import veraenderungImage from "../img/jaehrl_veraenderung.jpg";
-import sturmschaedenImage from "../img/sturmschaeden.jpg";
-import vitalitaetImage from "../img/vitalitaet.jpg";
-import geoservices from "../img/geoservices.jpg";
+import useCase1Image from "url:../img/Use-Case1_600.jpg";
+import useCase2Image from "url:../img/Use-Case2_600.jpg";
+import useCase3Image from "url:../img/Use-Case3_600.jpg";
+import geoservices from "url:../img/geoservices.jpg";
+import projektbeschriebImage from "url:../img/projektbeschrieb.png";
 import { router } from "./router";
+import { createGrid } from "./main_util";
 const homepageUtil = {
   model: {
     /*
@@ -23,7 +25,7 @@ const homepageUtil = {
      */
     cards: {
       veraenderung: {
-        image: veraenderungImage,
+        image: useCase1Image,
         title: "Jährliche Veränderung",
         subtitle: "Geodaten: Dominique Weber, HAFL",
         description:
@@ -33,7 +35,7 @@ const homepageUtil = {
         route: "/veraenderung"
       },
       stoerung: {
-        image: sturmschaedenImage,
+        image: useCase2Image,
         title: "Test Sommersturmschäden 2017",
         subtitle: "Geodaten: Dominique Weber, HAFL",
         description:
@@ -43,12 +45,12 @@ const homepageUtil = {
         linktext: "zum viewer"
       },
       vitalitaet: {
-        image: vitalitaetImage,
+        image: useCase3Image,
         title: "Hinweiskarten zur Vitalität",
         subtitle: "Geodaten: Dominique Weber, HAFL",
         description:
-        "Trockenheit führte in den vergangen Jahren vermehrt zu Waldschäden. "+
-        "Hier finden Sie Hinweiskarten zur Vitalität der Wälder.",
+          "Trockenheit führte in den vergangen Jahren vermehrt zu Waldschäden. " +
+          "Hier finden Sie Hinweiskarten zur Vitalität der Wälder.",
         route: "/vitalitaet",
         linktext: "zum viewer"
       },
@@ -61,6 +63,16 @@ const homepageUtil = {
           "importieren und mit Ihren eigenen Geodaten kombinieren.",
         route: "/services",
         linktext: "zu den Services"
+      },
+      projektbeschrieb: {
+        image: projektbeschriebImage,
+        title: "Projektbeschrieb",
+        subtitle: "Hintergrundwissen und Videoanleitungen",
+        description:
+          "Auf dieser Seite finden Sie Hinweise zur Verwendung der Kartenviewer und Geodienste " +
+          "sowie Videoanleitungen und Hintergrundinformationen.",
+        route: "/projektbeschrieb",
+        linktext: "zum Projektbeschrieb"
       }
     }
   },
@@ -94,7 +106,7 @@ const homepageUtil = {
      * @returns {DocumentFragment} - The grid with all the cards that were attached to the DOM.
      */
     createHomepageCards: () => {
-      const grid = homepageUtil.view.createGrid();
+      const grid = createGrid();
       const cards = document.createDocumentFragment();
       for (const card in homepageUtil.model.cards) {
         const cardElement = homepageUtil.view.createCard(
@@ -121,18 +133,6 @@ const homepageUtil = {
       jumbotronText.innerHTML = text;
       jumbotron.appendChild(jumbotronText);
       return jumbotron;
-    },
-    /*
-     * creates the grid layout containing the cards.
-     * @returns {HTMLElement} grid - a div with a MDCGrid inside.
-     */
-    createGrid: () => {
-      const grid = document.createElement("div");
-      const gridInner = document.createElement("div");
-      grid.classList.add("mdc-layout-grid");
-      gridInner.classList.add("mdc-layout-grid__inner");
-      grid.appendChild(gridInner);
-      return grid;
     },
     /*
      creates a html card element.

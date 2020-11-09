@@ -1,11 +1,13 @@
 import { Control } from "ol/control";
-import orthoImage from "../img/basemapOrtho.jpg";
-import sw from "../img/sw.jpg";
+import orthoImage from "url:../img/basemapOrtho.jpg";
+import sw from "url:../img/sw.jpg";
 import { orthoBasemap, swBasemap } from "./basemap_util";
+import { updateUrl } from "./url_util";
 class BasemapControl {
   constructor(map = null, active = "Orthofoto") {
     this.map = map;
     this.active = active;
+    this.checkAndSetZoom(this.active);
     this.basemaps = [
       {
         name: "Orthofoto",
@@ -21,12 +23,12 @@ class BasemapControl {
     const [activeBasemap, iconBasemap] = this.getBasemapState(this.active);
     //show the currently active basemap
     activeBasemap.layer.setVisible(true);
-    const basemapFragment = new DocumentFragment();
+    const basemapContainer = document.createElement("div");
     this.basemapControl = document.createElement("div");
     this.basemapControl.appendChild(this.createBasemap(iconBasemap));
-    basemapFragment.appendChild(this.basemapControl);
+    basemapContainer.appendChild(this.basemapControl);
     this.basemapControl.className = "basemapControl";
-    const basemapSwitch = new Control({ element: basemapFragment });
+    const basemapSwitch = new Control({ element: basemapContainer });
     return basemapSwitch;
   }
   /*
@@ -58,6 +60,9 @@ class BasemapControl {
         const [newBasemap, iconBasemap] = this.getBasemapState(
           basemapObject.name
         );
+        //set a new zoom for the basemap if necessary
+        this.checkAndSetZoom(newBasemap.name);
+        updateUrl({ basemap: newBasemap.name });
         this.basemapControl.firstChild.remove();
         this.basemapControl.appendChild(this.createBasemap(iconBasemap));
         iconBasemap.layer.setVisible(false);
@@ -81,6 +86,38 @@ class BasemapControl {
       item => item.name !== basemapName
     )[0];
     return [newBasemap, iconBasemap];
+  }
+
+  /*
+   * check zoom scales for a certain basemap
+   * @param {string} basemap - the basemap to check the zoom.
+   * @returns {number} zoom - the zoom to set for the basemap.
+   */
+  checkZoom(basemap, zoom) {
+    switch (basemap) {
+      case "Orthofoto":
+        return zoom <= 20 ? zoom : 20;
+      case "Karte SW":
+        return zoom <= 19 ? zoom : 19;
+      default:
+        return zoom;
+    }
+  }
+
+  /*
+   * checks if the current zoom is ok for a particular basemap and
+   * if not, set the zoom to the maximum value for the basemap.
+   * @param {string} basemap - the basemap to check.
+   * @returns {number} newZoom - the zoom that was set.
+   */
+  checkAndSetZoom(basemap) {
+    //set a new zoom for the basemap if necessary
+    const zoom = this.map.getView().getZoom();
+    const newZoom = this.checkZoom(basemap, zoom);
+    if (zoom !== newZoom) {
+      this.map.getView().setZoom(newZoom);
+    }
+    return newZoom;
   }
 }
 export default BasemapControl;

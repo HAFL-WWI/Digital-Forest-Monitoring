@@ -1,7 +1,6 @@
 {
   "name": "parcel-vanillajs-starter",
   "version": "1.0.0",
-  "main": "src/index.js",
   "license": "MIT",
   "sass": {
     "includePaths": [
@@ -9,22 +8,21 @@
     ]
   },
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "parcel-bundler": "^1.12.4",
-    "parcel-plugin-static-files-copy": "^2.3.1",
-    "prettier": "^2.0.2",
-    "sass": "^1.26.3"
+    "eslint": "^7.5.0",
+    "parcel": "^2.0.0-beta.1",
+    "prettier": "^2.1.1",
+    "sass": "^1.26.10"
   },
   "scripts": {
     "lint": "eslint src/**/*.js",
-    "dev": "parcel src/index.html --open --no-source-maps",
-    "prebuild": "rm -rf ./dist",
-    "build": "parcel build src/index.html --no-source-maps --experimental-scope-hoisting"
+    "start": "parcel serve ./src/index.html --open",
+    "prebuild": "rm -rf ./dist && rm -rf ./.parcel-cache",
+    "build": "parcel build src/index.html",
+    "postbuild": "cp -r static/ dist/"
   },
   "dependencies": {
     "@material/button": "^4.0.0",
     "@material/card": "^4.0.0",
-    "@material/chips": "4.0.0",
     "@material/dialog": "^4.0.0",
     "@material/icon-button": "^4.0.0",
     "@material/layout-grid": "^4.0.0",
@@ -37,7 +35,9 @@
     "@material/top-app-bar": "^4.0.0",
     "@material/typography": "^4.0.0",
     "navigo": "^7.1.2",
-    "ol": "^6.1.1"
+    "ol": "^6.4.3",
+    "proj4": "^2.6.2",
+    "query-string": "^6.13.1"
   },
   "comments": {
     "sass": {
