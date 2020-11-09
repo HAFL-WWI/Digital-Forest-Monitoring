@@ -1,0 +1,83 @@
+//////////////////////////////////////////////////////////////
+// Time series analysis for drought stress detection
+//
+// Script prepared by Dominique Weber & Alexandra Erbach, BFH-HAFL
+/////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////
+// PARAMS
+
+//LOCATIONS
+
+// Switzerland
+Map.setCenter(8.83, 47.62, 7)
+var swiss = ee.Geometry.Rectangle(5.4, 45.5, 11, 48.1);
+var aoi = swiss;
+
+// PARAMS
+var reference_year_from = 2015
+var reference_year_to = 2019
+var monitoring_year_from = 2020
+var monitoring_year_to = 2020
+var month_from = 8
+var month_to = 9
+
+/////////////////////////////////////////////////////////////
+// GENERAL FUNCTIONS
+// Function to mask cloud from built-in quality band
+var maskcloud1 = function(image) {
+  var QA60 = image.select(['QA60']);
+  return image.updateMask(QA60.lt(1));
+};
+
+// Function to mask further cloud using B1 (cirrus cloud) threshold
+var maskcloud2 = function(image) {
+ var B1 = image.select(['B1']);
+ var bin = B1.gt(1500);
+ return image.updateMask(bin.lt(1));
+};
+
+// Functions to add a date band
+var addDate = function(image){
+var doy = ee.Date(image.get('system:time_start')).format('D');
+var num = ee.Number.parse(doy);
+var banddate = image.select('B8').multiply(0).eq(0).multiply(num).uint16().rename('date');
+return image.addBands(banddate);
+};
+/////////////////////////////////////////////////////////////
+ 
+// Reference period
+//var ref = ee.ImageCollection('COPERNICUS/S2')
+  //.filter(ee.Filter.calendarRange(reference_year_from,reference_year_to,'year'))
+  //.filter(ee.Filter.calendarRange(month_from,month_to,'month'))
+  //.filterBounds(aoi)
+  //.map(maskcloud1)
+  //.map(maskcloud2)
+  //.map(addDate);
+
+// Count valid pixels (several valid pixels for one and the same date count as one)
+//var valid_ref = ref.reduce(ee.Reducer.countDistinct());
+
+/////////////////////////////////////////////////////////////    
+// Monitoring period
+var mon = ee.ImageCollection('COPERNICUS/S2')
+  .filter(ee.Filter.calendarRange(monitoring_year_from,monitoring_year_to,'year'))
+  .filter(ee.Filter.calendarRange(month_from,month_to,'month'))
+  .filterBounds(aoi)
+  .map(maskcloud1)
+  .map(maskcloud2)
+  .map(addDate);
+ 
+// Count valid pixels (several valid pixels for one and the same date count as one) 
+var valid_mon = mon.reduce(ee.Reducer.countDistinct());
+
+// Export
+Export.image.toDrive({
+  image: valid_mon,
+  description: 'valid_mon',
+  scale: 10,
+  maxPixels: 2000000000,
+  region: aoi,
+  crs: 'EPSG:2056'
+});
+
