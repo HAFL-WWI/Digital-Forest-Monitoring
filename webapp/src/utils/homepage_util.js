@@ -127,6 +127,23 @@ const homepageUtil = {
       grid.firstChild.appendChild(cards);
       homepageUtil.model.content.appendChild(grid);
       return grid;
+    },
+    /*
+     * opens a route.
+     * @param {string} route - internal or external url.
+     * @returns void
+     */
+    navigate: route => {
+      if (!route) {
+        return;
+      }
+      if (route.indexOf("https://") !== -1) {
+        // external url
+        window.open(route, "_self");
+        return;
+      }
+      // internal routing
+      router.navigate(route);
     }
   },
   view: {
@@ -171,13 +188,7 @@ const homepageUtil = {
       cardDescription.innerHTML = description;
       cardSubTitle.innerHTML = subtitle;
       actionButton.addEventListener("click", () => {
-        if (route.indexOf("https://") !== -1) {
-          // external url
-          window.open(route, "_self");
-          return;
-        }
-        // internal routing
-        router.navigate(route);
+        homepageUtil.controller.navigate(route);
       });
       actionButton.innerHTML = linktext;
 
@@ -190,7 +201,9 @@ const homepageUtil = {
         "mdc-card__primary-action",
         "homepage-card__primary-action"
       );
-      cardPrimaryAction.addEventListener("click", () => router.navigate(route));
+      cardPrimaryAction.addEventListener("click", () => {
+        homepageUtil.controller.navigate(route);
+      });
       cardMedia.classList.add(
         "mdc-card__media",
         "mdc-card__media--16-9",
