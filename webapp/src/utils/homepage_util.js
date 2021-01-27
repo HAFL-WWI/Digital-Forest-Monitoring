@@ -3,6 +3,7 @@ import useCase2Image from "url:../img/Use-Case2_600.jpg";
 import useCase3Image from "url:../img/Use-Case3_600.jpg";
 import geoservices from "url:../img/geoservices.jpg";
 import projektbeschriebImage from "url:../img/projektbeschrieb.png";
+import wikiImage from "url:../img/wiki_preview_tile-01.png";
 import { router } from "./router";
 import { createGrid } from "./main_util";
 const homepageUtil = {
@@ -73,6 +74,15 @@ const homepageUtil = {
           "sowie Videoanleitungen und Hintergrundinformationen.",
         route: "/projektbeschrieb",
         linktext: "zum Projektbeschrieb"
+      },
+      wiki: {
+        image: wikiImage,
+        title: "Waldmonitoring Wiki",
+        subtitle: "bereitgestellt von HAFL und BAFU",
+        description:
+          "Das Wiki bietet Austauschmöglichkeiten, Hintergrundwissen und Einsatzbeispiele der Waldmonitoring-Anwendungen.",
+        route: "https://wiki.waldmonitoring.ch/index.php/Hauptseite",
+        linktext: "zum Wiki"
       }
     }
   },
@@ -161,6 +171,12 @@ const homepageUtil = {
       cardDescription.innerHTML = description;
       cardSubTitle.innerHTML = subtitle;
       actionButton.addEventListener("click", () => {
+        if (route.indexOf("https://") !== -1) {
+          // external url
+          window.open(route, "_self");
+          return;
+        }
+        // internal routing
         router.navigate(route);
       });
       actionButton.innerHTML = linktext;
