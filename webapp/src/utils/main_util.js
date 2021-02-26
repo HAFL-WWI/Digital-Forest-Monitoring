@@ -148,7 +148,7 @@ export const impressum = {
 export const getLayerInfo = overlay => {
   return `<div>
   <h4>Legende:</h4>
-  <img src="https://geoserver.karten-werk.ch//wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&height=15&LAYER=${overlay.layername}&legend_options=forceLabels:on" />
+  <img src="https://geoserver.karten-werk.ch//wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&height=15&LAYER=${overlay.layername}&legend_options=forceLabels:on"  alt="legende"/>
   <h4>Beschreibung:</h4>
   <section>${overlay.description}</section>
   </div>`;
