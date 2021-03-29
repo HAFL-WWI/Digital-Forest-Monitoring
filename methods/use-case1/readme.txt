@@ -1,4 +1,4 @@
-Prozessschritte Berechnung NDVI Max:
+Prozessschritte Berechnung NDVI Max Differenzen:
 
 1.) ndvi_max_gee_script in der Google Earth Engine ausführen
 
@@ -11,5 +11,8 @@ Prozessschritte Berechnung NDVI Max:
 5.) Differenz-Raster umprojizieren nach EPSG 3857 > reproject_diffs.R (Zugriff auf Funktion project.R)
 
 6.) Vektorisierung > polygonize_change_surfaces.R
+
+7.) Manuelle reprojection auf EPSG 3857, da writeOGR das nicht korrekt schreibt leider...
+
 
 Im Archiv befinden sich die ehemaligen, nur auf R basierten Skripte (ohne GEE).
