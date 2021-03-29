@@ -12,4 +12,7 @@ Prozessschritte Berechnung NDVI Max:
 
 6.) Vektorisierung > polygonize_change_surfaces.R
 
+7.) Manuelle reprojection auf EPSG 3857, da writeOGR das nicht korrekt schreibt leider...
+
+
 Im Archiv befinden sich die ehemaligen, nur auf R basierten Skripte (ohne GEE).
