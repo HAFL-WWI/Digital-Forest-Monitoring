@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 Prozessschritte Berechnung NDVI Max Differenzen:
+=======
+Prozessschritte Berechnung NDVI Max:
+>>>>>>> cc15f59fe57b311ba9d3c7d490bd93dc5b3d7915
 
 1.) ndvi_max_gee_script in der Google Earth Engine ausführen
 
