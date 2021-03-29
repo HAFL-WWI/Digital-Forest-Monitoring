@@ -4,54 +4,70 @@
 # by Alexandra Erbach & Dominique Weber, BFH-HAFL
 ############################################################
 
-start_time <- Sys.time()
-
 library(raster)
 library(rgdal)
 library(velox)
+library(foreach)
+library(doParallel)
 
 # parameters
 minsize = 300 # m^2
-thrvalue = -0.1
-
-# read raster
-diff_raster = raster("//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/ndvi_diff_2020_2019_reprojected_cubic.tif")
-
-# out shp layer
+thrvalue = -1000
 out_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1"
-lyr = "ndvi_diff_2020_2019"
+years = c("2016_2015", "2017_2016", "2018_2017", "2019_2018", "2020_2019")
 
-# define CRS (EPSG 3857)
-crs(diff_raster) = CRS("+init=epsg:3857")
-
-# create binary mask
-print("create binary mask...")
-diff_mask = diff_raster
-diff_mask[diff_mask>thrvalue] = NA
-diff_mask[!is.na(diff_mask)] = 1
-
-# raster to polygon
-print("raster to polygon...")
-diff_mask_clump = clump(diff_mask, directions=4)
-writeRaster(diff_mask_clump, paste0(out_path,"/clump.tif"))
-
-diffmask_vec = rasterToPolygons(diff_mask_clump, fun=NULL, n=4, digits=10, dissolve=T)
-diffmask_vec = diffmask_vec[,-1]
-crs(diffmask_vec) = CRS("+init=epsg:3857")
-
-print("calculate area and mean diff...")
-# calculate area
-diffmask_vec$area = area(diffmask_vec)
-
-# filter out surfaces smaller than min. size
-diffmask_vec = diffmask_vec[which(diffmask_vec$area > minsize),]
-
-# calculate mean change per polygon
-velox_mask = velox(diff_raster, res=res(diff_raster))
-diffmask_vec$meandiff <- as.vector(velox_mask$extract(diffmask_vec, fun=mean))
-
-# save shapefile
-print("save shapefile...")
-writeOGR(diffmask_vec, dsn=out_path, layer=lyr, driver="ESRI Shapefile", overwrite_layer = T)
-
-print(Sys.time() - start_time) # ca. 35 mins
+cl = makeCluster(detectCores() -1)
+registerDoParallel(cl)
+foreach(i=1:length(years), .packages=c("raster", "rgdal", "velox")) %dopar% {
+  
+  start_time <- Sys.time()
+  
+  # parameters
+  year = years[i]
+  in_path = paste0("//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/ndvi_diff_", year, "_Int16_reproj_bilinear.tif")
+  
+  # out shp layer & raster
+  lyr = paste0("ndvi_diff_", year)
+  out_shp = paste0(out_path, "/", lyr, ".shp")
+  out_ras_name = paste0(lyr,"_forWMS.tif")
+  out_ras = paste0(out_path,"/",out_ras_name)
+  out_mask_name = paste0(lyr,"_mask.tif")
+  out_mask = paste0(out_path,"/",out_mask_name)
+  
+  # create binary mask & raster for WMS publication (values > thrvalue auf NA)
+  print("create binary mask...")
+  system(paste("gdal_calc.py -A ", in_path,  " --outfile=", out_ras, " --calc=\"(A<=", thrvalue, ")*A\" --co=\"COMPRESS=LZW\" --type='Int16' --NoDataValue=0 --overwrite", sep=""))
+  system(paste("gdal_calc.py -A ", out_ras,  " --outfile=", out_mask, " --calc=\"A<0\" --co=\"COMPRESS=LZW\" --type='Byte' --NoDataValue=0 --overwrite", sep=""))
+  
+  # raster to polygon
+  print("raster to polygon...")
+  system(paste("gdal_polygonize.py", out_mask, out_shp, sep=" "))
+  
+  diffmask_vec = readOGR(out_shp)
+  
+  print("calculate area and mean diff...")
+  # calculate area
+  diffmask_vec$area = round(area(diffmask_vec),0)
+  
+  # filter out surfaces smaller than min. size
+  diffmask_vec = diffmask_vec[which(diffmask_vec$area > minsize),]
+  
+  # calculate mean change per polygon
+  diff_raster = raster(in_path)
+  velox_mask = velox(diff_raster, res=res(diff_raster))
+  diffmask_vec$meandiff <- round(as.vector(velox_mask$extract(diffmask_vec, fun=mean))/10000, 2)
+  
+  # delete first column
+  diffmask_vec = diffmask_vec[,-1]
+  
+  # reproject
+  #diffmask_vec = spTransform(diffmask_vec, "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +ellps=WGS84 +datum=WGS84 +units=m +nadgrids=@null +wktext +no_defs")
+  
+  # save shapefile
+  print("save shapefile...")
+  writeOGR(diffmask_vec, dsn=out_path, layer=lyr, driver="ESRI Shapefile", overwrite_layer = T)
+  
+  print(Sys.time() - start_time) # ca. 6 mins
+  
+}
+stopCluster(cl)
