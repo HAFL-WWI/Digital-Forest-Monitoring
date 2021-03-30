@@ -1,8 +1,6 @@
-<<<<<<< HEAD
+==============================================================================================================================
 Prozessschritte Berechnung NDVI Max Differenzen:
-=======
-Prozessschritte Berechnung NDVI Max:
->>>>>>> cc15f59fe57b311ba9d3c7d490bd93dc5b3d7915
+==============================================================================================================================
 
 1.) ndvi_max_gee_script in der Google Earth Engine ausführen
 
@@ -16,7 +14,7 @@ Prozessschritte Berechnung NDVI Max:
 
 6.) Vektorisierung > polygonize_change_surfaces.R
 
-7.) Manuelle reprojection auf EPSG 3857, da writeOGR das nicht korrekt schreibt leider...
+7.) Manuelle reprojection, da writeOGR das nicht korrekt schreibt leider > im GIS KBS (crs = 3857) für jeden Layer korrekt definieren und dann exportieren (geht am einfachsten mit QGIS)
 
 
 Im Archiv befinden sich die ehemaligen, nur auf R basierten Skripte (ohne GEE).
