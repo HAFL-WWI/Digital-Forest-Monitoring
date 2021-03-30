@@ -43,9 +43,8 @@ foreach(i=1:length(years), .packages=c("raster", "rgdal", "velox")) %dopar% {
   print("raster to polygon...")
   system(paste("gdal_polygonize.py", out_mask, out_shp, sep=" "))
   
-  diffmask_vec = readOGR(out_shp)
-  
   print("calculate area and mean diff...")
+  diffmask_vec = readOGR(out_shp)
   # calculate area
   diffmask_vec$area = round(area(diffmask_vec),0)
   
@@ -60,10 +59,10 @@ foreach(i=1:length(years), .packages=c("raster", "rgdal", "velox")) %dopar% {
   # delete first column
   diffmask_vec = diffmask_vec[,-1]
   
-  # reproject
+  # reproject > doesn't make a difference...
   #diffmask_vec = spTransform(diffmask_vec, "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +ellps=WGS84 +datum=WGS84 +units=m +nadgrids=@null +wktext +no_defs")
   
-  # save shapefile
+  # save shapefile > careful, CRS ist not correctly written by writeOGR, has to be manually set in GIS
   print("save shapefile...")
   writeOGR(diffmask_vec, dsn=out_path, layer=lyr, driver="ESRI Shapefile", overwrite_layer = T)
   
