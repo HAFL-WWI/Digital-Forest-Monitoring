@@ -2,7 +2,7 @@
 Prozessschritte Berechnung NDVI Max Differenzen:
 ==============================================================================================================================
 
-1.) ndvi_max_gee_script in der Google Earth Engine ausführen
+1.) Für die jeweiligen Jahre ndvi_max_gee_script in der Google Earth Engine ausführen
 
 2.) Files vom Google Drive herunterladen und auf Server abspeichern
 
@@ -14,7 +14,7 @@ Prozessschritte Berechnung NDVI Max Differenzen:
 
 6.) Vektorisierung > polygonize_change_surfaces.R
 
-7.) Manuelle reprojection, da writeOGR das nicht korrekt schreibt leider > im GIS KBS (crs = 3857) für jeden Layer korrekt definieren und dann exportieren (geht am einfachsten mit QGIS)
+7.) Manuelle reprojection, da writeOGR das nicht korrekt schreibt leider > im GIS KBS (crs = 3857) für jeden Vektorlayer korrekt definieren und dann exportieren (geht am einfachsten mit QGIS)
 
 
 Im Archiv befinden sich die ehemaligen, nur auf R basierten Skripte (ohne GEE).
