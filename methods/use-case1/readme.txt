@@ -15,6 +15,6 @@ Prozessschritte Berechnung NDVI Max Differenzen:
 6.) Vektorisierung > polygonize_change_surfaces.R
 
 7.) Manuelle reprojection, da writeOGR das nicht korrekt schreibt leider > im GIS KBS (crs = 3857) für jeden Vektorlayer korrekt definieren und dann exportieren (geht am einfachsten mit QGIS)
-
+=======
 
 Im Archiv befinden sich die ehemaligen, nur auf R basierten Skripte (ohne GEE).
