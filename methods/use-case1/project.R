@@ -8,9 +8,9 @@
 library(foreach)
 library(doParallel)
 
-project <- function(path, crs) {
+project <- function(path, crs, pattern) {
   # get files
-  files = list.files(path, pattern = "Int16.tif", full.names = T)
+  files = list.files(path, pattern = pattern, full.names = T)
   
   # project lv95
   print(paste("processing", length(files), "files in parallel mode..."))
