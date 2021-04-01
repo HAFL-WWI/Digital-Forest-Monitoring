@@ -1,53 +1,80 @@
 ############################################################
-# Mosaic and clip ndvi anomalies exported from google earth engine 
+# Postprocess ndvi anomalies exported from google earth engine 
 #
 # IMPORTANT: Forest mask must have same crs, dimension, extent, origin as mosaic
 # see scripts under Digital-Forest-Monitoring/misc
 #
-# by Dominique Weber, BFH-HAFL
+# by Dominique Weber & Alexandra Erbach, BFH-HAFL
 ############################################################
 
 # load library
 library(raster)
+library(doParallel)
+library(foreach)
 
 # set wd
 setwd("~/Digital-Forest-Monitoring/methods")
 
 # source functions
 source("use-case1/mosaic.R")
+source("general/dir_exists_create_func.R")
 
-###########################################
-# define year and output directory here
-out_dir = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case3/NDVI_Anomaly_2019_08-09/"
-###########################################
+# main path
+main_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case3"
+dirs = dir(main_path, full.names=T, pattern="NDVI_Anomaly")
 
-###########################################
-# DEFAULT SETTINGS
+# general parameters
 ch_shp = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/general/swissBOUNDARIES3D/swissBOUNDARIES3D_1_1_TLM_LANDESGEBIET.shp"
 forest_mask = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/general/swissTLM3D_Wald/Wald_LV95_rs.tif" 
-mosaic_file = file.path(out_dir, "ndvi_anomaly.tif")
-mosaic_ch_file = file.path(out_dir, "ndvi_anomaly_ch.tif")
-mosaic_ch_file_byte = file.path(out_dir, "ndvi_anomaly_ch_byte.tif")
-mosaic_ch_forest_file = file.path(out_dir, "ndvi_anomaly_ch_forest.tif")
+crs = "EPSG:3857"
+thr_valid = 4
+
 ###########################################
+# loop over folders
+cl = makeCluster(detectCores() -1)
+registerDoParallel(cl)
 
-# START...
-start_time <- Sys.time()
+foreach(i=1:length(dirs), .packages=c("raster")) %dopar% {
+  
+  # source functions
+  source("use-case1/mosaic.R")
+  source("general/dir_exists_create_func.R")
 
-print("mosaic all tiles...")
-mosaic(out_dir, mosaic_file, ".tif")
-print(Sys.time()- start_time)
+  out_dir = paste0(dirs[i],"/")
+  dir_exist_create(out_dir,"tmp")
+  ###########################################
+  
+  ###########################################
+  # DEFAULT SETTINGS
+  mosaic_file = file.path(paste0(out_dir,"tmp"), "ndvi_anomaly.tif")
+  mosaic_ch_file = file.path(paste0(out_dir,"tmp"), "ndvi_anomaly_ch.tif")
+  mosaic_ch_forest_file = file.path(paste0(out_dir,"tmp"), "ndvi_anomaly_ch_forest.tif")
+  mosaic_ch_forest_filtered = file.path(paste0(out_dir,"tmp"), "ndvi_anomaly_ch_forest_filtered.tif")
+  out_file_final = paste0(dir(main_path, pattern="NDVI_Anomaly")[i],".tif")
+  mosaic_ch_forest_filtered_3857 = file.path(out_dir, out_file_final)
+  ###########################################
+  
+  # START...
+  start_time <- Sys.time()
+  
+  print("mosaic all tiles...")
+  mosaic(paste0(out_dir,"/orig"), mosaic_file, ".tif")
+  print(Sys.time()- start_time)
+  
+  print("clip mosaic to swiss boundaries...")
+  system(paste("gdalwarp -cutline", ch_shp, "-crop_to_cutline -wo CUTLINE_ALL_TOUCHED=TRUE -dstnodata -32767", mosaic_file, mosaic_ch_file))
 
-print("clip mosaic to swiss boundaries...")
-system(paste("gdalwarp -cutline", ch_shp, "-crop_to_cutline -wo CUTLINE_ALL_TOUCHED=TRUE -dstnodata -9999", mosaic_file, mosaic_ch_file))
-
-print("convert to byte...")
-# TODO to make sure that forest mask has same dimension etc. it should be generated based on the extent of the mosaic
-system(paste("gdal_calc.py -A ", mosaic_ch_file, " --outfile=", mosaic_ch_file_byte, " --calc=\"round_(A*100)\" --co=\"PIXELTYPE=SIGNEDBYTE\" --co=\"COMPRESS=LZW\" --type='Int16' --NoDataValue=-9999", sep=""))
-
-print("clip mosaic to forest mask...")
-# TODO to make sure that forest mask has same dimension etc. it should be generated based on the extent of the mosaic
-system(paste("gdal_calc.py -A ", mosaic_ch_file_byte," -B ", forest_mask, " --outfile=", mosaic_ch_forest_file, " --calc=\"A*(B==1)\" --co=\"PIXELTYPE=SIGNEDBYTE\" --co=\"COMPRESS=LZW\" --type='Int16' --NoDataValue=-9999", sep=""))
-
-# END ...
-print(Sys.time()- start_time)
+  print("clip mosaic to forest mask...")
+  # TODO to make sure that forest mask has same dimension etc. it should be generated based on the extent of the mosaic
+  system(paste("gdal_calc.py -A ", mosaic_ch_file," -B ", forest_mask, " --outfile=", mosaic_ch_forest_file, " --calc=\"A*(B==1)\" --co=\"PIXELTYPE=SIGNEDBYTE\" --co=\"COMPRESS=LZW\" --type='Int16' --NoDataValue=0 --allBands=A --overwrite", sep=""))
+  
+  print("filter out pixels with insufficient number of valid dates")
+  system(paste("gdal_calc.py -A ", mosaic_ch_forest_file," --A_band=1 -B ",mosaic_ch_forest_file, " --B_band=2 --outfile=", mosaic_ch_forest_filtered," --calc=\"A*(B>",thr_valid,")\" --co=\"PIXELTYPE=SIGNEDBYTE\" --co=\"COMPRESS=LZW\" --type='Int16' --NoDataValue=0 --overwrite", sep=""))
+  
+  print("reproject")
+  system(paste("gdalwarp -t_srs", crs, "-r bilinear -tr 10 10 -co COMPRESS=LZW", mosaic_ch_forest_filtered, mosaic_ch_forest_filtered_3857))
+  
+  # END ...
+  print(Sys.time()- start_time)
+}
+stopCluster(cl)
