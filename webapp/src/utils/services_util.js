@@ -13,7 +13,7 @@ const servicesUtil = {
      * content for every card on the hompage.
      */
     cards: {
-      veraenderung: {
+      wms: {
         title: "Web Map Service (WMS)",
         subtitle: "Provided by: karten-werk GmbH",
         description: `Dieser OGC konforme WMS liefert Kartenbilder- Layer und Legendeninformationen.`,
@@ -21,7 +21,7 @@ const servicesUtil = {
           "https://geoserver.karten-werk.ch/wms?request=GetCapabilities",
         videoUrl: "https://www.youtube.com/embed/g7t_tz2OJpg"
       },
-      stoerung: {
+      wmts: {
         title: "Web Map Tile Service (WMTS)",
         subtitle: "Provided by: karten-werk GmbH",
         description: `Der WMTS Service liefert vorprozessierte (gecachte) Bilder und ist somit schneller als der WMS Service.
@@ -30,7 +30,7 @@ const servicesUtil = {
           "https://geoserver.karten-werk.ch/gwc/service/wmts?request=getCapabilities",
         videoUrl: "https://www.youtube.com/embed/g7t_tz2OJpg"
       },
-      geodienste: {
+      wfs: {
         title: "Web Feature Service (WFS)",
         subtitle: "Provided by: karten-werk GmbH",
         description: `Der WFS Service lierfert Vektor Geometrien inklusive Attribut Informationen.
@@ -38,6 +38,16 @@ const servicesUtil = {
         serviceUrl:
           "https://geoserver.karten-werk.ch/wfs?request=GetCapabilities",
         videoUrl: "https://www.youtube.com/embed/aZbNjFLe884"
+      },
+      wcs: {
+        title: "Web Coverage Service (WCS)",
+        subtitle: "Provided by: karten-werk GmbH",
+        description: `Unser WCS Service stellt (rohe) Rasterdaten zur Verfügung. Entsprechend ist er
+          typischweise etwas langsamer als ein WMTS oder WMS, aber dafür umso mächtiger.
+          Die Daten lassen sich beliebig klassieren, einfärben, für Geoprocessing nutzen, oder gar herunterladen.`,
+        serviceUrl:
+          "https://geoserver.karten-werk.ch/wcs?request=GetCapabilities",
+        videoUrl: "https://www.youtube.com/embed/0nzgaLhqFGU"
       }
     }
   },

@@ -1,3 +1,9 @@
+import useCase1ImageWebp from "url:../img/Use-Case1_600.webp";
+import useCase2ImageWebp from "url:../img/Use-Case2_600.webp";
+import useCase3ImageWebp from "url:../img/Use-Case3_600.webp";
+import geoservicesWebp from "url:../img/geoservices.webp";
+import projektbeschriebImageWebp from "url:../img/projektbeschrieb.webp";
+import wikiImageWebp from "url:../img/wiki_preview_tile-01.webp";
 import useCase1Image from "url:../img/Use-Case1_600.jpg";
 import useCase2Image from "url:../img/Use-Case2_600.jpg";
 import useCase3Image from "url:../img/Use-Case3_600.jpg";
@@ -27,6 +33,7 @@ const homepageUtil = {
     cards: {
       veraenderung: {
         image: useCase1Image,
+        imageWebp: useCase1ImageWebp,
         title: "Jährliche Veränderung",
         subtitle: "Geodaten: Dominique Weber, HAFL",
         description:
@@ -37,6 +44,7 @@ const homepageUtil = {
       },
       stoerung: {
         image: useCase2Image,
+        imageWebp: useCase2ImageWebp,
         title: "Test Sommersturmschäden 2017",
         subtitle: "Geodaten: Dominique Weber, HAFL",
         description:
@@ -47,6 +55,7 @@ const homepageUtil = {
       },
       vitalitaet: {
         image: useCase3Image,
+        imageWebp: useCase3ImageWebp,
         title: "Hinweiskarten zur Vitalität",
         subtitle: "Geodaten: Dominique Weber, HAFL",
         description:
@@ -57,6 +66,7 @@ const homepageUtil = {
       },
       geodienste: {
         image: geoservices,
+        imageWebp: geoservicesWebp,
         title: "Geodienste",
         subtitle: "Services: karten-werk GmbH",
         description:
@@ -67,6 +77,7 @@ const homepageUtil = {
       },
       projektbeschrieb: {
         image: projektbeschriebImage,
+        imageWebp: projektbeschriebImageWebp,
         title: "Projektbeschrieb",
         subtitle: "Hintergrundwissen und Videoanleitungen",
         description:
@@ -77,6 +88,7 @@ const homepageUtil = {
       },
       wiki: {
         image: wikiImage,
+        imageWebp: wikiImageWebp,
         title: "Waldmonitoring Wiki",
         subtitle: "bereitgestellt von HAFL und BAFU",
         description:
@@ -171,11 +183,20 @@ const homepageUtil = {
      @param {string} params.route - the url to open when the user clicks on the card.
      @returns {HTMLElement} cell - a single grid cell containing a card Element.
     */
-    createCard: ({ image, title, subtitle, description, linktext, route }) => {
+    createCard: ({
+      image,
+      imageWebp,
+      title,
+      subtitle,
+      description,
+      linktext,
+      route
+    }) => {
       const cell = document.createElement("div");
       const card = document.createElement("div");
       const cardPrimaryAction = document.createElement("div");
       const cardMedia = document.createElement("div");
+      const picture = document.createElement("picture");
       const cardTitleContainer = document.createElement("div");
       const cardTitle = document.createElement("h2");
       const cardSubTitle = document.createElement("h3");
@@ -204,12 +225,13 @@ const homepageUtil = {
       cardPrimaryAction.addEventListener("click", () => {
         homepageUtil.controller.navigate(route);
       });
-      cardMedia.classList.add(
-        "mdc-card__media",
-        "mdc-card__media--16-9",
-        "homepage-card__media"
-      );
-      cardMedia.style.backgroundImage = 'url("' + image + '")';
+      picture.innerHTML = `
+      <source type="image/webp" srcset="${imageWebp}" />
+      <img
+      src="${image}"
+      alt="${title}"
+      style="object-fit:cover; max-width:100%" />`;
+      cardMedia.appendChild(picture);
       cardTitleContainer.classList.add("homepage-card__primary");
       cardTitle.classList.add(
         "homepage-card__title",
