@@ -6,6 +6,9 @@ import { Vector as VectorSource } from "ol/source";
 import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
 import { convertPointCoordinates } from "./projectionUtil";
 import gpsIcon from "url:../img/gps.svg";
+import gpsButton from "url:../img/gps_icon.jpg";
+import { dialog } from "./init";
+import { dialogTitle, dialogContent } from "./main_util";
 const positionStroke = new Stroke({
   color: "#ffffff",
   width: 1.5
@@ -70,6 +73,19 @@ export default class GpsPosition {
 
       this.geolocation.on("change:accuracyGeometry", () => {
         accuracyFeature.setGeometry(this.geolocation.getAccuracyGeometry());
+        const accuracyArea = parseInt(
+          this.geolocation.getAccuracyGeometry().getArea()
+        );
+        const radius = parseInt(Math.sqrt(accuracyArea / Math.PI));
+        if (radius > 100) {
+          dialogTitle.innerHTML = "Warnung GPS Genauigkeit";
+          dialogContent.innerHTML = `Die GPS Positionierung ist momentan nicht sehr genau. (<strong>Radius von ${radius}m</strong>) <br />
+        Dies kann vorkommen, wenn die Positionierung z.B. auf einem Desktop Computer verwendet wird.
+        Um das GPS zu deaktivieren, klicken Sie auf diesen Button oben rechts. <img src="${gpsButton}" alt="gps button" style="vertical-align:middle;" />`;
+          dialog.open();
+        } else {
+          dialog.close();
+        }
       });
 
       this.geolocation.on("change:position", () => {
