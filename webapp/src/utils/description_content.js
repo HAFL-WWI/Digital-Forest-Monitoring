@@ -177,7 +177,7 @@ const descriptionContent = {
 
       Diese ausgewiesenen Veränderungsflächen basieren auf der Abnahme des Normalized Burn Ratio Vegetationsindexes 
       (NBR; siehe Abschnitt 2). In einem Vorgängerprojekt 
-      (<a href="https://www.planfor.ch/de/content/schlussbericht-waldmonitoring-mit-sentinel-2-satellitenbildern" rel="noopener noreferrer" target="_blank">Weber & Rosset, 2019</a>) 
+      (<a href="https://www.planfor.ch/article/22" rel="noopener noreferrer" target="_blank">Weber & Rosset, 2019</a>) 
       hat sich dieser Index als geeignet für die Detektion von Sturmschadflächen erwiesen.<br /><br />
 
       Die Werte in der Legende des Kartenviewers stellen die <strong>Abnahme des NBR</strong> multipliziert mit 100 dar, 
