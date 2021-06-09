@@ -56,9 +56,9 @@ const descriptionContent = {
       Forschungsprojektes eine Expertengruppe mit je drei VertreterInnen von Forstbetrieben und Forstdiensten gebildet. 
       Die drei Use-Cases wurden in enger Zusammenarbeit mit den Praxispersonen ausgebarbeitet.
     <div style="height:16px"></div>
-    Dieses Projekt baut auf den Resultaten der Projekte <a href="https://www.planfor.ch/de/content/schlussbericht-waldmonitoring-mit-sentinel-2-satellitenbildern" rel="noopener noreferrer" target="_blank">
+    Dieses Projekt baut auf den Resultaten der Projekte <a href="https://www.planfor.ch/article/22" rel="noopener noreferrer" target="_blank">
     «Waldmonitoring mit Sentinel-2 Satellitenbildern»</a> und 
-    <a href="https://www.planfor.ch/de/content/schlussbericht-praxistauglicher-einsatz-von-fernerkundung-im-waldbereich-zustand-entwicklung" rel="noopener noreferrer" target="_blank">
+    <a href="https://www.planfor.ch/article/21" rel="noopener noreferrer" target="_blank">
     «Praxistauglicher Einsatz von Fernerkundung im Waldbereich»</a> auf.
     <div style="height:24px"></div>
     `
@@ -68,7 +68,7 @@ const descriptionContent = {
       content: `Im Fokus dieses Projektes lag die Nutzung von schweizweit frei verfügbaren Daten. Dafür eignen sich insbesondere die Sentinel-2-Satellitenbilder, 
       deren Mehrwert für die Waldwirtschaft bereits aufgezeigt werden konnte
       (<a href="https://www.szf-jfs.org/doi/abs/10.3188/szf.2018.0026" rel="noopener noreferrer" target="_blank">SZF Artikel</a>, 
-      <a href="https://www.planfor.ch/de/content/april-mai-2019-sentinel-2-kursreihe" rel="noopener noreferrer" target="_blank">FOWALA Kurs</a>).
+      <a href="https://www.planfor.ch/event/19" rel="noopener noreferrer" target="_blank">FOWALA Kurs</a>).
       Zusätzlich wurde die nationale Waldmaske (swissTLM3D) verwendet und es können verschiedene Hintergrundkarten 
       (z.B. Luftbilder) dargestellt werden.
       <div style="height:16px"></div>
@@ -76,7 +76,7 @@ const descriptionContent = {
       Seit Ende 2015 sind Sentinel-2-Satellitenbilder frei erhältlich und grossflächig verfügbar. 
       Die häufige Wiederholung der Aufnahmen (alle 2-5 Tage) in für Vegetationsanalysen wichtigen 
       Spektralbändern bietet dabei ein grosses Potenzial für die Nutzung im Waldbereich. In einem bereits 
-      abgeschlossenen Projekt (<a href="https://www.planfor.ch/de/content/schlussbericht-waldmonitoring-mit-sentinel-2-satellitenbildern" rel="noopener noreferrer" target="_blank">
+      abgeschlossenen Projekt (<a href="https://www.planfor.ch/article/22" rel="noopener noreferrer" target="_blank">
       Weber & Rosset, 2019</a>) konnte aufgezeigt werden, dass sich starke Waldveränderungen 
       wie Holzschläge oder Sommersturmschäden zeitnah erfassen lassen. Auch für die Klassifizierung von Hauptbaumarten 
       und die Beurteilung der Vitalität wurde ein grosses Potenzial festgestellt.
@@ -140,7 +140,7 @@ const descriptionContent = {
       Ausserdem kann keine Aussage über die Ursache der Veränderung getroffen werden. 
       Es kann sich also sowohl um Holzschläge, Sturmschäden als auch um andere Veränderungen handeln.<br /><br />
 
-      Das folgende <strong>Video</strong> erläutert die <strong>Benutzung des Kartenviewers</strong> «<a href="https://forestmonitoring.lab.karten-werk.ch/veraenderung">Jährliche Veränderungen</a>»:
+      Das folgende <strong>Video</strong> erläutert die <strong>Benutzung des Kartenviewers</strong> «<a href="http://waldmonitoring.ch/veraenderung">Jährliche Veränderungen</a>»:
     <div style="height:16px"></div>
     ${getVideoElement("mYK2KJqgrhM")}
     <div style="height:16px"></div>
@@ -152,7 +152,7 @@ const descriptionContent = {
     maximalen NDVI (<strong>«NDVI Maximum Komposit»</strong>). Aus diesen Kompositen wird die <strong>Differenz</strong> zwischen zwei Jahren gebildet. Die Differenzwerte 
     spiegeln dementsprechend die Stärke der Veränderung wider. So weisen Werte näher -1 auf stärkere Waldveränderungen (z.B. Räumungen) 
     hin. Mittels Schwellenwert wurden die Veränderungsflächen zudem als Vektordaten (Polygone) ausgeschieden und sind 
-    <a href="https://forestmonitoring.lab.karten-werk.ch/services">hier</a> per Web Map Service (WMS) Dienst verfügbar. 
+    <a href="http://waldmonitoring.ch/services">hier</a> per Web Map Service (WMS) Dienst verfügbar. 
     Bisher wurden Veränderungskarten für die Jahre 2016/2017, 2017/2018 und 2018/2019 gerechnet. 
     Ab Herbst 2020 wird die Veränderungskarte für 2019/2020 zur Verfügung stehen. Die nachstehende Abbildung veranschaulicht das Vorgehen.
     <div style="height:8px"></div>
@@ -195,7 +195,7 @@ const descriptionContent = {
       Für jede ausgeschiedene Veränderungsfläche wurden neben dem Zeitpunkt (time) zudem Flächengrösse (area), sowie Mittelwert (mean), 
       Maximalwert (max) und 90%-Quantil (p90) der NBR-Differenzwerte berechnet und als Attribute in den Vektordaten gespeichert. 
       Das Attribut class differenziert zwischen Veränderungsflächen (class = 1), Wolken (class = -1), und NoData (class = -2). 
-      Die Vektordaten stehen <a href="https://forestmonitoring.lab.karten-werk.ch/services">hier</a> als Web Feature Service (WFS) Dienst zur Verfügung.<br /><br />
+      Die Vektordaten stehen <a href="http://waldmonitoring.ch/services">hier</a> als Web Feature Service (WFS) Dienst zur Verfügung.<br /><br />
       
       <div style="height:16px"></div>
       <img src="${useCase2Viewer}" alt="useCase 2 viewer screenshot" style="max-width:100%"/>
@@ -231,7 +231,7 @@ const descriptionContent = {
     abgeglichen.</div>
     <div style="height:24px"></div>
     Das folgende <strong>Video</strong> erläutert die <strong>Benutzung des Kartenviewers</strong>
-    «<a href="https://forestmonitoring.lab.karten-werk.ch/stoerungen">Sommersturmschäden 2017</a>»:
+    «<a href="http://waldmonitoring.ch/stoerungen">Sommersturmschäden 2017</a>»:
     <div style="height:16px"></div>
     ${getVideoElement("aamvbhKXoNU")}
     <div style="height:16px"></div>
@@ -287,7 +287,7 @@ const descriptionContent = {
 
       <div style="height:24px"></div>
       Das folgende <strong>Video</strong> erläutert die <strong>Benutzung des Kartenviewers</strong> 
-      «<a href="https://forestmonitoring.lab.karten-werk.ch/vitalitaet">Hinweiskarten zur Vitalität</a>»:
+      «<a href="http://waldmonitoring.ch/vitalitaet">Hinweiskarten zur Vitalität</a>»:
       <div style="height:16px"></div>
       ${getVideoElement("wraBOBSfcdk")}
       <div style="height:16px"></div>
@@ -322,13 +322,13 @@ const descriptionContent = {
     {
       title: "6 Kartenviewer und Geodienste",
       content: `Für jeden Use-Case wird ein eigener <strong>Kartenviewer</strong> angeboten. Alle Kartenviewer 
-      sind über die Startseite <a href="https://forestmonitoring.lab.karten-werk.ch/">https://forestmonitoring.lab.karten-werk.ch/</a> 
+      sind über die Startseite <a href="http://waldmonitoring.ch">http://waldmonitoring.ch</a> 
       erreichbar und weisen, je nach Use-Case, unterschiedliche Funktionalitäten auf. Sie wurden auch für die Verwendung ausserhalb 
       des Büros konzipiert und können daher auf <strong>mobilen Geräten</strong> benutzt werden.<br />
       Es ist vorgesehen, die Kartenviewer durch weitere Funktionalitäten, wie zum Beispiel die Positionierung über GPS, 
       in einem Nachfolgeprojekt zu ergänzen.<br />
       Die dargestellten Karten können auch als <strong>Geodienste</strong> (WMS, WMTS, WFS) in eine GIS-Umgebung eingebunden werden. 
-      Durch Klick auf die Kachel „<a href="https://forestmonitoring.lab.karten-werk.ch/services">Geodienste</a>“ 
+      Durch Klick auf die Kachel „<a href="http://waldmonitoring.ch/services">Geodienste</a>“ 
       erfahren Sie mehr darüber. Einfache Video-Tutorials zeigen anhand von Beispielen, wie Sie die Services in QGIS einbinden können.<br /><br />
       Die gesamte Webapplikation ist Open Source und unter: <a href="https://github.com/HAFL-FWI/Digital-Forest-Monitoring/tree/master/webapp" rel="noopener noreferrer" target="_blank">https://github.com/HAFL-FWI/Digital-Forest-Monitoring/tree/master/webapp</a> verfügbar.  
       Bei Fragen oder Verbesserungswünschen wenden Sie sich bitte an untenstehenden Kontakt.<br /><br />
