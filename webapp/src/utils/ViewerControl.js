@@ -256,6 +256,9 @@ class ViewerControl {
       const layersToAdd = [];
       // get the right veraenderung layer and add it to the viewer
       layerArr.forEach((layername, index) => {
+        const splitted = layername.split("_");
+        const year = splitted[2];
+        const month = splitted[3];
         switch (layerType) {
           case "veraenderung":
             for (var i = 0; i < this.changeOverlays.length; i++) {
@@ -273,15 +276,12 @@ class ViewerControl {
             }
             break;
           case "vitalitaet":
-            const splitted = layername.split("_");
-            const year = splitted[2];
-            const month = splitted[3];
-            for (var i = 0; i < this.vitalityLayers.length; i++) {
+            for (var y = 0; y < this.vitalityLayers.length; y++) {
               if (
-                this.vitalityLayers[i].year === year &&
-                this.vitalityLayers[i].layers.length > 0
+                this.vitalityLayers[y].year === year &&
+                this.vitalityLayers[y].layers.length > 0
               ) {
-                this.vitalityLayers[i].layers.forEach(layer => {
+                this.vitalityLayers[y].layers.forEach(layer => {
                   const layerMonth = layer.layername.split("_")[3];
                   if (month === layerMonth) {
                     layer.visible = this.getVisibility(visibilities, index);
@@ -294,23 +294,24 @@ class ViewerControl {
             break;
           case "stoerungen":
             if (Array.isArray(times) && times.length > 0) {
-              for (var i = 0; i < this.stoerungslayers.length; i++) {
+              for (var x = 0; x < this.stoerungslayers.length; x++) {
                 if (
-                  layername === this.stoerungslayers[i].layername &&
-                  times[index] === this.stoerungslayers[i].time.substring(0, 10)
+                  layername === this.stoerungslayers[x].layername &&
+                  times[index] === this.stoerungslayers[x].time.substring(0, 10)
                 ) {
-                  this.stoerungslayers[i].visible = this.getVisibility(
+                  this.stoerungslayers[x].visible = this.getVisibility(
                     visibilities,
                     index
                   );
-                  this.stoerungslayers[i].opacity = this.getOpacity(
+                  this.stoerungslayers[x].opacity = this.getOpacity(
                     opacities,
                     index
                   );
-                  layersToAdd.push(this.stoerungslayers[i]);
+                  layersToAdd.push(this.stoerungslayers[x]);
                 }
               }
             }
+            break;
           default:
             return layersToAdd;
         }
@@ -700,7 +701,7 @@ class ViewerControl {
     chipContent.classList.add("chip__content");
     chipContent.innerHTML = label;
     chip.appendChild(chipContent);
-    chip.addEventListener("click", e => {
+    chip.addEventListener("click", () => {
       const domContainer = document.querySelector(".layers");
       if (singleLayer) {
         this.removeMapOverlays(this.activeLayers);
@@ -957,7 +958,7 @@ class ViewerControl {
       });
       // wait for the change to be commited before
       // updating the url.
-      mdcslider.listen("MDCSlider:change", e => {
+      mdcslider.listen("MDCSlider:change", () => {
         updateUrlVisibilityOpacity({
           ...layer,
           opacity
