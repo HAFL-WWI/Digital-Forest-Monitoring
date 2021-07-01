@@ -2,13 +2,11 @@ import useCase1ImageWebp from "url:../img/Use-Case1_600.webp";
 import useCase2ImageWebp from "url:../img/Use-Case2_600.webp";
 import useCase3ImageWebp from "url:../img/Use-Case3_600.webp";
 import geoservicesWebp from "url:../img/geoservices.webp";
-import projektbeschriebImageWebp from "url:../img/projektbeschrieb.webp";
 import wikiImageWebp from "url:../img/wiki_preview_tile-01.webp";
 import useCase1Image from "url:../img/Use-Case1_600.jpg";
 import useCase2Image from "url:../img/Use-Case2_600.jpg";
 import useCase3Image from "url:../img/Use-Case3_600.jpg";
 import geoservices from "url:../img/geoservices.jpg";
-import projektbeschriebImage from "url:../img/projektbeschrieb.png";
 import wikiImage from "url:../img/wiki_preview_tile-01.png";
 import { router } from "./router";
 import { createGrid } from "./main_util";
@@ -74,17 +72,6 @@ const homepageUtil = {
           "importieren und mit Ihren eigenen Geodaten kombinieren.",
         route: "/services",
         linktext: "zu den Services"
-      },
-      projektbeschrieb: {
-        image: projektbeschriebImage,
-        imageWebp: projektbeschriebImageWebp,
-        title: "Projektbeschrieb",
-        subtitle: "Hintergrundwissen und Videoanleitungen",
-        description:
-          "Auf dieser Seite finden Sie Hinweise zur Verwendung der Kartenviewer und Geodienste " +
-          "sowie Videoanleitungen und Hintergrundinformationen.",
-        route: "/projektbeschrieb",
-        linktext: "zum Projektbeschrieb"
       },
       wiki: {
         image: wikiImage,
