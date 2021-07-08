@@ -46,7 +46,9 @@
       ]
     },
     "scripts": {
-      "build": "--experimental-scope-hoisting enables tree shaking support and reduces bundle size very much."
+      "build": "--experimental-scope-hoisting enables tree shaking support and reduces bundle size very much.",
+      "prebuild": "when working on windows powershell, the command is: cd dist; Get-ChildItem * | Remove-Item; cd ../",
+      "postbuild": " when working on windows powershell, the command is: Copy-Item -Path static/* -Destination dist -PassThru"
     }
   }
 }

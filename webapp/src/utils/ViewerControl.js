@@ -29,11 +29,11 @@ class ViewerControl {
        Datums</strong> und einem wolkenfreien <strong>Referenz-Composite aller verfügbaren Bilder der vorhergehenden 45 Tage.</strong> 
        Werte näher bei -100 weisen auf stärkere Schäden hin. Veränderungsflächen wurden ab einer 
        Mindestgrösse von 500 m2 ausgeschieden.`;
-    this.uc3description = `Hinweiskarte für die Veränderung der Vitalität in Bezug zum Medianwert seit 2015. 
-    Dargestellt sind standardisierte NDVI-Werte (Sentinel-2-Satellitenbilder). Negative Werte deuten auf eine
-     Abnahme der Vitalität hin, positive Werte deuten auf eine Zunahme der Vitalität hin. 
-     Je tiefer bzw. höher die Werte sind, desto wahrscheinlicher ist es, dass eine effektive Veränderung stattfand. 
-     Potenzielle Fehlerquellen sind Wolken und andere atmosphärische Störungen.`;
+    this.uc3description = `Hinweiskarte für die Veränderung der Vitalität in Bezug zum Medianwert seit 2015. Dargestellt sind standardisierte NDVI-Anomalien. 
+    Negative Werte deuten auf eine Abnahme der Vitalität hin, positive Werte auf eine Zunahme. 
+    Je tiefer bzw. höher die Werte sind, desto wahrscheinlicher ist es, dass eine effektive Veränderung stattfand. 
+    Potenzielle Fehlerquellen sind Wolken und andere atmosphärische Störungen. 
+    Insbesondere Veränderungen an den Rändern der aufgrund von Wolken ausgegrauten Flächen ("nicht genug Daten") sind mit Vorsicht zu interpretieren.`;
     this.changeOverlays = [
       {
         layername: "karten-werk:ndvi_decrease_2020_2019",
@@ -256,6 +256,9 @@ class ViewerControl {
       const layersToAdd = [];
       // get the right veraenderung layer and add it to the viewer
       layerArr.forEach((layername, index) => {
+        const splitted = layername.split("_");
+        const year = splitted[2];
+        const month = splitted[3];
         switch (layerType) {
           case "veraenderung":
             for (var i = 0; i < this.changeOverlays.length; i++) {
@@ -273,15 +276,12 @@ class ViewerControl {
             }
             break;
           case "vitalitaet":
-            const splitted = layername.split("_");
-            const year = splitted[2];
-            const month = splitted[3];
-            for (var i = 0; i < this.vitalityLayers.length; i++) {
+            for (var y = 0; y < this.vitalityLayers.length; y++) {
               if (
-                this.vitalityLayers[i].year === year &&
-                this.vitalityLayers[i].layers.length > 0
+                this.vitalityLayers[y].year === year &&
+                this.vitalityLayers[y].layers.length > 0
               ) {
-                this.vitalityLayers[i].layers.forEach(layer => {
+                this.vitalityLayers[y].layers.forEach(layer => {
                   const layerMonth = layer.layername.split("_")[3];
                   if (month === layerMonth) {
                     layer.visible = this.getVisibility(visibilities, index);
@@ -294,23 +294,24 @@ class ViewerControl {
             break;
           case "stoerungen":
             if (Array.isArray(times) && times.length > 0) {
-              for (var i = 0; i < this.stoerungslayers.length; i++) {
+              for (var x = 0; x < this.stoerungslayers.length; x++) {
                 if (
-                  layername === this.stoerungslayers[i].layername &&
-                  times[index] === this.stoerungslayers[i].time.substring(0, 10)
+                  layername === this.stoerungslayers[x].layername &&
+                  times[index] === this.stoerungslayers[x].time.substring(0, 10)
                 ) {
-                  this.stoerungslayers[i].visible = this.getVisibility(
+                  this.stoerungslayers[x].visible = this.getVisibility(
                     visibilities,
                     index
                   );
-                  this.stoerungslayers[i].opacity = this.getOpacity(
+                  this.stoerungslayers[x].opacity = this.getOpacity(
                     opacities,
                     index
                   );
-                  layersToAdd.push(this.stoerungslayers[i]);
+                  layersToAdd.push(this.stoerungslayers[x]);
                 }
               }
             }
+            break;
           default:
             return layersToAdd;
         }
@@ -700,7 +701,7 @@ class ViewerControl {
     chipContent.classList.add("chip__content");
     chipContent.innerHTML = label;
     chip.appendChild(chipContent);
-    chip.addEventListener("click", e => {
+    chip.addEventListener("click", () => {
       const domContainer = document.querySelector(".layers");
       if (singleLayer) {
         this.removeMapOverlays(this.activeLayers);
@@ -957,7 +958,7 @@ class ViewerControl {
       });
       // wait for the change to be commited before
       // updating the url.
-      mdcslider.listen("MDCSlider:change", e => {
+      mdcslider.listen("MDCSlider:change", () => {
         updateUrlVisibilityOpacity({
           ...layer,
           opacity
