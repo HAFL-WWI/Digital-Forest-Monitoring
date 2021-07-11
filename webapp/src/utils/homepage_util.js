@@ -33,7 +33,7 @@ const homepageUtil = {
         image: useCase1Image,
         imageWebp: useCase1ImageWebp,
         title: "Jährliche Veränderung",
-        subtitle: "Geodaten: Dominique Weber, HAFL",
+        subtitle: "Geodaten: Alexandra Erbach, HAFL",
         description:
           "Der Wald verändert sich ständig. Hier können Sie sehen, " +
           "wo Veränderungen z.B. durch Holzschläge stattgefunden haben.",
@@ -44,7 +44,7 @@ const homepageUtil = {
         image: useCase2Image,
         imageWebp: useCase2ImageWebp,
         title: "Test Sommersturmschäden 2017",
-        subtitle: "Geodaten: Dominique Weber, HAFL",
+        subtitle: "Geodaten: Alexandra Erbach, HAFL",
         description:
           "Hier können Sie sehen, wo der Wald natürlichen Störungen wie z.B. " +
           "Borkenkäferbefall oder Sommersturmschäden ausgesetzt ist.",
@@ -55,7 +55,7 @@ const homepageUtil = {
         image: useCase3Image,
         imageWebp: useCase3ImageWebp,
         title: "Hinweiskarten zur Vitalität",
-        subtitle: "Geodaten: Dominique Weber, HAFL",
+        subtitle: "Geodaten: Alexandra Erbach, HAFL",
         description:
           "Trockenheit führte in den vergangen Jahren vermehrt zu Waldschäden. " +
           "Hier finden Sie Hinweiskarten zur Vitalität der Wälder.",
