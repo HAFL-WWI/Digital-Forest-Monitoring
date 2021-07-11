@@ -29,11 +29,12 @@ class ViewerControl {
        Datums</strong> und einem wolkenfreien <strong>Referenz-Composite aller verfügbaren Bilder der vorhergehenden 45 Tage.</strong> 
        Werte näher bei -100 weisen auf stärkere Schäden hin. Veränderungsflächen wurden ab einer 
        Mindestgrösse von 500 m2 ausgeschieden.`;
-    this.uc3description = `Hinweiskarte für die Veränderung der Vitalität in Bezug zum Medianwert seit 2015. Dargestellt sind standardisierte NDVI-Anomalien. 
-    Negative Werte deuten auf eine Abnahme der Vitalität hin, positive Werte auf eine Zunahme. 
+    this.uc3description = `Hinweiskarte für die Veränderung der Vitalität in Bezug zum Medianwert seit 2015. 
+    Dargestellt sind standardisierte NDVI-Anomalien. Negative Werte deuten auf eine Abnahme der Vitalität hin, 
+    positive Werte auf eine Zunahme. Jedoch kann auch Holznutzung die Ursache der Veränderung sein. 
     Je tiefer bzw. höher die Werte sind, desto wahrscheinlicher ist es, dass eine effektive Veränderung stattfand. 
-    Potenzielle Fehlerquellen sind Wolken und andere atmosphärische Störungen. 
-    Insbesondere Veränderungen an den Rändern der aufgrund von Wolken ausgegrauten Flächen ("nicht genug Daten") sind mit Vorsicht zu interpretieren.`;
+    Potenzielle Fehlerquellen sind Wolken und andere atmosphärische Störungen. Insbesondere Veränderungen an den Rändern 
+    der aufgrund von Wolken ausgegrauten Flächen ("nicht genug Daten") sind mit Vorsicht zu interpretieren.`;
     this.changeOverlays = [
       {
         layername: "karten-werk:ndvi_decrease_2020_2019",
