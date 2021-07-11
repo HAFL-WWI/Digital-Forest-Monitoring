@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 //////////////////////////////////////////////////////////////
 // Analysis of Sentinel-2 images for drought stress detection > z-score
 //
@@ -6,7 +5,7 @@
 /////////////////////////////////////////////////////////////
 
 // IMAGE COLLECTIONS
-var s2Sr = ee.ImageCollection('COPERNICUS/S2_SR');
+var s2Sr = ee.ImageCollection('COPERNICUS/S2');
 var s2Clouds = ee.ImageCollection('COPERNICUS/S2_CLOUD_PROBABILITY');
 
 //LOCATION
@@ -27,12 +26,12 @@ var aoi = swiss;
 
 // PARAMS
 var reference_year_from = 2015;
-var reference_year_to = 2019;
-var monitoring_year_from = 2020;
-var monitoring_year_to = 2020;
+var reference_year_to = 2017;
+var monitoring_year_from = 2018;
+var monitoring_year_to = 2018;
 var month_from = 8;
 var month_to = 9;
-var MAX_CLOUD_PROBABILITY = 65;
+var MAX_CLOUD_PROBABILITY = 10;
 
 /////////////////////////////////////////////////////////////
 // GENERAL FUNCTIONS
@@ -69,7 +68,7 @@ var addDate = function(image){
 // Function to subtract raster layer from stack and return absolute deviation
 var diff = function(ras,bn){
   var wrap = function(image){
-    return image.select(bn).subtract(ras).abs().rename('diff');
+    return (image.select(bn).subtract(ras)).abs().rename('diff');
   };
   return wrap;
 };
@@ -104,7 +103,7 @@ var ref_abs_diff = ref.map(diff(ref_ndvi_med,'NDVI'));
 var ref_ndvi_mad = ref_abs_diff.select('diff').reduce(ee.Reducer.median());
 
 // Count valid pixels (several valid pixels for one and the same date count as one)
-//var valid_ref = ref.select(['date']).reduce(ee.Reducer.countDistinct());
+var valid_ref = ref.select(['date']).reduce(ee.Reducer.countDistinct());
 
 
 /////////////////////////////////////////////////////////////
@@ -139,12 +138,8 @@ var valid_mon = mon.select(['date']).reduce(ee.Reducer.countDistinct()).int16();
 /////////////////////////////////////////////////////////////
 // Z-SCORE
 
-// calculate z-score
-// see: https://en.wikipedia.org/wiki/Standard_score
-// see: https://www.sciencedirect.com/science/article/pii/S0034425718305509
-// see: ftp://mco.cfc.umt.edu/ndvi/aqua/monthly/MODIS_ndvi_monthly_zscore_metadata_FGDC.html
-// see: https://www.mdpi.com/2072-4292/6/4/3101
-var z_score = mon_ndvi_med.subtract(ref_ndvi_med).divide(ref_ndvi_mad).multiply(100).round().int16();
+// calculate modified z-score
+var z_score = (mon_ndvi_med.subtract(ref_ndvi_med)).multiply(0.6745).divide(ref_ndvi_mad).multiply(100).round().int16();
 
 // display NDVIs
 //var ndvi_params = {min: 0, max: 1, palette: ['blue', 'white', 'green']};
@@ -152,8 +147,8 @@ var z_score = mon_ndvi_med.subtract(ref_ndvi_med).divide(ref_ndvi_mad).multiply(
 //Map.addLayer(mon_ndvi_med, ndvi_params, 'ndvi monitoring', false);
 
 // display z-score
-var z_params = {min: -400, max: 400, palette: ['red', 'yellow', 'green']};
-Map.addLayer(z_score, z_params, 'z score', true);  
+//var z_params = {min: -500, max: 500, palette: ['red', 'yellow', 'green']};
+//Map.addLayer(z_score, z_params, 'z score', true);  
 
 
 /////////////////////////////////////////////////////////////
@@ -164,9 +159,11 @@ var stacked = z_score.addBands(valid_mon).rename(['zsc','no_valid']);
 // Export image
 Export.image.toDrive({
   image: stacked,
-  description: 'z_score_08-09',
+  description: 'z_score_08-09_2018',
   scale: 10,
   maxPixels: 2000000000,
   region: aoi,
   crs: 'EPSG:2056'
 });
+
+

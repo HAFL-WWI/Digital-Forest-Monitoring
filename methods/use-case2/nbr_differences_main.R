@@ -19,21 +19,22 @@ source("use-case2/update_shapefile.R")
 source("use-case2/build_polygons.R")
 
 # paths
-main_path = "//mnt/smb.hdd.rbd/BFH/Geodata/ESA/S2MSI2Ap/SAFE/"
-out_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case2/Test_all"
+main_path = "//mnt/smb.hdd.rbd/BFH/Geodata/ESA/S2MSI2A/SAFE/"
+out_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case2/Sturm_ZG_2021"
 mask_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/general/swissTLM3D_Wald/Wald_wgs84.tif"
 shp_path = dir_exist_create(out_path,"shp_dates")
 targetpath = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case2/Test_all/T32TMT/2017/nbr_diff/"  # reference for reprojection of T31TGM
 
 tile_vec = c("T32TLT", "T32TLS", "T32TMT", "T32TMS", "T32TNT", "T32TNS", "T32TMR", "T31TGM")
+tile_vec = c("T32TMT")
 
 dates_all = character()
 
 # get dates
 for(i in 1:length(tile_vec)){
   
-  diff_stk = calc_nbr_differences(main_path, out_path, tile_vec[i], year="2017", ref_date=as.Date("2017-08-19"), time_int_nbr=45, time_int_refstack=45, cloud_vec=c(3,7:10), cloud_value=-999, nodata_vec=c(0:2,5,6,11), nodata_value=-555)
-  diff_path = paste0(out_path,tile_vec[i],"/2017/nbr_diff")
+  diff_stk = calc_nbr_differences(main_path, out_path, tile_vec[i], year="2021", ref_date=as.Date("2021-06-23"), time_int_nbr=10, time_int_refstack=45, cloud_vec=c(3,7:10), cloud_value=-999, nodata_vec=c(0:2,5,6,11), nodata_value=-555)
+  #diff_path = paste0(out_path,tile_vec[i],"/2017/nbr_diff")
   #diff_stk = stack(rev(list.files(diff_path, full.names=T)))
   #names(diff_stk) = rev(lapply(strsplit(list.files(diff_path),".tif"), "[[", 1))
   
