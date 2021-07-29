@@ -3,8 +3,6 @@
 
 This is a research project of the BFH-HAFL on behalf of or with the support of the FOEN. The aim of this project is to use existing remote sensing data, which are freely available throughout Switzerland, for specific use cases and with a added value for practical applications. The main objective of this project is to implement map viewers and geoservices for the corresponding use cases.
 
-*At present, the data and services provided are intended exclusively for test purposes.*
-
 ![test](https://github.com/HAFL-FWI/Digital-Forest-Monitoring/blob/master/doc/pictures/intro.gif)
 
 ## Overview
