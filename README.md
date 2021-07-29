@@ -16,8 +16,8 @@ This is a research project of the BFH-HAFL on behalf of or with the support of t
 
 - Alexandra Erbach (HAFL)
 - Christian Rosset (HAFL)
-- Hannes Horneber (HAFL)
 - Dominique Weber (WSL)
+- Hannes Horneber (HAFL)
 - Hanskaspar Frei (karten-werk GmbH)
 - Thomas Bettler (BAFU)
 
