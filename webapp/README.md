@@ -45,7 +45,7 @@ yarn run start
 ```
 
 This command starts the bundling process and opens the development server on port 1234 => [http://localhost:1234](http://localhost:1234).
-In order to use the wms services in development mode, you should instead open: [http://app.karten-werk.ch:1234](http://app.karten-werk:1234)
+In order to use the wms services in development mode, you should instead open: [http://app.karten-werk.ch:1234](http://app.karten-werk.ch:1234)
 
 This works because of the change in the _hosts_ file.
 
