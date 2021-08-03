@@ -20,6 +20,16 @@ After that, you should have a new directory named "Digital-Forest-Monitoring". E
 The project needs the package manager [Yarn](https://yarnpkg.com/). You can install it from [here](https://yarnpkg.com/en/docs/install).
 Also it is very recommended to install the version control system [Git](https://git-scm.com/) on your machine.
 
+In order to be able to use the wms services in development mode, you have to add an entry to your hosts file.
+Under windows you can do this like so:
+
+- Press the Windows key.
+- Type Notepad in the search field.
+- In the search results, right-click Notepad and select Run as administrator.
+- From Notepad, open the following file: `c:\Windows\System32\Drivers\etc\hosts`
+- add an entry: `127.0.0.1 app.karten-werk.ch`
+- Select File > Save to save your changes.
+
 ### Installing
 
 While in the newly created folder, install all the dependencies.
@@ -35,6 +45,9 @@ yarn run start
 ```
 
 This command starts the bundling process and opens the development server on port 1234 => [http://localhost:1234](http://localhost:1234).
+In order to use the wms services in development mode, you should instead open: [http://app.karten-werk.ch:1234](http://app.karten-werk:1234)
+
+This works because of the change in the _hosts_ file.
 
 ## Deployment
 
@@ -71,6 +84,7 @@ We use [SemVer](http://semver.org/) for versioning.
 - Alexandra Erbach (HAFL)
 - Christian Rosset (HAFL)
 - Dominique Weber (HAFL)
+- Hannes Horneber (HAFL)
 - Hanskaspar Frei (karten-werk GmbH)
 - Thomas Bettler (BAFU)
 
