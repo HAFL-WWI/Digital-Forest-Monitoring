@@ -66,7 +66,7 @@ export default class GpsPosition {
 
       this.geolocation.on("error", error => {
         alert(
-          `Es gab einen Fehler bei der GPS Positionierung. Error message: ${error.message}`
+          `Es gab einen Fehler bei der GPS Positionierung. Error message: ${error.message}\nBitte stellen sie sicher, dass sie via https:// und nicht nur via http:// verbunden sind. (https://waldmonitoring.ch/)`
         );
         this.disableTracking(this.positionElement);
       });
