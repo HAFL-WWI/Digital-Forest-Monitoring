@@ -215,4 +215,16 @@ yarn.lock
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# local R-Studio files
+Digital-Forest-Monitoring_git.Rproj
+
+# local data
+methods/use-case4/input/*
+methods/use-case4/output/*
+
 >>>>>>> 85614df46121eff0970ac84d2b1e335a1f250b82
+
+
+
+
