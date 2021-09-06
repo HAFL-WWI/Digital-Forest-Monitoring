@@ -31,6 +31,8 @@ methods/use-case4/output/*
 # code for local execution (outside of docker)
 methods/use-case4/UC4_main_loc.R
 
+# code for local execution (outside of docker)
+methods/use-case4/uc4-lidar.qgz
 
 
 #-------------------------------#

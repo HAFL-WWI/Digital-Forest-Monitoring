@@ -1,0 +1,14 @@
+#-------------------------------#
+####        USE CASE 4       ####
+#-------------------------------#
+# these files are not included in the container
+
+# local input/output data
+input/*
+output/*
+
+# code for local execution (outside of docker)
+UC4_main_loc.R
+
+# 
+uc4-lidar.qgz
