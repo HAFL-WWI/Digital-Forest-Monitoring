@@ -98,6 +98,7 @@ COV_DENS_FACTOR = 3
 if(VERBOSE) print(paste0("######  load data: ", DIR_INPUT, " ######"))
 # get input files from dir
 
+#### > read shp/kml ####
 if(KML){
   input_files = list.files(path=DIR_INPUT, pattern='.kml', full.names = TRUE)
   if(VERBOSE) print(paste0("found ", length(input_files), " .kml files in input directory"))
