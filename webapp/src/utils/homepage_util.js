@@ -229,7 +229,7 @@ const homepageUtil = {
       <img
       src="${image}"
       alt="${title}"
-      style="object-fit:cover; max-width:100%" />`;
+      style="object-fit:cover; max-width:100%; min-width:100%" />`;
       cardMedia.appendChild(picture);
       cardTitleContainer.classList.add("homepage-card__primary");
       cardTitle.classList.add(
