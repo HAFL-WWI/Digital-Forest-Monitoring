@@ -70,7 +70,8 @@ const homepageUtil = {
         title: "Hinweiskarten zur Verjüngung",
         subtitle: "Geodaten: Hannes Horneber, HAFL",
         description:
-          "Ergänzend zu Vegetationshöhenmodellen zeigt diese Hinweiskarte das mögliche Vorhandensein von Vegetation unter Schirm.",
+          "Ergänzend zu Vegetationshöhenmodellen zeigt diese Hinweiskarte das mögliche Vorhandensein von Vegetation unter Schirm." +
+          "<br /><strong>Prototyp: Bisher nur Daten Burgergemeinde Bern. Wird noch erweitert um die Bereiche der swissSurface3D Daten.</strong>",
         route: "/verjuengung",
         linktext: "zum viewer"
       },
