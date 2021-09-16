@@ -69,6 +69,57 @@ class ViewerControl {
         toc: false
       }
     ];
+    this.verjuengungOverlays = [
+      {
+        layername: "karten-werk:verj_blaetterdach_groesser_12m",
+        displayName: "Blätterdach (>12 m)",
+        description: `Die Blätterdach-Maske zeigt Waldgebiete, in denen die Deckung der Vegetation >12 m über 33% beträgt. 
+          Dies wird verwendet, um zu ermitteln ob niedrigere Vegetation unter Schirm steht oder (weitestgehend) frei.`,
+        visible: false,
+        opacity: 1,
+        toc: false
+      },
+      {
+        layername: "karten-werk:verj_0-2m_unter_schirm",
+        displayName: "Verj. 0-2 m unter Schirm",
+        description: `Gibt die modellierte Wahrscheinlichkeit an, dass hier unter dem Blätterdach Vegetation zwischen 0-2 m vorhanden ist. 
+        Die Wahrscheinlichkeit basiert auf der Punktdichte der Vegetationsschicht relativ zur allgemeinen Punktdichte in dieser Zelle.
+        Werte reichen von 20 - 100%, alles unter 20% ist komplett transparent.`,
+        visible: true,
+        opacity: 1,
+        toc: false
+      },
+      {
+        layername: "karten-werk:verj_0-2m_frei",
+        displayName: "Verj. 0-2 m frei",
+        description: `Gibt die modellierte Wahrscheinlichkeit an, dass hier Vegetation zwischen 0-2 m vorhanden ist. 
+        Die Wahrscheinlichkeit basiert auf der Punktdichte der Vegetationsschicht relativ zur allgemeinen Punktdichte in dieser Zelle.
+        Werte reichen von 20 - 100%, alles unter 20% ist komplett transparent.`,
+        visible: false,
+        opacity: 1,
+        toc: false
+      },
+      {
+        layername: "karten-werk:verj_0-5m_unter_schirm",
+        displayName: "Verj. 0-5 m unter Schirm",
+        description: `Gibt die modellierte Wahrscheinlichkeit an, dass hier unter dem Blätterdach Vegetation zwischen 0-5 m vorhanden ist. 
+        Die Wahrscheinlichkeit basiert auf der Punktdichte der Vegetationsschicht relativ zur allgemeinen Punktdichte in dieser Zelle.
+        Werte reichen von 20 - 100%, alles unter 20% ist komplett transparent.`,
+        visible: false,
+        opacity: 1,
+        toc: false
+      },
+      {
+        layername: "karten-werk:verj_0-5m_frei",
+        displayName: "Verj. 0-5 m frei",
+        description: `Gibt die modellierte Wahrscheinlichkeit an, dass hier Vegetation zwischen 0-5 m vorhanden ist. 
+        Die Wahrscheinlichkeit basiert auf der Punktdichte der Vegetationsschicht relativ zur allgemeinen Punktdichte in dieser Zelle.
+        Werte reichen von 20 - 100%, alles unter 20% ist komplett transparent.`,
+        visible: false,
+        opacity: 1,
+        toc: false
+      }
+    ];
     this.month = [
       { number: "01-02", text: "Jan/Feb" },
       { number: "02-03", text: "Feb/Mrz" },
@@ -138,7 +189,7 @@ class ViewerControl {
   }
 
   /*
-   * creates the whole layer control for the "jaehrliche veränderung" viewer.
+   * creates the entire layer control for all the viewers.
    * @returns {HTMLElement} veraenderungControlElement - a div with all the necessary children.
    */
   createControl({ type }) {
@@ -178,13 +229,24 @@ class ViewerControl {
         this.viewerControls = this.getStoerungControls(this.urlParams);
         break;
       case "Jährliche Veränderung":
-        this.viewerControls = this.getVeraenderungControls(this.urlParams);
+        this.viewerControls = this.createBasicControl({
+          urlParams: this.urlParams,
+          tocLayers: this.changeOverlays,
+          layerType: "veraenderung"
+        });
         break;
       case "Vitalität der Wälder":
         this.viewerControls = this.getVitalityControls(
           this.vitalityLayers,
           this.urlParams
         );
+        break;
+      case "Hinweiskarten Verjüngung":
+        this.viewerControls = this.createBasicControl({
+          urlParams: this.urlParams,
+          tocLayers: this.verjuengungOverlays,
+          layerType: "verjuengung"
+        });
         break;
       default:
         return;
@@ -200,13 +262,20 @@ class ViewerControl {
   }
 
   /*
-   * create the controls for the "Jährliche Veranderung" viewer.
+   * create a basic layer control.
+   * @param {object} params - function parameter object.
+   * @param {object} params.urlParams - url parameters.
+   * @param {array} params.tocLayers - layers which must be available in the toc.
+   * @param {string} params.layertype - "veraenderung", ""
    * @returns {htmlElement} - a div element with all the controls for the viewer.
    */
-  getVeraenderungControls(urlParams) {
+  createBasicControl({ urlParams, tocLayers, layerType } = {}) {
+    if (!tocLayers) {
+      return;
+    }
     const controls = document.createElement("div");
     controls.classList.add("viewerControl__controls");
-    const dropdown = this.createLayerDropdown(this.changeOverlays);
+    const dropdown = this.createLayerDropdown(tocLayers);
     controls.appendChild(dropdown);
     const layers = document.createElement("div");
     layers.classList.add("layers");
@@ -215,13 +284,36 @@ class ViewerControl {
     if (urlParams.layers) {
       this.addLayersFromUrlParams({
         urlParams,
-        layerType: "veraenderung",
+        layerType,
         domContainer: layers
       });
     }
     if (this.activeLayers.length === 0) {
-      // if no layers in the urlParams, add the first layer to the toc and the map
-      this.addLayer({ layer: this.changeOverlays[0], domContainer: layers });
+      // if no layers in the urlParams, add some specific layers.
+      if (layerType === "verjuengung") {
+        // 0-5m unter schirm
+        this.addLayer({
+          layer: this.verjuengungOverlays[3],
+          domContainer: layers
+        });
+        // 0-2m unter schirm
+        this.addLayer({
+          layer: this.verjuengungOverlays[1],
+          domContainer: layers
+        });
+        // blaetterdach
+        this.addLayer({
+          layer: this.verjuengungOverlays[0],
+          domContainer: layers
+        });
+      }
+      if (layerType === "veraenderung") {
+        // the latest available year
+        this.addLayer({
+          layer: this.changeOverlays[0],
+          domContainer: layers
+        });
+      }
     }
     return controls;
   }
@@ -260,19 +352,21 @@ class ViewerControl {
         const splitted = layername.split("_");
         const year = splitted[2];
         const month = splitted[3];
+        let layers = [];
         switch (layerType) {
           case "veraenderung":
-            for (var i = 0; i < this.changeOverlays.length; i++) {
-              if (this.changeOverlays[i].layername === layername) {
-                this.changeOverlays[i].visible = this.getVisibility(
-                  visibilities,
-                  index
-                );
-                this.changeOverlays[i].opacity = this.getOpacity(
-                  opacities,
-                  index
-                );
-                layersToAdd.push(this.changeOverlays[i]);
+          case "verjuengung":
+            if (layerType === "veraenderung") {
+              layers = this.changeOverlays;
+            }
+            if (layerType === "verjuengung") {
+              layers = this.verjuengungOverlays;
+            }
+            for (var i = 0; i < layers.length; i++) {
+              if (layers[i].layername === layername) {
+                layers[i].visible = this.getVisibility(visibilities, index);
+                layers[i].opacity = this.getOpacity(opacities, index);
+                layersToAdd.push(layers[i]);
               }
             }
             break;
@@ -465,7 +559,7 @@ class ViewerControl {
       "Layer hinzufügen"
     );
     const callback = event => {
-      const layer = this.changeOverlays.filter(
+      const layer = layers.filter(
         overlay => overlay.displayName === event.detail.value
       )[0];
       if (layer.toc === true) {
@@ -896,6 +990,7 @@ class ViewerControl {
     label.innerHTML = `${overlay.displayName}`;
     label.style.padding = "0 0 0 12px";
     label.style.flexGrow = 1;
+    label.style.minWidth = "60%";
     label.style.fontSize = "12px";
     thumb.appendChild(input);
     thumbUnderlay.appendChild(thumb);
