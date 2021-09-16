@@ -1,11 +1,13 @@
 import useCase1ImageWebp from "url:../img/Use-Case1_600.webp";
 import useCase2ImageWebp from "url:../img/Use-Case2_600.webp";
 import useCase3ImageWebp from "url:../img/Use-Case3_600.webp";
+import useCase4ImageWebp from "url:../img/Use-Case4_600.webp";
 import geoservicesWebp from "url:../img/geoservices.webp";
 import wikiImageWebp from "url:../img/wiki_preview_tile-01.webp";
 import useCase1Image from "url:../img/Use-Case1_600.jpg";
 import useCase2Image from "url:../img/Use-Case2_600.jpg";
 import useCase3Image from "url:../img/Use-Case3_600.jpg";
+import useCase4Image from "url:../img/Use-Case4_600.jpg";
 import geoservices from "url:../img/geoservices.jpg";
 import wikiImage from "url:../img/wiki_preview_tile-01.png";
 import { router } from "./router";
@@ -60,6 +62,16 @@ const homepageUtil = {
           "Trockenheit führte in den vergangen Jahren vermehrt zu Waldschäden. " +
           "Hier finden Sie Hinweiskarten zur Vitalität der Wälder.",
         route: "/vitalitaet",
+        linktext: "zum viewer"
+      },
+      verjuengung: {
+        image: useCase4Image,
+        imageWebp: useCase4ImageWebp,
+        title: "Hinweiskarten zur Verjüngung",
+        subtitle: "Geodaten: Hannes Horneber, HAFL",
+        description:
+          "Ergänzend zu Vegetationshöhenmodellen zeigt diese Hinweiskarte das mögliche Vorhandensein von Vegetation unter Schirm.",
+        route: "/verjuengung",
         linktext: "zum viewer"
       },
       geodienste: {
