@@ -71,7 +71,7 @@ const homepageUtil = {
         subtitle: "Geodaten: Hannes Horneber, HAFL",
         description:
           "Ergänzend zu Vegetationshöhenmodellen zeigt diese Hinweiskarte das mögliche Vorhandensein von Vegetation unter Schirm." +
-          "<br /><strong>Prototyp: Bisher nur Daten Burgergemeinde Bern. Wird noch erweitert um die Bereiche der swissSurface3D Daten.</strong>",
+          "<br /><strong>Prototyp: Bisher nur Daten der Burgergemeinde Bern. Wird noch erweitert um die Bereiche der swissSurface3D Daten.</strong>",
         route: "/verjuengung",
         linktext: "zum viewer"
       },
