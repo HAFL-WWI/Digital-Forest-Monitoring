@@ -108,9 +108,7 @@ export const getVideoElement = videoId =>
 export const getTitle = () => {
   const width = window.innerWidth;
   const title =
-    width <= 550
-      ? "Waldmonitoring"
-      : "Waldmonitoring mit Sentinel Satellitenbildern";
+    width <= 550 ? "Waldmonitoring" : "Waldmonitoring mit Fernerkundungsdaten";
   return title;
 };
 
