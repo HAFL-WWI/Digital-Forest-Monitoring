@@ -260,7 +260,7 @@ const viewerUtil = {
      */
     toggleZoomControl({ orientation, zoomControl } = {}) {
       if (!orientation || !zoomControl) return;
-      if (orientation === "landscape-primary") {
+      if (orientation.indexOf("landscape") !== -1) {
         zoomControl.setMap(null);
       } else {
         zoomControl.setMap(viewerUtil.model.map);
