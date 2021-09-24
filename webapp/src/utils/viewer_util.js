@@ -207,9 +207,9 @@ const viewerUtil = {
           control => control instanceof Zoom
         )[0];
       }
-      // hide the control if the site get's loaded in landscape mode initially
+      // hide the control if the site get's loaded in landscape mode initially.
       viewerUtil.controller.toggleZoomControl({
-        orientation: window.screen.orientation.type,
+        orientation: viewerUtil.controller.getOrientation(),
         zoomControl: viewerUtil.model.zoomControl
       });
     },
@@ -217,13 +217,9 @@ const viewerUtil = {
       viewerUtil.model.map.on("moveend", event => {
         viewerUtil.controller.updateUrlParams(event.map);
       });
-      window.addEventListener("orientationchange", e => {
-        viewerUtil.controller.updateMapHeight();
-        viewerUtil.controller.toggleZoomControl({
-          orientation: e.target.screen.orientation.type,
-          zoomControl: viewerUtil.model.zoomControl
-        });
-      });
+    },
+    getOrientation: () => {
+      return window.innerWidth > window.innerHeight ? "landscape" : "portrait";
     },
     /*
      * update x, y, zoom and rotation url params.
@@ -250,7 +246,10 @@ const viewerUtil = {
      * update the height of the map container.
      */
     updateMapHeight() {
-      viewerUtil.model.viewerContainer.style.height = "calc(100vh - 64px)";
+      const vh = window.innerHeight * 0.01;
+      const mapHeight = parseInt(vh * 100 - 64);
+      viewerUtil.model.viewerContainer.style.height = `${mapHeight}px`;
+      viewerUtil.model.map.updateSize();
     },
     /*
      * hide or show the zoomControl based on the orientation of the device.
