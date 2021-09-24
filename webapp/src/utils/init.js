@@ -31,6 +31,32 @@ export const init = () => {
     // We execute the same script as before
     let vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty("--vh", `${vh}px`);
+    /* the map height must be updated in order to have no empty
+     * space on device rotation on mobile devices.
+     */
+    let updateMapsize;
+    /*
+     * the resize event got fired in an interval < 100ms
+     * therefore we clear the timeout function to update
+     * the map size.
+     */
+    clearTimeout(updateMapsize);
+
+    updateMapsize = setTimeout(() => {
+      /*
+       * the code in here only get's called, when
+       * the resize event did not get fired for 100ms.
+       */
+      viewerUtil.controller.updateMapHeight();
+      /* hide the zoom control in landscape mode
+       * cause it obscures the gps button.
+       */
+      const orientation = viewerUtil.controller.getOrientation();
+      viewerUtil.controller.toggleZoomControl({
+        orientation,
+        zoomControl: viewerUtil.model.zoomControl
+      });
+    }, 100);
   });
 };
 
