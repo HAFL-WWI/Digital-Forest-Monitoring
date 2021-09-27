@@ -248,8 +248,9 @@ const viewerUtil = {
     updateMapHeight() {
       const vh = window.innerHeight * 0.01;
       const mapHeight = parseInt(vh * 100 - 64);
-      viewerUtil.model.viewerContainer.style.height = `${mapHeight}px`;
-      viewerUtil.model.map.updateSize();
+      if (viewerUtil.model.viewerContainer)
+        viewerUtil.model.viewerContainer.style.height = `${mapHeight}px`;
+      if (viewerUtil.model.map) viewerUtil.model.map.updateSize();
     },
     /*
      * hide or show the zoomControl based on the orientation of the device.
