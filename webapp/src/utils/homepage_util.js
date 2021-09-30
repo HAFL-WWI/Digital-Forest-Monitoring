@@ -45,7 +45,7 @@ const homepageUtil = {
       stoerung: {
         image: useCase2Image,
         imageWebp: useCase2ImageWebp,
-        title: "Test Sommersturmschäden 2017",
+        title: "Test Sommersturmschäden",
         subtitle: "Geodaten: Alexandra Erbach, HAFL",
         description:
           "Hier können Sie sehen, wo der Wald natürlichen Störungen wie z.B. " +
