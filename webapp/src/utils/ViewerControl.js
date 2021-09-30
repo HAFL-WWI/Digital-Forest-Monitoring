@@ -190,6 +190,8 @@ class ViewerControl {
 
   /*
    * creates the entire layer control for all the viewers.
+   * @param {object} params - function parameter object.
+   * @param {string} type - the type of viewer to create.
    * @returns {HTMLElement} veraenderungControlElement - a div with all the necessary children.
    */
   createControl({ type }) {
