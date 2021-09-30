@@ -9,6 +9,7 @@ import { MDCSelect } from "@material/select";
 import { getLayerInfo, openSidebar } from "./main_util";
 import {
   addLayerToUrl,
+  getQueryParams,
   removeLayerFromUrl,
   updateUrlVisibilityOpacity
 } from "./url_util";
@@ -18,7 +19,6 @@ class ViewerControl {
     this.map = map;
     this.title = title;
     this.urlParams = urlParams;
-    this.nbr_change = "karten-werk:nbr_ch_2017";
     this.uc1description = `Hinweiskarte für Waldveränderungen (z.B. Holzschläge) 
       auf Basis von Sentinel-2-Satellitenbildern. Die Werte in der Legende 
       beschreiben die Abnahme des <a href="https://de.wikipedia.org/wiki/Normalized_Difference_Vegetation_Index"> NDVI Vegetationsindex</a> zwischen den zwei 
@@ -64,6 +64,28 @@ class ViewerControl {
         layername: "karten-werk:ndvi_decrease_2017_2016",
         displayName: "Juni 2016 - Juni 2017",
         description: this.uc1description,
+        visible: false,
+        opacity: 1,
+        toc: false
+      }
+    ];
+    this.disorderOverlays = [
+      {
+        layername: "karten-werk:nbr_ch_2017",
+        displayName: "Sommersturm 2017",
+        intro:
+          "Wählen Sie ein Datum um Veränderungsflächen der letzten <br /><strong>45 Tage</strong> zu sehen.",
+        description: this.uc2description,
+        visible: false,
+        opacity: 1,
+        toc: false
+      },
+      {
+        layername: "karten-werk:nbr_ch_2021",
+        displayName: "Sommersturm 2021 Kt. Zug",
+        intro:
+          "Das Sturmereignis war am 21.6.2021. Betroffen war insbes. die Region Risch ZG. <strong>Bitte wählen sie ein Datum</strong>.",
+        description: this.uc2description,
         visible: false,
         opacity: 1,
         toc: false
@@ -143,21 +165,22 @@ class ViewerControl {
       },
       { year: "2018", month: this.month.slice(5, 8), layers: [] }
     ];
-    this.stoerungslayers = [];
+    this.disorderlayers = [];
     this.activeLayers = [];
   }
 
   /*
    * creates an object which can be used to create a time based wms.
-   * @param {string} time - iso date format e.g. "2017-08-25".
+   * @param {string} date - iso date format e.g. "2017-08-25".
+   * @param {string} layername - namespace:name of the layer.
    * @param {boolean} visibility - visibility of the layer (on/off).
    * @param {float} opacity - layer opacity (value between 0 an 1).
    * @returns {object} layer object to use in the createWmsLayer function.
    */
-  getTimeLayerObject(date, visibility = true, opacity = 1) {
+  getTimeLayerObject(date, layername, visibility = true, opacity = 1) {
     const fromDate = new Date(date.substring(0, 10)).toLocaleDateString();
     return {
-      layername: this.nbr_change,
+      layername,
       time: date || "2017-08-18",
       infoTitle: `Hinweis auf Veränderungen gemäss Bild vom ${fromDate}`,
       displayName: `Veränderung ${fromDate}`,
@@ -228,7 +251,10 @@ class ViewerControl {
     // add the necessary controls for every viewer.
     switch (type) {
       case "Natürliche Störungen":
-        this.viewerControls = this.getStoerungControls(this.urlParams);
+        this.viewerControls = this.getDisorderControls({
+          tocLayers: this.disorderOverlays,
+          urlParams: this.urlParams
+        });
         break;
       case "Jährliche Veränderung":
         this.viewerControls = this.createBasicControl({
@@ -277,7 +303,7 @@ class ViewerControl {
     }
     const controls = document.createElement("div");
     controls.classList.add("viewerControl__controls");
-    const dropdown = this.createLayerDropdown(tocLayers);
+    const dropdown = this.createLayerDropdown({ tocLayers });
     controls.appendChild(dropdown);
     const layers = document.createElement("div");
     layers.classList.add("layers");
@@ -391,20 +417,20 @@ class ViewerControl {
             break;
           case "stoerungen":
             if (Array.isArray(times) && times.length > 0) {
-              for (var x = 0; x < this.stoerungslayers.length; x++) {
+              for (var x = 0; x < this.disorderlayers.length; x++) {
                 if (
-                  layername === this.stoerungslayers[x].layername &&
-                  times[index] === this.stoerungslayers[x].time.substring(0, 10)
+                  layername === this.disorderlayers[x].layername &&
+                  times[index] === this.disorderlayers[x].time.substring(0, 10)
                 ) {
-                  this.stoerungslayers[x].visible = this.getVisibility(
+                  this.disorderlayers[x].visible = this.getVisibility(
                     visibilities,
                     index
                   );
-                  this.stoerungslayers[x].opacity = this.getOpacity(
+                  this.disorderlayers[x].opacity = this.getOpacity(
                     opacities,
                     index
                   );
-                  layersToAdd.push(this.stoerungslayers[x]);
+                  layersToAdd.push(this.disorderlayers[x]);
                 }
               }
             }
@@ -553,27 +579,34 @@ class ViewerControl {
 
   /*
    * creates a dropdown menu with new layers which can be added to the map.
-   * @param {array} layers - layer objects which must be available in the dropdown.
+   * @param {object} params - function parameter object.
+   * @param {array} params.tocLayers - layer objects which must be available in the dropdown.
+   * @param {function} params.callback - function to call when select menu changes
    * @returns {htmlElement} - dropdown menu with layers to choose.
    */
-  createLayerDropdown(layers) {
+  createLayerDropdown({ tocLayers, callback }) {
     const { dropdownContainer, mdcSelect } = this.createMDCDropdown(
       "Layer hinzufügen"
     );
-    const callback = event => {
-      const layer = layers.filter(
-        overlay => overlay.displayName === event.detail.value
-      )[0];
-      if (layer.toc === true) {
-        console.log("layer allready in toc");
-        return;
-      }
-      layer.visible = true;
-      layer.toc = true;
-      this.addLayer({ layer, domContainer: document.querySelector(".layers") });
-    };
+    if (!callback) {
+      callback = event => {
+        const layer = tocLayers.filter(
+          overlay => overlay.displayName === event.detail.value
+        )[0];
+        if (layer.toc === true) {
+          console.log("layer allready in toc");
+          return;
+        }
+        layer.visible = true;
+        layer.toc = true;
+        this.addLayer({
+          layer,
+          domContainer: document.querySelector(".layers")
+        });
+      };
+    }
     this.createSelectMenu({
-      items: layers,
+      items: tocLayers,
       mdcSelect,
       dropdownContainer,
       callback
@@ -705,31 +738,85 @@ class ViewerControl {
 
   /*
    * create the controls for the "Natürliche Störungen" viewer.
+   * @param {object} function parameter object.
+   * @param {array} params.tocLayers - layers to add to the dropdown menu. (this.disorderOverlays).
+   * @param {object} params.urlParams - url parameter object.
+   * @returns {htmlElement} - all the controls for the disorder viewer.
    */
-  getStoerungControls(urlParams) {
+  getDisorderControls({ tocLayers, urlParams }) {
     const controls = document.createElement("div");
     controls.classList.add("viewerControl__controls");
+    const disorderLayerControls = document.createElement("section");
+    // the function to call when the dropdown changes.
+    const callback = e => {
+      this.removeMapOverlays(this.activeLayers);
+      const disorderOverlay = this.disorderOverlays[e.detail.index];
+      this.getDisorderLayerControls({
+        urlParams: getQueryParams(), //these must be the current params!
+        disorderOverlay,
+        disorderLayerControls
+      });
+    };
+    // dropdown for case selection
+    const dropdown = this.createLayerDropdown({
+      tocLayers,
+      callback
+    });
+    controls.appendChild(dropdown);
+    controls.appendChild(disorderLayerControls);
+    let disorderOverlay = this.disorderOverlays[0];
+    // add the layer from the url param if it exists
+    // else, use the first one from the disorderoverlays.
+    if (urlParams.layers) {
+      disorderOverlay = this.disorderOverlays.filter(
+        element => element.layername === urlParams.layers
+      )[0];
+    }
+    this.getDisorderLayerControls({
+      urlParams,
+      disorderOverlay,
+      disorderLayerControls
+    });
+    return controls;
+  }
+
+  /*
+   * create the layer chips for the disorder layers.
+   * @param {object} params - function parameter object.
+   * @param {object} params.urlParams - url parameters.
+   * @param {object} params.disorderOverlay - element from this.disorderOverlays.
+   * @param {domElement} params.disorderLayerControls - container to append the chips etc.
+   * @returns {domElement} disorderLayerControls - container filled with content (chips etc.).
+   */
+  getDisorderLayerControls({
+    urlParams,
+    disorderOverlay,
+    disorderLayerControls
+  }) {
+    //clear the element from previous content.
+    disorderLayerControls.innerHTML = "";
+    this.disorderlayers = [];
+
     const intro = document.createElement("div");
     intro.classList.add("viewerControl__helpertext");
-    intro.innerHTML =
-      "Wählen Sie ein Datum um Veränderungsflächen der letzten <br /><strong>45 Tage</strong> zu sehen.";
-    controls.appendChild(intro);
+    intro.innerHTML = `<strong>${disorderOverlay.displayName}</strong> <br /><br /> ${disorderOverlay.intro}`;
+    disorderLayerControls.appendChild(intro);
     const yearInfo = document.createElement("div");
     yearInfo.classList.add("viewerControl__yearinfo");
-    controls.appendChild(yearInfo);
+    disorderLayerControls.appendChild(yearInfo);
     const dateChips = document.createElement("div");
     dateChips.classList.add("datechips");
     const chipsetEl = document.createElement("div");
     chipsetEl.classList.add("mdc-chip-set", "mdc-chip-set--filter");
     const layers = document.createElement("div");
     layers.classList.add("layers");
-    controls.appendChild(chipsetEl);
-    controls.appendChild(layers);
-    this.getDimensions().then(response => {
+    disorderLayerControls.appendChild(chipsetEl);
+    disorderLayerControls.appendChild(layers);
+    this.getDimensions(disorderOverlay.layername).then(response => {
       const year = response[0].split("-")[0];
       yearInfo.innerHTML = `Jahr ${year}`;
       response.forEach(date => {
-        const layer = this.getTimeLayerObject(date);
+        const layer = this.getTimeLayerObject(date, disorderOverlay.layername);
         const printDate = date.substring(0, 10);
         layer.chip = this.createChip({
           label: this.formatDateString(printDate),
@@ -738,7 +825,7 @@ class ViewerControl {
         });
         chipsetEl.appendChild(layer.chip);
         // we need this to add the layer when it was in the url.
-        this.stoerungslayers.push(layer);
+        this.disorderlayers.push(layer);
       });
       if (urlParams.layers) {
         this.addLayersFromUrlParams({
@@ -748,7 +835,7 @@ class ViewerControl {
         });
       }
     });
-    return controls;
+    return disorderLayerControls;
   }
 
   /*
@@ -768,9 +855,10 @@ class ViewerControl {
 
   /*
    * get all the available time dimensions for the nbr_change layer.
+   * @param {string} layername - name of the layer to query the dimensions.
    * @returns {promise} - promise with all the available time strings.
    */
-  getDimensions() {
+  getDimensions(layername) {
     const url = "https://geoserver.karten-werk.ch/wms?request=getCapabilities";
     const parser = new WMSCapabilities();
     return fetch(url)
@@ -778,7 +866,7 @@ class ViewerControl {
       .then(text => {
         const result = parser.read(text);
         const layers = result.Capability.Layer.Layer;
-        const nbr = layers.filter(layer => layer.Name === this.nbr_change)[0];
+        const nbr = layers.filter(layer => layer.Name === layername)[0];
         const dimensions = nbr.Dimension[0].values.split(",");
         return dimensions;
       });
