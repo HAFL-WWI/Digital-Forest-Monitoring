@@ -18,7 +18,7 @@ source("use-case1/mosaic.R")
 
 ###########################################
 # define year and output directory here
-out_dir = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/NDVI_max_2018"
+out_dir = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/NDVI_max_2021"
 ###########################################
 
 ###########################################
