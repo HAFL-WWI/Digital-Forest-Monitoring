@@ -1,5 +1,5 @@
 import { Map, View } from "ol";
-import { defaults as defaultControls, Control } from "ol/control";
+import { defaults as defaultControls, Control, Zoom } from "ol/control";
 import { MDCList } from "@material/list";
 import "ol/ol.css";
 import { orthoBasemap, swBasemap, vegetationBasemap } from "./basemap_util";
@@ -29,6 +29,7 @@ const viewerUtil = {
       viewerUtil.controller.removeContent();
       viewerUtil.controller.createContainer();
       viewerUtil.controller.showViewer(title);
+      viewerUtil.controller.saveZoomControl();
       viewerUtil.controller.attachEventListeners();
       viewerUtil.model.searchList = new MDCList(
         document.querySelector(".mdc-list")
@@ -196,10 +197,29 @@ const viewerUtil = {
         request.send();
       }
     }, 250),
+    /*
+     * save the zoom control to the model in order to be able to hide/show it later.
+     */
+    saveZoomControl: () => {
+      const controls = viewerUtil.model.map.getControls().getArray();
+      if (typeof viewerUtil.model.zoomControl === "undefined") {
+        viewerUtil.model.zoomControl = controls.filter(
+          control => control instanceof Zoom
+        )[0];
+      }
+      // hide the control if the site get's loaded in landscape mode initially.
+      viewerUtil.controller.toggleZoomControl({
+        orientation: viewerUtil.controller.getOrientation(),
+        zoomControl: viewerUtil.model.zoomControl
+      });
+    },
     attachEventListeners: () => {
       viewerUtil.model.map.on("moveend", event => {
         viewerUtil.controller.updateUrlParams(event.map);
       });
+    },
+    getOrientation: () => {
+      return window.innerWidth > window.innerHeight ? "landscape" : "portrait";
     },
     /*
      * update x, y, zoom and rotation url params.
@@ -221,6 +241,30 @@ const viewerUtil = {
         removeParam("rotation");
       }
       return updateUrl(queryParams);
+    },
+    /*
+     * update the height of the map container.
+     */
+    updateMapHeight() {
+      const vh = window.innerHeight * 0.01;
+      const mapHeight = parseInt(vh * 100 - 64);
+      if (viewerUtil.model.viewerContainer)
+        viewerUtil.model.viewerContainer.style.height = `${mapHeight}px`;
+      if (viewerUtil.model.map) viewerUtil.model.map.updateSize();
+    },
+    /*
+     * hide or show the zoomControl based on the orientation of the device.
+     * @param {object} params - function parameter object.
+     * @param {string} params.orientation - the orientation of the device.
+     * @param {object} params.zoomControl - instance of the zoom control.
+     */
+    toggleZoomControl({ orientation, zoomControl } = {}) {
+      if (!orientation || !zoomControl) return;
+      if (orientation.indexOf("landscape") !== -1) {
+        zoomControl.setMap(null);
+      } else {
+        zoomControl.setMap(viewerUtil.model.map);
+      }
     }
   },
   view: {

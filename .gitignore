@@ -1,6 +1,46 @@
 <<<<<<< HEAD
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+#-------------------------------#
+####          GENERAL        ####
+#-------------------------------#
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+#-------------------------------#
+####        LOCAL IDE        ####
+#-------------------------------#
+
+# local R-Studio files
+Digital-Forest-Monitoring_git.Rproj
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+#-------------------------------#
+####        USE CASE 4       ####
+#-------------------------------#
+
+# local input/output data
+methods/use-case4/input/*
+methods/use-case4/output/*
+
+# code for local execution (outside of docker)
+methods/use-case4/UC4_main_loc.R
+methods/use-case4/UC4_main_locM.R
+methods/use-case4/UC4_main_locMP.R
+
+# QGIS project
+methods/use-case4/uc4-lidar.qgz
+methods/use-case4/uc4_lidar.qgz
+
+#-------------------------------#
+####          WEBAPP         ####
+#-------------------------------#
+
 # compiled output
 dist/
 tmp/
@@ -90,11 +130,6 @@ jspm_packages/
 # Lerna
 lerna-debug.log
 
-# System Files
-.DS_Store
-Thumbs.db
-.Rproj.user
-=======
 # Logs
 logs
 *.log
@@ -207,7 +242,6 @@ dist
 .vscode-test
 
 yarn.lock
-.DS_Store
 
 # yarn v2
 .yarn/cache
@@ -215,4 +249,10 @@ yarn.lock
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+
 >>>>>>> 85614df46121eff0970ac84d2b1e335a1f250b82
+
+
+
+
