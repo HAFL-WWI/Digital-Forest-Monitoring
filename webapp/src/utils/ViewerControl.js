@@ -37,10 +37,18 @@ class ViewerControl {
     der aufgrund von Wolken ausgegrauten Flächen ("nicht genug Daten") sind mit Vorsicht zu interpretieren.`;
     this.changeOverlays = [
       {
+        layername: "karten-werk:ndvi_decrease_2021_2020",
+        displayName: "Juni 2020 - Juni 2021",
+        description: this.uc1description,
+        visible: true,
+        opacity: 1,
+        toc: false
+      },
+      {
         layername: "karten-werk:ndvi_decrease_2020_2019",
         displayName: "Juni 2019 - Juni 2020",
         description: this.uc1description,
-        visible: true,
+        visible: false,
         opacity: 1,
         toc: false
       },
@@ -157,6 +165,7 @@ class ViewerControl {
       { number: "12-01", text: "Dez/Jan" }
     ];
     this.vitalityLayers = [
+      { year: "2021", month: this.month.slice(5, 8), layers: [] },
       { year: "2020", month: this.month.slice(5, 8), layers: [] },
       {
         year: "2019",
