@@ -1,59 +1,3 @@
-<<<<<<< HEAD
-{
-  "name": "parcel-vanillajs-starter",
-  "version": "1.0.0",
-  "license": "MIT",
-  "sass": {
-    "includePaths": [
-      "./node_modules"
-    ]
-  },
-  "devDependencies": {
-    "eslint": "^7.5.0",
-    "parcel": "^2.0.0-beta.1",
-    "prettier": "^2.1.1",
-    "sass": "^1.26.10"
-  },
-  "scripts": {
-    "lint": "eslint src/**/*.js",
-    "start": "parcel serve ./src/index.html --open",
-    "prebuild": "rm -rf ./dist && rm -rf ./.parcel-cache",
-    "build": "parcel build src/index.html",
-    "postbuild": "cp -r static/ dist/"
-  },
-  "dependencies": {
-    "@material/button": "^4.0.0",
-    "@material/card": "^4.0.0",
-    "@material/dialog": "^4.0.0",
-    "@material/icon-button": "^4.0.0",
-    "@material/layout-grid": "^4.0.0",
-    "@material/list": "^4.0.0",
-    "@material/ripple": "^4.0.0",
-    "@material/select": "4.0.0",
-    "@material/slider": "^4.0.0",
-    "@material/switch": "^4.0.0",
-    "@material/textfield": "^4.0.0",
-    "@material/top-app-bar": "^4.0.0",
-    "@material/typography": "^4.0.0",
-    "navigo": "^7.1.2",
-    "ol": "^6.4.3",
-    "proj4": "^2.6.2",
-    "query-string": "^6.13.1"
-  },
-  "comments": {
-    "sass": {
-      "includePaths": [
-        "we add this, in order for material components to find all the .scss files."
-      ]
-    },
-    "scripts": {
-      "build": "--experimental-scope-hoisting enables tree shaking support and reduces bundle size very much.",
-      "prebuild": "when working on windows powershell, the command is: cd dist; Get-ChildItem * | Remove-Item; cd ../",
-      "postbuild": " when working on windows powershell, the command is: Copy-Item -Path static/* -Destination dist -PassThru"
-    }
-  }
-}
-=======
 {
   "name": "parcel-vanillajs-starter",
   "version": "1.0.0",
@@ -112,4 +56,3 @@
     }
   }
 }
->>>>>>> 9d6240b0548adb81487dd37783a949c6de440ade
