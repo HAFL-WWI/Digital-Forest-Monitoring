@@ -42,7 +42,8 @@ class ViewerControl {
         description: this.uc1description,
         visible: true,
         opacity: 1,
-        toc: false
+        toc: false,
+        color: { hex: "#a444d6ff", name: "Dark-Orchid" }
       },
       {
         layername: "karten-werk:ndvi_decrease_2020_2019",
@@ -50,7 +51,8 @@ class ViewerControl {
         description: this.uc1description,
         visible: false,
         opacity: 1,
-        toc: false
+        toc: false,
+        color: { hex: "#4545d9ff", name: "Iris" }
       },
       {
         layername: "karten-werk:ndvi_decrease_2019_2018",
@@ -58,7 +60,8 @@ class ViewerControl {
         description: this.uc1description,
         visible: false,
         opacity: 1,
-        toc: false
+        toc: false,
+        color: { hex: "#46d8d5ff", name: "Medium-Turquoise" }
       },
       {
         layername: "karten-werk:ndvi_decrease_2018_2017",
@@ -66,7 +69,8 @@ class ViewerControl {
         description: this.uc1description,
         visible: false,
         opacity: 1,
-        toc: false
+        toc: false,
+        color: { hex: "#80c757ff", name: "Mantis" }
       },
       {
         layername: "karten-werk:ndvi_decrease_2017_2016",
@@ -74,7 +78,8 @@ class ViewerControl {
         description: this.uc1description,
         visible: false,
         opacity: 1,
-        toc: false
+        toc: false,
+        color: { hex: "#f8e025ff", name: "Yellow-Pantone" }
       }
     ];
     this.disorderOverlays = [
@@ -736,7 +741,16 @@ class ViewerControl {
     const layerControl = document.createElement("div");
     layerControl.classList.add("viewerControl__controls-control");
     layerControl.appendChild(this.getSwitch({ overlay: layer }));
-    layerControl.appendChild(this.getLayerRemoveButton(layer));
+    const layerTopRightBlock = document.createElement("div");
+    layerTopRightBlock.style.display = "flex";
+    layerTopRightBlock.style.alignItems = "center";
+    layerTopRightBlock.style.justifyContent = "end";
+    layerTopRightBlock.style.flexGrow = 1;
+    if (layer.color) {
+      layerTopRightBlock.appendChild(this.getLayercolor(layer));
+    }
+    layerTopRightBlock.appendChild(this.getLayerRemoveButton(layer));
+    layerControl.appendChild(layerTopRightBlock);
     layerControl.appendChild(this.getSlider(layer));
     if (this.title === "Natürliche Störungen") {
       layerControl.appendChild(this.getSentinelLink(layer));
@@ -997,6 +1011,17 @@ class ViewerControl {
     return layerInfo;
   }
 
+  getLayercolor(layer) {
+    const color = document.createElement("div");
+    color.title = `Layerfarbe: ${layer.color.name}`;
+    color.style.backgroundColor = layer.color.hex;
+    color.style.borderRadius = "6px";
+    color.style.height = "12px";
+    color.style.width = "20px";
+    color.style.marginRight = "8px";
+    return color;
+  }
+
   getLayerRemoveButton(layer) {
     const removeLayer = document.createElement("button");
     removeLayer.title = "Layer entfernen";
@@ -1088,7 +1113,6 @@ class ViewerControl {
     label.setAttribute("for", `${overlay.layername}_switch`);
     label.innerHTML = `${overlay.displayName}`;
     label.style.padding = "0 0 0 12px";
-    label.style.flexGrow = 1;
     label.style.minWidth = "60%";
     label.style.fontSize = "12px";
     thumb.appendChild(input);
