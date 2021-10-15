@@ -8,14 +8,13 @@
     ]
   },
   "devDependencies": {
-    "@parcel/packager-raw-url": "2.0.0-rc.0",
-    "@parcel/transformer-image": "2.0.0-rc.0",
-    "@parcel/transformer-sass": "2.0.0-rc.0",
-    "@parcel/transformer-webmanifest": "2.0.0-rc.0",
-    "eslint": "^7.5.0",
-    "parcel": "^2.0.0-rc.0",
-    "prettier": "^2.1.1",
-    "sass": "^1.26.10"
+    "@parcel/packager-raw-url": "^2.0.0",
+    "@parcel/transformer-sass": "^2.0.0",
+    "@parcel/transformer-webmanifest": "^2.0.0",
+    "eslint": "^8.0.1",
+    "parcel": "^2.0.0",
+    "prettier": "^2.4.1",
+    "sass": "^1.43.2"
   },
   "scripts": {
     "lint": "eslint src/**/*.js",
@@ -50,7 +49,6 @@
       ]
     },
     "scripts": {
-      "build": "--experimental-scope-hoisting enables tree shaking support and reduces bundle size very much.",
       "prebuild": "when working on windows powershell, the command is: cd dist; Get-ChildItem * | Remove-Item; cd ../",
       "postbuild": " when working on windows powershell, the command is: Copy-Item -Path static/* -Destination dist -PassThru"
     }
