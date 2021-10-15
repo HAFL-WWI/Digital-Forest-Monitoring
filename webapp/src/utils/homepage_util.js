@@ -1,17 +1,20 @@
-import useCase1ImageWebp from "url:../img/Use-Case1_600.webp";
-import useCase2ImageWebp from "url:../img/Use-Case2_600.webp";
-import useCase3ImageWebp from "url:../img/Use-Case3_600.webp";
-import useCase4ImageWebp from "url:../img/Use-Case4_600.webp";
-import geoservicesWebp from "url:../img/geoservices.webp";
-import wikiImageWebp from "url:../img/wiki_preview_tile-01.webp";
-import useCase1Image from "url:../img/Use-Case1_600.jpg";
-import useCase2Image from "url:../img/Use-Case2_600.jpg";
-import useCase3Image from "url:../img/Use-Case3_600.jpg";
-import useCase4Image from "url:../img/Use-Case4_600.jpg";
-import geoservices from "url:../img/geoservices.jpg";
-import wikiImage from "url:../img/wiki_preview_tile-01.png";
 import { router } from "./router";
 import { createGrid } from "./main_util";
+const useCase1ImageWebp = new URL("../img/Use-Case1_600.webp", import.meta.url);
+const useCase2ImageWebp = new URL("../img/Use-Case2_600.webp", import.meta.url);
+const useCase3ImageWebp = new URL("../img/Use-Case3_600.webp", import.meta.url);
+const useCase4ImageWebp = new URL("../img/Use-Case4_600.webp", import.meta.url);
+const geoservicesWebp = new URL("../img/geoservices.webp", import.meta.url);
+const wikiImageWebp = new URL(
+  "../img/wiki_preview_tile-01.webp",
+  import.meta.url
+);
+const useCase1Image = new URL("../img/Use-Case1_600.jpg", import.meta.url);
+const useCase2Image = new URL("../img/Use-Case2_600.jpg", import.meta.url);
+const useCase3Image = new URL("../img/Use-Case3_600.jpg", import.meta.url);
+const geoservices = new URL("../img/geoservices.jpg", import.meta.url);
+const wikiImage = new URL("../img/wiki_preview_tile-01.png", import.meta.url);
+const useCase4Image = new URL("../img/Use-Case4_600.jpg", import.meta.url);
 const homepageUtil = {
   model: {
     /*

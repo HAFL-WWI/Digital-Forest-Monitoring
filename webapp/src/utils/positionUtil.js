@@ -5,10 +5,10 @@ import { Vector as VectorLayer } from "ol/layer";
 import { Vector as VectorSource } from "ol/source";
 import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
 import { convertPointCoordinates } from "./projectionUtil";
-import gpsIcon from "url:../img/gps.svg";
-import gpsButton from "url:../img/gps_icon.jpg";
 import { dialog } from "./init";
 import { dialogTitle, dialogContent } from "./main_util";
+const gpsIcon = new URL("../img/gps.svg", import.meta.url);
+const gpsButton = new URL("../img/gps_icon.jpg", import.meta.url);
 const positionStroke = new Stroke({
   color: "#ffffff",
   width: 1.5

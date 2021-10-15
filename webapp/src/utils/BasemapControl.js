@@ -1,8 +1,8 @@
 import { Control } from "ol/control";
-import orthoImage from "url:../img/basemapOrtho.jpg";
-import sw from "url:../img/sw.jpg";
 import { orthoBasemap, swBasemap } from "./basemap_util";
 import { updateUrl } from "./url_util";
+const orthoImage = new URL("../img/basemapOrtho.jpg", import.meta.url);
+const sw = new URL("../img/sw.jpg", import.meta.url);
 class BasemapControl {
   constructor(map = null, active = "Orthofoto") {
     this.map = map;

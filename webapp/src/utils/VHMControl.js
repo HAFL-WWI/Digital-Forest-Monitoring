@@ -1,7 +1,10 @@
 import { Control } from "ol/control";
-import vegetationImage from "url:../img/basemapVegetation.jpg";
 import { vegetationBasemap } from "./basemap_util";
 import { updateUrl, removeParam } from "./url_util";
+const vegetationImage = new URL(
+  "../img/basemapVegetation.jpg",
+  import.meta.url
+);
 class VHMControl {
   constructor(map = null, showVegetation = false) {
     this.map = map;
