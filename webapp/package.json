@@ -21,7 +21,11 @@
     "start": "parcel serve ./src/index.html --open",
     "prebuild": "rm -rf ./dist && rm -rf ./.parcel-cache",
     "build": "parcel build src/index.html",
-    "postbuild": "cp -r static/ dist/"
+    "postbuild": "cp -r static/ dist/",
+    "winPrebuild": "rd /s /q dist .parcel-cache>nul 2>&1|echo.>nul",
+    "winBuild": "parcel build src/index.html",
+    "winPostbuild": "@powershell Copy-Item -Path static/* -Destination dist -PassThru",
+    "buildOnWin": "npm run winPrebuild && npm run winBuild && npm run winPostbuild"
   },
   "dependencies": {
     "@material/button": "^4.0.0",

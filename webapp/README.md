@@ -51,8 +51,16 @@ This works because of the change in the _hosts_ file.
 
 ## Deployment
 
+On Linux, OSX
+
 ```zsh
 yarn run build
+```
+
+On Windows
+
+```zsh
+yarn run buildOnWin
 ```
 
 This disables watch mode and hot module replacement so it will only build once. It also enables the minifier for all output bundles to reduce file size. The minifiers used by Parcel are [terser](https://github.com/terser/terser) for JavaScript, [cssnano](https://cssnano.co/) for CSS, and [htmlnano](https://github.com/posthtml/htmlnano) for HTML.
