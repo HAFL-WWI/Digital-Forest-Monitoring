@@ -24,12 +24,12 @@ export const registerProjections = register => {
 export const convertPointCoordinates = ({
   sourceProj,
   destProj,
-  coordinates
+  position
 } = {}) => {
   // we have to switch the coordinates in case its wgs84
   const normalisedCoords =
     sourceProj === "EPSG:4326"
-      ? [parseFloat(coordinates[1]), parseFloat(coordinates[0])]
-      : [Math.round(coordinates[0]), Math.round(coordinates[1])];
+      ? [parseFloat(position[1]), parseFloat(position[0])]
+      : [Math.round(position[0]), Math.round(position[1])];
   return proj4(sourceProj, destProj, normalisedCoords);
 };
