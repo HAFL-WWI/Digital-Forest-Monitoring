@@ -1,20 +1,27 @@
 import Feature from "ol/Feature";
 import Geolocation from "ol/Geolocation";
-import Point from "ol/geom/Point";
+import { Point, LineString } from "ol/geom";
 import { Vector as VectorLayer } from "ol/layer";
 import { Vector as VectorSource } from "ol/source";
-import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
+import { Circle as CircleStyle, Fill, Stroke, Style, Icon } from "ol/style";
+import { containsXY } from "ol/extent";
 import { convertPointCoordinates } from "./projectionUtil";
 import { dialog } from "./init";
 import { dialogTitle, dialogContent } from "./main_util";
 const gpsIcon = new URL("../img/gps.svg", import.meta.url);
 const gpsButton = new URL("../img/gps_icon.jpg", import.meta.url);
+const gpsArrow = new URL("../img/gps_arrow_icon.svg", import.meta.url);
+const gpsArrowIcon = document.createElement("img");
+gpsArrowIcon.src = gpsArrow;
+gpsArrowIcon.alt = "gps arrow icon";
+gpsArrowIcon.style.width = "15px";
+gpsArrowIcon.style.height = "15px";
 const positionStroke = new Stroke({
   color: "#ffffff",
   width: 1.5
 });
 const positionFill = new Fill({
-  color: "red" //"#f9aa33"
+  color: "red"
 });
 const positionStyle = new Style({
   image: new CircleStyle({
@@ -24,6 +31,13 @@ const positionStyle = new Style({
   }),
   stroke: positionStroke,
   fill: positionFill
+});
+const positionHeadingStyle = new Style({
+  image: new Icon({
+    crossOrigin: "anonymous",
+    img: gpsArrowIcon,
+    imgSize: [15, 15]
+  })
 });
 const accuracyStyle = new Style({
   stroke: new Stroke({
@@ -43,6 +57,13 @@ accuracyFeature.setId("gpsAccuracy");
 accuracyFeature.setProperties({
   _style: { fill: "#ffffff", stroke: { color: "#fbc02d" } }
 });
+
+/*
+ * linestring to store different geolocation positions.
+ * this linestring is time aware. the z dimension is used
+ * to store the rotation (heading)
+ */
+const positions = new LineString([], "XYZM");
 
 export default class GpsPosition {
   constructor(map) {
@@ -90,21 +111,17 @@ export default class GpsPosition {
 
       this.geolocation.on("change:position", () => {
         const height = this.geolocation.getAltitude();
-        const coordinates = this.geolocation.getPosition();
+        const position = this.geolocation.getPosition();
+        const heading = this.geolocation.getHeading() || 0;
+        const speed = this.geolocation.getSpeed() || 0;
+        const m = Date.now();
         const lv95Coords = convertPointCoordinates({
           sourceProj: "EPSG:3857",
           destProj: "EPSG:2056",
-          coordinates
+          position
         });
-        const gpsAttribution = `<br />GPS (LV95): ${Math.round(
-          lv95Coords[0]
-        ).toLocaleString("de-CH")}, ${Math.round(lv95Coords[1]).toLocaleString(
-          "de-CH"
-        )} | Höhe (m.ü.M): ${height ? Math.round(height) : "unbekannt"}`;
-        this.source.setAttributions(gpsAttribution);
-        positionFeature.setGeometry(
-          coordinates ? new Point(coordinates) : null
-        );
+        this.setAttribution(lv95Coords, height);
+        this.addPosition({ position, heading, m, speed });
       });
       Object.freeze(this); // make it unchangeable
       GpsPosition.instance = this;
@@ -115,6 +132,89 @@ export default class GpsPosition {
      */
     return GpsPosition.instance;
   }
+
+  /*
+   * update the attribution with the newest gps measurements.
+   * @param {array} lv95Coords - coordinates in lv95 projection.
+   * @param {number} height - the height in m.ü.m.
+   */
+  setAttribution(lv95Coords, height) {
+    const gpsAttribution = `<br />GPS (LV95): ${Math.round(
+      lv95Coords[0]
+    ).toLocaleString("de-CH")}, ${Math.round(lv95Coords[1]).toLocaleString(
+      "de-CH"
+    )} | Höhe (m.ü.M): ${height ? Math.round(height) : "unbekannt"}`;
+    this.source.setAttributions(gpsAttribution);
+  }
+
+  /*
+   * does all the manipulation on the gps marker icon.
+   * @param {object} params - function parameter object.
+   * @param {array} params.position - result of geolocation.getPosition()
+   * @param {number} params.heading - result of geolocation.getHeading() (radians clowise from North)
+   * @param {date} params.m - A time value from date.now()
+   * @param {number} params.speed - result from geolocation.getSpeed() (m/s)
+   */
+  addPosition({ position, heading, m, speed }) {
+    // x coordinate
+    const x = position[0];
+    // y coordinate
+    const y = position[1];
+    // get all coordinate objects inside the lineString object.
+    const fCoords = positions.getCoordinates();
+    // the last the last one from the coordinate objects.
+    const previous = fCoords[fCoords.length - 1];
+    // get the last heading value
+    const prevHeading = previous && previous[2];
+    if (prevHeading) {
+      // get the difference between the last and the previous heading.
+      let headingDiff = heading - this.mod(prevHeading);
+      // force the rotation change to be less than 180°
+      // here is the magic !!!
+      if (Math.abs(headingDiff) > Math.PI) {
+        const sign = headingDiff >= 0 ? 1 : -1;
+        headingDiff = -sign * (2 * Math.PI - Math.abs(headingDiff));
+      }
+      heading = prevHeading + headingDiff;
+    }
+    // add the latest calculations to coordinates
+    positions.appendCoordinate([x, y, heading, m]);
+
+    // only keep the 20 last coordinates
+    positions.setCoordinates(positions.getCoordinates().slice(-20));
+
+    // set the gps icon based on wether we have a heading and speed or not.
+    if (heading && speed) {
+      positionHeadingStyle.getImage().setRotation(heading);
+      positionFeature.setStyle(positionHeadingStyle);
+    } else {
+      positionFeature.setStyle(positionStyle);
+    }
+    positionFeature.setGeometry(position ? new Point(position) : null);
+    this.centerViewOnGps(x, y, this.map);
+  }
+
+  /*
+   * center the map on the geolocation marker if it the latter is outside the map extent
+   * @param {number} x - the x coordinate.
+   * @param {number} y - the y coordinate.
+   * @param {object} map - ol/map instance.
+   */
+  centerViewOnGps(x, y, map) {
+    if (!x || !y || !map) return;
+    const mapExtent = map.getView().calculateExtent(this.map.getSize());
+    if (containsXY(mapExtent, x, y)) {
+      return true;
+    } else {
+      map.getView().setCenter([x, y]);
+    }
+  }
+
+  // modulo for negative values
+  mod(n) {
+    return ((n % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  }
+
   /* creates the position/gps element which can
    * be used as a control on the map
    * @param {object} map - ol/map instance
