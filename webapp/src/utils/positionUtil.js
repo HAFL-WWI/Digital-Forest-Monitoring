@@ -14,8 +14,8 @@ const gpsArrow = new URL("../img/gps_arrow_icon.svg", import.meta.url);
 const gpsArrowIcon = document.createElement("img");
 gpsArrowIcon.src = gpsArrow;
 gpsArrowIcon.alt = "gps arrow icon";
-gpsArrowIcon.style.width = "15px";
-gpsArrowIcon.style.height = "15px";
+gpsArrowIcon.style.width = "20px";
+gpsArrowIcon.style.height = "20px";
 const positionStroke = new Stroke({
   color: "#ffffff",
   width: 1.5
@@ -36,7 +36,7 @@ const positionHeadingStyle = new Style({
   image: new Icon({
     crossOrigin: "anonymous",
     img: gpsArrowIcon,
-    imgSize: [15, 15]
+    imgSize: [20, 20]
   })
 });
 const accuracyStyle = new Style({
