@@ -140,6 +140,7 @@ body:after {
   -webkit-box-shadow: 4px 0 4px 0 rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 4px 0 4px 0 rgba(0, 0, 0, 0.75);
   box-shadow: 4px 0 4px 0 rgba(0, 0, 0, 0.75);
+  z-index: -1;
   /* the transition property is set under router.js */
 }
 .sidebar__close {
@@ -269,11 +270,21 @@ body:after {
   width: 56px;
 }
 .vhmControl__title {
+  align-items: center;
   background-color: rgba(255, 255, 255, 0.9);
   font-size: 11px;
+  display: flex;
+  justify-content: space-between;
+  padding: 1px 4px;
   text-align: center;
   width: 100%;
 }
+
+.vhmControl__info {
+  width: 15px;
+  height: 15px;
+}
+
 .vhm__text {
   align-items: center;
   color: $mdc-theme-primary;
