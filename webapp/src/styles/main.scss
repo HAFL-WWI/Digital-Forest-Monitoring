@@ -285,6 +285,12 @@ body:after {
   height: 15px;
 }
 
+.vhmControl__waiting {
+  color: dimgray;
+  display: flex;
+  justify-content: center;
+}
+
 .vhm__text {
   align-items: center;
   color: $mdc-theme-primary;
