@@ -4,6 +4,10 @@ import VectorSource from "ol/source/Vector";
 import GeoJSON from "ol/format/GeoJSON";
 import { getCenter } from "ol/extent";
 import { dialog } from "./init";
+
+export const GEO_ADMIN_WMS_INFO_URL =
+  "https://europe-west1-oereb-uri.cloudfunctions.net/getwmsinfo?";
+
 export const topAppBarRight = document.querySelector(
   ".top-app-bar__section--align-end"
 );
@@ -332,6 +336,7 @@ const createOlVectorSource = geojson => {
 export const openSidebar = ({ content = null } = {}) => {
   sidebar.style.zIndex = 5;
   sidebar.style.transform = "scale(1)";
+  sidebar.dataset.open = "true";
   if (content) {
     sidebarContent.appendChild(content);
   }
@@ -340,6 +345,7 @@ export const openSidebar = ({ content = null } = {}) => {
 export const closeSidebar = () => {
   sidebarContent.innerHTML = "";
   sidebar.style.transform = "scale(0,1)";
+  sidebar.dataset.open = "false";
   window.setTimeout(() => {
     sidebar.style.zIndex = -1;
   }, 400);
