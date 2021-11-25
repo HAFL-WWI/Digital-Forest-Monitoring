@@ -343,10 +343,14 @@ export const openSidebar = ({ content = null } = {}) => {
 };
 
 export const closeSidebar = () => {
-  sidebarContent.innerHTML = "";
+  clearSidebar();
   sidebar.style.transform = "scale(0,1)";
   sidebar.dataset.open = "false";
   window.setTimeout(() => {
     sidebar.style.zIndex = -1;
   }, 400);
+};
+
+export const clearSidebar = () => {
+  sidebarContent.innerHTML = "";
 };
