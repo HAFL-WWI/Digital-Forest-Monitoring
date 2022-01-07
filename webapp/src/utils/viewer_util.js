@@ -139,7 +139,6 @@ const viewerUtil = {
       });
       viewerUtil.model.map.addControl(viewerUtil.model.viewerControl);
       viewerUtil.controller.updateUrlParams(viewerUtil.model.map);
-      viewerUtil.model.map.addEventListener("click", e => console.log(e));
     },
     /*
      * close the search results and set the correct z-index in order for paning/zooming to work as expected.
