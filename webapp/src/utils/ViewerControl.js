@@ -4,7 +4,7 @@ import { transform } from "ol/proj";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import { TileWMS, Vector as VectorSource } from "ol/source";
-import { Stroke, Style } from "ol/style";
+import { Stroke, Style, Fill } from "ol/style";
 import { bbox as bboxStrategy } from "ol/loadingstrategy";
 import { MDCSlider } from "@material/slider";
 import { MDCSwitch } from "@material/switch";
@@ -185,6 +185,19 @@ class ViewerControl {
     ];
     this.disorderlayers = [];
     this.activeLayers = [];
+    this.selectedFeatures = [];
+    this.wfsStyle = new Style({
+      fill: new Fill({ color: "rgba(255,0,0,0)" })
+    });
+    this.highlightStyle = new Style({
+      stroke: new Stroke({
+        color: "#ffff00",
+        width: 2
+      }),
+      fill: new Fill({
+        color: "rgba(255,0,0,0.5)"
+      })
+    });
   }
 
   /*
@@ -279,6 +292,15 @@ class ViewerControl {
           urlParams: this.urlParams,
           tocLayers: this.changeOverlays,
           layerType: "veraenderung"
+        });
+        // add the click event listener for crowdsourcing
+        this.map.addEventListener("click", e => {
+          this.selectedFeatures.forEach(feature => feature.setStyle(undefined));
+          this.selectedFeatures = [];
+          this.map.forEachFeatureAtPixel(e.pixel, feature => {
+            feature.setStyle(this.highlightStyle);
+            this.selectedFeatures.push(feature);
+          });
         });
         break;
       case "Vitalität der Wälder":
@@ -1021,12 +1043,7 @@ class ViewerControl {
     });
     const wfsLayer = new VectorLayer({
       source: vectorSource,
-      style: new Style({
-        stroke: new Stroke({
-          color: "rgba(255, 0, 0, 0.5)",
-          width: 1
-        })
-      })
+      style: this.wfsStyle
     });
     return wfsLayer;
   }
