@@ -1,5 +1,6 @@
 import { Control } from "ol/control";
 import { WMSCapabilities, GeoJSON } from "ol/format";
+import Overlay from "ol/Overlay";
 import { transform } from "ol/proj";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
@@ -295,11 +296,14 @@ class ViewerControl {
         });
         // add the click event listener for crowdsourcing
         this.map.addEventListener("click", e => {
-          this.selectedFeatures.forEach(feature => feature.setStyle(undefined));
-          this.selectedFeatures = [];
+          this.selectedFeatures.forEach((element, i) => {
+            element.feature.setStyle(undefined);
+            element.overlay.setPosition(undefined);
+            // remove the object from the array
+            this.selectedFeatures.splice(i, 1);
+          });
           this.map.forEachFeatureAtPixel(e.pixel, feature => {
-            feature.setStyle(this.highlightStyle);
-            this.selectedFeatures.push(feature);
+            this.selectFeature(e.coordinate, feature);
           });
         });
         break;
@@ -1258,6 +1262,85 @@ class ViewerControl {
     });
 
     return sliderContainer;
+  }
+
+  /*
+   * creates the html elements for a popup
+   * @returns {object} - with a popup, content and closer key and the corresponding elements.
+   */
+  getPopup() {
+    const popup = document.createElement("div");
+    popup.classList.add("ol-popup");
+    const closer = document.createElement("span");
+    closer.style.cursor = "pointer";
+    closer.classList.add("ol-popup-closer");
+    const content = document.createElement("div");
+    content.classList.add("popup-content");
+    popup.appendChild(closer);
+    popup.appendChild(content);
+    return { popup, content, closer };
+  }
+
+  /*
+   * creates a ol/Overlay object
+   * @param {dom Element} popup - the div element with the popup content.
+   * @returns {object} - ol/Overlay instance.
+   */
+  getOverlay(popup) {
+    return new Overlay({
+      element: popup,
+      autoPan: {
+        animation: {
+          duration: 250
+        }
+      }
+    });
+  }
+
+  /*
+   * select a vector feature on the map and display a popup with attributes.
+   * @param {array} coordinate - [x,y] coordinate of the click event.
+   * @param {object} feature - the ol/Feature to highlight.
+   * @returns void.
+   */
+  selectFeature(coordinate, feature) {
+    feature.setStyle(this.highlightStyle);
+    const { popup, content, closer } = this.getPopup();
+    const overlay = this.getOverlay(popup);
+    closer.addEventListener("click", () => {
+      overlay.setPosition(undefined);
+      feature.setStyle(undefined);
+      return false;
+    });
+    content.appendChild(this.createFeaturePropsTable(feature.getProperties()));
+    this.selectedFeatures.push({ feature, overlay });
+    overlay.setPosition(coordinate);
+    this.map.addOverlay(overlay);
+  }
+
+  /*
+   * create a html table for feature properties to
+   * display inside a popup.
+   * @ param {object} props - feature properties
+   * @returns {htmlElement} - html table.
+   */
+  createFeaturePropsTable(props) {
+    const hiddenAttributes = ["geometry", "id", "fid"];
+    const keys = Object.keys(props);
+    const table = document.createElement("table");
+    for (var i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      if (hiddenAttributes.indexOf(key) !== -1) continue;
+      const row = document.createElement("tr");
+      const tdKey = document.createElement("td");
+      const tdVal = document.createElement("td");
+      tdKey.innerText = key;
+      tdVal.innerText = props[key];
+      row.appendChild(tdKey);
+      row.appendChild(tdVal);
+      table.appendChild(row);
+    }
+    return table;
   }
 }
 export default ViewerControl;
