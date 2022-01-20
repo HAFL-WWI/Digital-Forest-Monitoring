@@ -517,6 +517,17 @@ body:after {
 .ol-popup-closer:after {
   content: "✖";
 }
+.popup__attributetable,
+.popup__editform {
+  padding-bottom: 12px;
+}
+.popup__buttoncontainer {
+  border-top: 1px solid gainsboro;
+  padding: 12px 0 0 0;
+}
+.button__fullwidth {
+  width: 100%;
+}
 
 /*
 * position button animation
