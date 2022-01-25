@@ -289,8 +289,13 @@ class ViewerControl {
             // remove the object from the array
             this.crowdsourcing.selectedFeatures.splice(i, 1);
           });
-          this.map.forEachFeatureAtPixel(e.pixel, feature => {
-            this.crowdsourcing.selectFeature(e.coordinate, feature);
+          const features = this.map.getFeaturesAtPixel(e.pixel);
+          features.forEach((feature, index) => {
+            this.crowdsourcing.selectFeature({
+              coordinate: e.coordinate,
+              feature,
+              index
+            });
           });
         });
         break;
