@@ -283,19 +283,10 @@ class ViewerControl {
         });
         // add the click event listener for crowdsourcing
         this.map.addEventListener("click", e => {
-          this.crowdsourcing.selectedFeatures.forEach((element, i) => {
-            element.feature.setStyle(undefined);
-            element.overlay.setPosition(undefined);
-            // remove the object from the array
-            this.crowdsourcing.selectedFeatures.splice(i, 1);
-          });
           const features = this.map.getFeaturesAtPixel(e.pixel);
-          features.forEach((feature, index) => {
-            this.crowdsourcing.selectFeature({
-              coordinate: e.coordinate,
-              feature,
-              index
-            });
+          this.crowdsourcing.selectFeature({
+            coordinate: e.coordinate,
+            features
           });
         });
         break;
