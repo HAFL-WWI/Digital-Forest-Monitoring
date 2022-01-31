@@ -331,7 +331,8 @@ class Crowdsourcing {
       const cloneFeature = activeFeature.feature.clone();
       cloneFeature.setId(activeFeature.feature.getId());
       cloneFeature.setProperties(updatedProps);
-
+      const wfsName = cloneFeature.getId().split(".")[0];
+      this.wfsTransactionEngine.setGMLFormat(wfsName);
       this.wfsTransactionEngine
         .transactWFS("insert", cloneFeature)
         .then(response => {
