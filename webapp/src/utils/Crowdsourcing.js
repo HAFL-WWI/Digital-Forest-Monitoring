@@ -62,7 +62,8 @@ class Crowdsourcing {
       const style = [
         new Style({
           fill: new Fill({ color: fillColor }),
-          stroke: new Stroke({ color: strokeColor, width: 3 })
+          stroke: new Stroke({ color: strokeColor, width: 3 }),
+          zIndex: 1
         })
       ];
       if (kategorie) {
@@ -98,7 +99,8 @@ class Crowdsourcing {
       }),
       fill: new Fill({
         color: "rgba(255,0,0,0.5)"
-      })
+      }),
+      zIndex: 2
     });
     this.wfsTransactionEngine = new WfsTransationEngine(this.map);
   }
