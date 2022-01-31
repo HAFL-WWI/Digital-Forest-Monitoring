@@ -5,13 +5,16 @@ class WfsTransationEngine {
   constructor(map) {
     this.map = map;
     this.formatWFS = new WFS();
+    this.xs = new XMLSerializer();
+  }
+
+  setGMLFormat(wfsName) {
     this.formatGML = new GML({
       featureNS: "https://geoserver.karten-werk.ch/wfs/karten-werk",
       featurePrefix: "karten-werk",
-      featureType: "ndvi_decrease_crowd_2021_2020",
+      featureType: wfsName,
       srsName: "EPSG:3857"
     });
-    this.xs = new XMLSerializer();
   }
   getVectorSources() {
     const layers = this.map.getLayers();
