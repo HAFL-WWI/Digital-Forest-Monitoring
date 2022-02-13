@@ -225,7 +225,7 @@ class ViewerControl {
    */
   getVitalityLayerObject({ year, month, visibility = true, opacity = 1 }) {
     return {
-      layername: `kartenwerk:ndvi_anomaly_${year}_${month.number}`,
+      layername: `karten-werk:ndvi_anomaly_${year}_${month.number}`,
       displayName: `NDVI Anomalien ${month.number} ${year}`,
       description: this.uc3description,
       visible: visibility,
