@@ -354,3 +354,11 @@ export const closeSidebar = () => {
 export const clearSidebar = () => {
   sidebarContent.innerHTML = "";
 };
+
+export const change_overlay_colors = {
+  ndvi_decrease_2021_2020: { hex: "#a444d6ff", name: "Dark-Orchid" },
+  ndvi_decrease_2020_2019: { hex: "#4545d9ff", name: "Iris" },
+  ndvi_decrease_2019_2018: { hex: "#46d8d5ff", name: "Medium-Turquoise" },
+  ndvi_decrease_2018_2017: { hex: "#80c757ff", name: "Mantis" },
+  ndvi_decrease_2017_2016: { hex: "#f8e025ff", name: "Yellow-Pantone" }
+};

@@ -8,7 +8,7 @@ import { bbox as bboxStrategy } from "ol/loadingstrategy";
 import { MDCSlider } from "@material/slider";
 import { MDCSwitch } from "@material/switch";
 import { MDCSelect } from "@material/select";
-import { getLayerInfo, openSidebar } from "./main_util";
+import { getLayerInfo, openSidebar, change_overlay_colors } from "./main_util";
 import Crowdsourcing from "./Crowdsourcing";
 import {
   addLayerToUrl,
@@ -46,7 +46,7 @@ class ViewerControl {
         visible: true,
         opacity: 1,
         toc: false,
-        color: { hex: "#a444d6ff", name: "Dark-Orchid" },
+        color: change_overlay_colors["ndvi_decrease_2021_2020"],
         wfs: "karten-werk:ndvi_decrease_crowd_2021_2020"
       },
       {
@@ -56,7 +56,7 @@ class ViewerControl {
         visible: false,
         opacity: 1,
         toc: false,
-        color: { hex: "#4545d9ff", name: "Iris" },
+        color: change_overlay_colors["ndvi_decrease_2020_2019"],
         wfs: "karten-werk:ndvi_decrease_crowd_2020_2019"
       },
       {
@@ -66,7 +66,7 @@ class ViewerControl {
         visible: false,
         opacity: 1,
         toc: false,
-        color: { hex: "#46d8d5ff", name: "Medium-Turquoise" },
+        color: change_overlay_colors["ndvi_decrease_2019_2018"],
         wfs: "karten-werk:ndvi_decrease_crowd_2019_2018"
       },
       {
@@ -76,7 +76,7 @@ class ViewerControl {
         visible: false,
         opacity: 1,
         toc: false,
-        color: { hex: "#80c757ff", name: "Mantis" },
+        color: change_overlay_colors["ndvi_decrease_2018_2017"],
         wfs: "karten-werk:ndvi_decrease_crowd_2018_2017"
       },
       {
@@ -86,7 +86,7 @@ class ViewerControl {
         visible: false,
         opacity: 1,
         toc: false,
-        color: { hex: "#f8e025ff", name: "Yellow-Pantone" },
+        color: change_overlay_colors["ndvi_decrease_2017_2016"],
         wfs: "karten-werk:ndvi_decrease_crowd_2017_2016"
       }
     ];
