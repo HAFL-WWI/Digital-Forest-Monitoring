@@ -1,3 +1,4 @@
+import { change_overlay_colors } from "./main_util";
 import Overlay from "ol/Overlay";
 import { Stroke, Style, Fill, Icon } from "ol/style";
 import WfsTransationEngine from "./WfsTransactionEngine";
@@ -20,6 +21,19 @@ class Crowdsourcing {
       "datum",
       "kontakt_name"
     ];
+    this.fieldMappings = {
+      area: "Fläche (m2)",
+      meandiff: "Vitalitätsreduktion",
+      validiert: "Fläche validiert?",
+      ereignisdatum: "Genaues Datum?",
+      flaeche_korrekt: "Stimmt Fläche?",
+      forstlicher_eingriff: "Forstlicher Eingriff",
+      grund_veraenderung: "Grund der Veränderung",
+      deckungsgrad_vor: "Deckungsgrad VORHER",
+      deckungsgrad_nach: "Deckungsgrad NACHHER",
+      kommentar: "Kommentar",
+      email: "E-Mail Adresse"
+    };
     this.categories = [
       { value: "unbekannt", text: "Unbekannt", color: "rgba(255,0,0,1)" },
       {
@@ -141,9 +155,18 @@ class Crowdsourcing {
       const sortedFeatures = this.sortByDate(features);
       for (let feature of sortedFeatures) {
         const date = feature.get("erfassungsdatum");
+        const layername = feature.id_.split(".")[0];
+        const years = layername.split("_");
+        const title = `Veränderung (Zeitraum ${years[years.length - 1]}-${
+          years[years.length - 2]
+        })`;
+        const color = change_overlay_colors[layername];
         result[date] = {
           feature,
-          attributeTable: this.createFeaturePropsTable(feature.getProperties())
+          attributeTable: this.createFeaturePropsTable({
+            props: feature.getProperties(),
+            layer: { color: color.hex, title }
+          })
         };
       }
     }
@@ -932,31 +955,53 @@ class Crowdsourcing {
   /*
    * create a html table for feature properties to
    * display inside a popup.
-   * @param {object} props - feature properties.
+   * @param {object} params - function parameter object.
+   * @param {object} params.props - feature properties.
+   * @param {object} params.layer - {name:layername, color:color of features}.
    * @returns {htmlElement} - html table.
    */
-  createFeaturePropsTable(props) {
-    const hiddenAttributes = ["geometry", "id", "fid"];
+  createFeaturePropsTable({ props, layer } = {}) {
+    const hiddenAttributes = ["geometry", "id", "fid", "kommentar", "email"];
     const keys = Object.keys(props);
     const table = document.createElement("table");
+    table.style.borderColor = layer.color;
     table.classList.add("popup__attributetable");
+    const row = document.createElement("tr");
+    row.style.backgroundColor = layer.color;
+    const td = document.createElement("td");
+    td.colSpan = 2;
+    td.style.color = "white";
+    td.style.fontWeight = "bold";
+    td.classList.add("popup__attributetable--title");
+    td.innerText = layer.title;
+    row.appendChild(td);
+    table.appendChild(row);
     for (var i = 0; i < keys.length; i++) {
       const key = keys[i];
       if (hiddenAttributes.indexOf(key) !== -1) continue;
       const row = document.createElement("tr");
+      const backgrundColor = i < 6 ? "#d6d6d6" : "#f0f0f0";
+      row.style.backgroundColor = backgrundColor;
       const tdKey = document.createElement("td");
       const tdVal = document.createElement("td");
       tdKey.classList.add("popup__attributetable--td");
       tdVal.classList.add("popup__attributetable--td");
-      tdKey.innerText = key;
+      tdKey.innerText = this.fieldMappings[key] || key;
       if (
         (key === "erfassungsdatum" || key === "ereignisdatum") &&
         props[key] !== null
       ) {
         tdVal.innerText = new Date(props[key]).toLocaleDateString("de-ch");
+      } else if (key === "validiert") {
+        row.style.color = "grey";
+        row.style.fontStyle = "italic";
+        if (tdVal.innerText.length === 0) {
+          tdVal.innerText = "nein";
+        }
       } else {
         tdVal.innerText = props[key];
       }
+
       row.appendChild(tdKey);
       row.appendChild(tdVal);
       table.appendChild(row);

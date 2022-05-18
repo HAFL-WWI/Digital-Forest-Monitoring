@@ -522,14 +522,18 @@ body:after {
   padding-bottom: 12px;
 }
 .popup__attributetable {
-  border-collapse: collapse;
   margin-top: 12px;
   width: 100%;
 }
 .popup__attributetable--td {
-  border: 1px dashed gray;
   font-size: 0.8em;
   padding: 4px;
+}
+.popup__attributetable--title {
+  font-size: 0.9em;
+  height: 40px;
+  padding: 4px;
+  text-align: center;
 }
 .popup__buttoncontainer {
   border-top: 1px solid gainsboro;
