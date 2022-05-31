@@ -953,7 +953,9 @@ class Crowdsourcing {
           if (props[key] !== null) {
             tdVal.innerText = new Date(props[key]).toLocaleDateString("de-ch");
           } else {
-            tdVal.innerText = "kA";
+            if (props["validiert"]) {
+              tdVal.innerText = "kA";
+            }
           }
           break;
         case "validiert":
@@ -973,7 +975,9 @@ class Crowdsourcing {
               .map(string => string[0].toUpperCase() + string.slice(1))
               .join(", ");
           } else {
-            tdVal.innerText = "kA";
+            if (props["validiert"]) {
+              tdVal.innerText = "kA";
+            }
           }
           break;
         case "flaeche_korrekt":
