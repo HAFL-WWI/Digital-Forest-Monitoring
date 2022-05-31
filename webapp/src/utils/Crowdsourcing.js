@@ -1,50 +1,39 @@
 import { change_overlay_colors } from "./main_util";
 import Overlay from "ol/Overlay";
-import { Stroke, Style, Fill, Icon } from "ol/style";
+import { Stroke, Style, Fill } from "ol/style";
 import WfsTransationEngine from "./WfsTransactionEngine";
-const questionmark = new URL("../img/question-mark.png", import.meta.url);
-const clearcut = new URL("../img/clearcut.png", import.meta.url);
-const umbrella = new URL("../img/umbrella.png", import.meta.url);
-const wind = new URL("../img/wind.png", import.meta.url);
-const beetle = new URL("../img/beetle.png", import.meta.url);
-const avalanche = new URL("../img/snow-avalanche.png", import.meta.url);
-const other = new URL("../img/other.png", import.meta.url);
+
 class Crowdsourcing {
   constructor(map) {
     this.map = map;
-    this.editableProps = [
-      "korrekt",
-      "kategorie",
-      "groessenordnung",
-      "kommentar",
-      "staerke",
-      "datum",
-      "kontakt_name"
-    ];
     this.fieldMappings = {
-      area: "Fläche (m2)",
-      meandiff: "Vitalitätsreduktion",
-      validiert: "Fläche validiert?",
-      ereignisdatum: "Genaues Datum?",
-      flaeche_korrekt: "Stimmt Fläche?",
-      forstlicher_eingriff: "Forstlicher Eingriff",
-      grund_veraenderung: "Grund der Veränderung",
-      deckungsgrad_vor: "Deckungsgrad VORHER",
-      deckungsgrad_nach: "Deckungsgrad NACHHER",
-      kommentar: "Kommentar",
-      email: "E-Mail Adresse"
+      area: { name: "Fläche (m2)", editable: false },
+      meandiff: { name: "Vitalitätsreduktion", editable: false },
+      validiert: { name: "Fläche validiert?", editable: true },
+      ereignisdatum: { name: "Genaues Datum?", editable: true },
+      flaeche_korrekt: { name: "Stimmt Fläche?", editable: true },
+      flaeche_korrekt_bemerkung: { name: "Fläche Bemerkung", editable: true },
+      forstlicher_eingriff: { name: "Forstlicher Eingriff?", editable: true },
+      grund_veraenderung: { name: "Grund der Veränderung?", editable: true },
+      deckungsgrad_vor: { name: "Deckungsgrad VORHER", editable: true },
+      deckungsgrad_nach: { name: "Deckungsgrad NACHHER", editable: true },
+      kommentar: { name: "Kommentar", editable: true },
+      email: { name: "E-Mail Adresse", editable: true }
     };
     this.categories = [
-      { value: "unbekannt", text: "Unbekannt", color: "rgba(255,0,0,1)" },
       {
-        value: "schirmhieb",
-        text: "Schirmhieb",
+        value: "verjuengungsschlag",
+        text: "Verjüngungsschlag",
         color: "rgba(255,0,0,1)"
       },
-      { value: "räumung", text: "Räumung", color: "rgba(255,0,0,1)" },
       {
-        value: "sturmschaden",
-        text: "Sturmschaden",
+        value: "sturmereignis",
+        text: "Sturmereignis",
+        color: "rgba(255,0,0,1)"
+      },
+      {
+        value: "durchforstung",
+        text: "Durchforstung",
         color: "rgba(255,0,0,1)"
       },
       {
@@ -53,12 +42,23 @@ class Crowdsourcing {
         color: "rgba(255,0,0,1)"
       },
       {
+        value: "dauerwaldpflege",
+        text: "Dauerwaldpflege",
+        color: "rgba(255,0,0,1)"
+      },
+      {
         value: "lawinenschaden",
         text: "Lawinenschaden",
         color: "rgba(255,0,0,1)"
       },
+      {
+        value: "vitalitätsverlust",
+        text: "Vitalitätsverlust",
+        color: "rgba(255,0,0,1)"
+      },
       { value: "sonstiges", text: "Sonstiges", color: "rgba(255,0,0,1)" }
     ];
+    this.formTabs = ["FLÄCHE", "URSACHE", "ERFASSER"];
     this.features = {};
     this.formDataList = [];
     /*
@@ -69,41 +69,25 @@ class Crowdsourcing {
      */
     this.wfsStyle = feature => {
       const fillColor = "rgba(255,0,0,0)";
-      let strokeColor = fillColor;
-      let interiorPoints = null;
-      const kategorie = feature.get("kategorie");
-      let icon = "";
+      const flaecheKorrekt = feature.get("flaeche_korrekt");
+      let strokeColor = "rgba(255,0,0,0)";
+      switch (flaecheKorrekt) {
+        case "ja":
+          strokeColor = "rgba(124,252,0,1)"; // green border
+          break;
+        case "nein":
+          strokeColor = "rgba(255,0,0,1)"; // red border
+          break;
+        default:
+          break;
+      }
       const style = [
         new Style({
           fill: new Fill({ color: fillColor }),
-          stroke: new Stroke({ color: strokeColor, width: 3 }),
+          stroke: new Stroke({ color: strokeColor, width: 1 }),
           zIndex: 1
         })
       ];
-      if (kategorie) {
-        const geometry = feature.getGeometry();
-        if (geometry.getType() === "MultiPolygon") {
-          interiorPoints = geometry.getInteriorPoints();
-        }
-        if (geometry.getType() === "Polygon") {
-          interiorPoints = geometry.getInteriorPoint();
-        }
-        for (let entry of this.categories) {
-          if (entry.value === kategorie) {
-            style[0].getStroke().setColor(entry.color);
-          }
-        }
-        icon = this.getFillIcon(kategorie);
-        style.push(
-          new Style({
-            geometry: interiorPoints,
-            image: new Icon({
-              src: icon,
-              rotateWithView: true
-            })
-          })
-        );
-      }
       return style;
     };
     this.highlightStyle = new Style({
@@ -119,28 +103,6 @@ class Crowdsourcing {
     this.wfsTransactionEngine = new WfsTransationEngine(this.map);
   }
 
-  getFillIcon(kategorie) {
-    switch (kategorie) {
-      case "unbekannt":
-        return questionmark.href;
-
-      case "schirmhieb":
-        return umbrella.href;
-      case "räumung":
-        return clearcut.href;
-      case "sturmschaden":
-        return wind.href;
-      case "borkenkäfer":
-        return beetle.href;
-      case "lawinenschaden":
-        return avalanche.href;
-      case "sonstiges":
-        return other.href;
-      default:
-        return other.href;
-    }
-  }
-
   /*
    * this function sorts features by "erfassungsdatum" and
    * creates an object with timestamp keys and a corresponding object.
@@ -154,13 +116,7 @@ class Crowdsourcing {
       // sort features by date
       const sortedFeatures = this.sortByDate(features);
       for (let feature of sortedFeatures) {
-        const date = feature.get("erfassungsdatum");
-        const layername = feature.id_.split(".")[0];
-        const years = layername.split("_");
-        const title = `Veränderung (Zeitraum ${years[years.length - 1]}-${
-          years[years.length - 2]
-        })`;
-        const color = change_overlay_colors[layername];
+        const { date, color, title } = this.getFeatureMetadata(feature);
         result[date] = {
           feature,
           attributeTable: this.createFeaturePropsTable({
@@ -267,14 +223,14 @@ class Crowdsourcing {
       // add the table with attributes to the popup.
       this.popup.attributeTable.appendChild(this.activeFeature.attributeTable);
 
-      // get a container for the edit forms.
-      const formContainer = this.getFormContainer();
-      this.popup.editForm.appendChild(formContainer);
+      // get the tabs for the edit form.
+      const formTabs = this.getFormTabs();
+      this.popup.editForm.appendChild(formTabs);
 
       // add the save/edit buttons to the popup.
       const buttonContainer = this.getButtonContainer(
         this.activeFeature,
-        formContainer
+        formTabs
       );
       this.popup.buttonContainer.appendChild(buttonContainer);
 
@@ -293,6 +249,42 @@ class Crowdsourcing {
     return formContainer;
   }
 
+  getFormTabs() {
+    /*
+     * this.editForm is an object containing a key with the name of each form.
+     */
+    this.editForm = this.getEditForm();
+    const formSection = document.createElement("section");
+    formSection.style.display = "none";
+    formSection.classList.add("popup__formcontainer");
+    const tabContainer = document.createElement("div");
+    tabContainer.classList.add("tab");
+    formSection.appendChild(tabContainer);
+    // next we add each form to the formSection.
+    this.formTabs.forEach((tab, i) => {
+      // add the tabs
+      const button = document.createElement("button");
+      button.classList.add("tablinks");
+      button.addEventListener("click", e => this.switchTab(e, tab));
+      button.innerText = tab;
+      tabContainer.appendChild(button);
+      // the content...
+      const content = document.createElement("div");
+      content.id = tab;
+      content.classList.add("tabcontent");
+      if (this.editForm[tab]?.form) {
+        content.appendChild(this.editForm[tab].form);
+      }
+      // Show the first tab as a default
+      if (i === 0) {
+        content.style.display = "block";
+        button.className += " active";
+      }
+      formSection.appendChild(content);
+    });
+    return formSection;
+  }
+
   /*
    * gets the container with the save/edit buttons.
    * @param {object} activeFeature - the currently selected feature.
@@ -308,17 +300,6 @@ class Crowdsourcing {
     buttonContainer.appendChild(editButton);
     buttonContainer.appendChild(saveButton);
     editButton.addEventListener("click", () => {
-      /*
-       * this.editForm is an object containing a key with the name of each form.
-       * next we add each form to the formContainer.
-       */
-      this.editForm = this.getEditForm();
-
-      for (const key of Object.keys(this.editForm)) {
-        if (this.editForm[key].form) {
-          formContainer.appendChild(this.editForm[key].form);
-        }
-      }
       requestAnimationFrame(() => {
         this.setDisplay({
           elements: [
@@ -349,15 +330,40 @@ class Crowdsourcing {
       const updatedProps = {};
       this.formDataList.forEach(element => {
         for (var entry of element.entries()) {
-          updatedProps[entry[0]] = entry[1] || null;
+          // case when multiple values for a property, concat them.
+          // for instance "Grund der Veränderung?"
+          if (updatedProps[entry[0]]) {
+            updatedProps[entry[0]] = updatedProps[entry[0]] + "," + entry[1];
+          } else {
+            updatedProps[entry[0]] = entry[1] || null;
+          }
         }
       });
-      updatedProps.erfassungsdatum = new Date().toISOString();
+      // check if the mandatory field is filled out.
+      if (!updatedProps.flaeche_korrekt) {
+        alert(
+          "Bitte beantworten Sie mindestens die Frage: \n 'Stimmt die Ausdehnung der Fläche?'"
+        );
+        return;
+      }
+      // save the e-mail adress to the localStorage.
+      if (updatedProps.email && updatedProps.email.length > 4) {
+        localStorage.setItem("waldmonitoring_email", updatedProps.email);
+      }
+      updatedProps.validiert = new Date().toISOString();
+      updatedProps.ereignisdatum = new Date(
+        updatedProps.ereignisdatum
+      ).toISOString();
+      // no "bemerkung" needed when flaeche is korrekt.
+      if (updatedProps.flaeche_korrekt === "ja")
+        delete updatedProps.flaeche_korrekt_bemerkung;
+      // create a new feature and give them the attributes from the form.
       const cloneFeature = activeFeature.feature.clone();
       cloneFeature.setId(activeFeature.feature.getId());
       cloneFeature.setProperties(updatedProps);
       const wfsName = cloneFeature.getId().split(".")[0];
       this.wfsTransactionEngine.setGMLFormat(wfsName);
+      // save the new feature to the wfs.
       this.wfsTransactionEngine
         .transactWFS("insert", cloneFeature)
         .then(response => {
@@ -418,9 +424,9 @@ class Crowdsourcing {
     const button = document.createElement("button");
     button.classList.add(
       "mdc-button",
-      "mdc-button--outlined",
-      "mdc-button--leading",
-      "button__fullwidth"
+      "mdc-button--raised",
+      "mdc-card__action",
+      "mdc-card__action--button"
     );
     const ripple = document.createElement("span");
     ripple.classList.add("mdc-button__ripple");
@@ -444,63 +450,30 @@ class Crowdsourcing {
    */
   getEditForm() {
     const result = {};
-    for (let i = 0; i < this.editableProps.length; i++) {
-      const prop = this.editableProps[i];
+    const { years, color } = this.getFeatureMetadata(
+      this.activeFeature.feature
+    );
+    const splittedYears = years.split("-");
+    for (let i = 0; i < this.formTabs.length; i++) {
+      const prop = this.formTabs[i];
       switch (prop) {
-        case "korrekt":
+        case "FLÄCHE":
           result[prop] = {
-            form: this.getKorrektEditForm({
-              next: this.editableProps[i + 1],
-              previous: this.editableProps[i - 1]
+            form: this.getFlaecheForm({
+              color,
+              yearvon: splittedYears[0],
+              yearbis: splittedYears[1]
             })
           };
           break;
-        case "kategorie":
+        case "URSACHE":
           result[prop] = {
-            form: this.getKategorieForm({
-              next: this.editableProps[i + 1],
-              previous: this.editableProps[i - 1]
-            })
+            form: this.getUrsacheForm()
           };
           break;
-        case "groessenordnung":
+        case "ERFASSER":
           result[prop] = {
-            form: this.getGroessenordnungForm({
-              next: this.editableProps[i + 1],
-              previous: this.editableProps[i - 1]
-            })
-          };
-          break;
-        case "kommentar":
-          result[prop] = {
-            form: this.getKommentarForm({
-              next: this.editableProps[i + 1],
-              previous: this.editableProps[i - 1]
-            })
-          };
-          break;
-        case "staerke":
-          result[prop] = {
-            form: this.getStaerkeForm({
-              next: this.editableProps[i + 1],
-              previous: this.editableProps[i - 1]
-            })
-          };
-          break;
-        case "datum":
-          result[prop] = {
-            form: this.getDatumForm({
-              next: this.editableProps[i + 1],
-              previous: this.editableProps[i - 1]
-            })
-          };
-          break;
-        case "kontakt_name":
-          result[prop] = {
-            form: this.getContactForm({
-              next: this.editableProps[i + 1],
-              previous: this.editableProps[i - 1]
-            })
+            form: this.getErfasserForm()
           };
           break;
         default:
@@ -529,270 +502,227 @@ class Crowdsourcing {
    * @param {string} params.previous - the key for the previous form.
    * @returns {htmlElement} form - html form element.
    */
-  getContactForm({ next, previous }) {
-    const form = this.getForm();
+  getEmailForm() {
     const section = document.createElement("div");
-    const title = this.getTitle("Kontakt:");
-    section.appendChild(title);
-    const contactInputs = this.getContactInputs();
-    section.appendChild(contactInputs);
-
-    form.appendChild(section);
-    if (previous) {
-      const navButtons = this.getNavButtons({ next, previous });
-      form.appendChild(navButtons);
-    }
-    return form;
+    section.style.paddingBottom = "8px";
+    const emailInput = this.getEmailInput();
+    section.appendChild(emailInput);
+    return section;
   }
 
   /*
-   * gets the form element for the ereignisdatum.
-   * @param {object} params - function parameter object.
-   * @param {string} params.next - the key for the next form.
-   * @param {string} params.previous - the key for the previous form.
-   * @returns {htmlElement} form - html form element.
+   * gets the form elements for the ereignisdatum.
+   * @returns {htmlElement} section - html section element.
    */
-  getDatumForm({ next, previous }) {
-    const form = this.getForm();
+  getDatumSection({ yearvon, yearbis }) {
     const section = document.createElement("div");
-    const title = this.getTitle("Ereignisdatum:");
+    const title = this.getTitle(
+      "Genaues Datum bekannt?",
+      "Monat/Jahr der Veränderung"
+    );
     section.appendChild(title);
-    const datePicker = this.getDatePicker();
+    const datePicker = this.getDatePicker({
+      min: `${yearvon}-06`,
+      max: `${yearbis}-06`,
+      type: "month"
+    });
     section.appendChild(datePicker);
-    form.appendChild(section);
-    if (next) {
-      const navButtons = this.getNavButtons({ next, previous });
-      form.appendChild(navButtons);
-    }
-    return form;
-  }
 
-  /*
-   * gets the form element for the stärke select.
-   * @param {object} params - function parameter object.
-   * @param {string} params.next - the key for the next form.
-   * @param {string} params.previous - the key for the previous form.
-   * @returns {htmlElement} form - html form element.
-   */
-  getStaerkeForm({ next, previous }) {
-    const form = this.getForm();
-    const section = document.createElement("div");
-    const title = this.getTitle("Stärke:");
-    section.appendChild(title);
-    const staerkeSelect = this.getStaerkeSelect();
-    section.appendChild(staerkeSelect);
-
-    form.appendChild(section);
-    if (next) {
-      const navButtons = this.getNavButtons({ next, previous });
-      form.appendChild(navButtons);
-    }
-    return form;
+    return section;
   }
 
   /*
    * gets the form element for the kommentar.
-   * @param {object} params - function parameter object.
-   * @param {string} params.next - the key for the next form.
-   * @param {string} params.previous - the key for the previous form.
    * @returns {htmlElement} form - html form element.
    */
-  getKommentarForm({ next, previous }) {
+  getKommentarForm() {
     const currentValue = this.activeFeature.feature.get("kommentar");
-    const form = this.getForm();
     const section = document.createElement("div");
-    const title = this.getTitle("Kommentar:");
-    section.appendChild(title);
     const kommentarInput = this.getKommentarInput(currentValue);
     section.appendChild(kommentarInput);
+    return section;
+  }
 
-    form.appendChild(section);
-    if (next) {
-      const navButtons = this.getNavButtons({ next, previous });
-      form.appendChild(navButtons);
-    }
+  getFlaecheForm({ color, yearvon, yearbis }) {
+    const form = this.getForm("block");
+    form.appendChild(
+      this.getColoredTitle({
+        color,
+        yearvon,
+        yearbis
+      })
+    );
+    form.appendChild(this.getKorrektEditSection());
+    form.appendChild(this.getDatumSection({ yearvon, yearbis }));
+    form.appendChild(
+      this.getDeckungsgradRadios({
+        radiotitle: "Deckungsgrad VOR",
+        radioname: "deckungsgrad_vor"
+      })
+    );
+    form.appendChild(
+      this.getDeckungsgradRadios({
+        radiotitle: "Deckungsgrad NACH",
+        radioname: "deckungsgrad_nach"
+      })
+    );
     return form;
   }
 
-  /*
-   * gets the form element for the grössenordnung in m2 input.
-   * @param {object} params - function parameter object.
-   * @param {string} params.next - the key for the next form.
-   * @param {string} params.previous - the key for the previous form.
-   * @returns {htmlElement} form - html form element.
-   */
-  getGroessenordnungForm({ next, previous }) {
-    const currentValue = this.activeFeature.feature.get("groessenordnung_m2");
-    const form = this.getForm();
-    const section = document.createElement("div");
-    const title = this.getTitle("Grössenordnung in m<sup>2</sup>:");
-    section.appendChild(title);
-    const input = this.getGroessenOrdnungInput(currentValue);
-    section.appendChild(input);
-
-    form.appendChild(section);
-    if (next) {
-      const navButtons = this.getNavButtons({ next, previous });
-      form.appendChild(navButtons);
-    }
+  getUrsacheForm() {
+    const form = this.getForm("block");
+    form.appendChild(this.getForstlichereingriffSection());
+    form.appendChild(this.getKategorieSection());
     return form;
+  }
+
+  getErfasserForm() {
+    const form = this.getForm("block");
+    form.appendChild(this.getEmailForm());
+    form.appendChild(this.getKommentarForm());
+    return form;
+  }
+
+  getColoredTitle({ color, yearvon, yearbis }) {
+    const coloredTitle = document.createElement("div");
+    coloredTitle.style.color = color.hex;
+    coloredTitle.style.fontWeight = "bold";
+    coloredTitle.style.fontSize = "0.8em";
+    coloredTitle.innerHTML = `Zeitraum Juni ${yearvon} - Juni ${yearbis}`;
+
+    return coloredTitle;
   }
 
   /*
    * gets the form elements for the korrekt radio buttons.
-   * @param {object} params - function parameter object.
-   * @param {string} params.next - the key for the next form.
-   * @param {string} params.previous - the key for the previous form.
-   * @returns {htmlElement} form - html form element.
+   * @returns {htmlElement} section - html section element.
    */
-  getKorrektEditForm({ next, previous }) {
-    const latestValue = this.activeFeature.feature.get("korrekt");
-    const form = this.getForm("block");
+  getKorrektEditSection() {
+    const latestValue = this.activeFeature.feature.get("flaeche_korrekt");
     const section = document.createElement("div");
-    const title = this.getTitle("Ist die Fläche korrekt?");
+    const title = this.getTitle(
+      "Stimmt die Ausdehnung der Fläche? <span class='red'>*</span>"
+    );
+
+    const correctSelectContainer = document.createElement("section");
+    correctSelectContainer.classList.add(
+      "correctselect",
+      "correctselect__hidden"
+    );
+    const correctSelectLabel = document.createElement("label");
+    correctSelectLabel.style.fontSize = "0.8em";
+    correctSelectLabel.setAttribute("for", "flaeche_korrekt_bemerkung");
+    correctSelectLabel.innerText = "Bitte wählen sie eine Option...";
+    const correctSelect = this.getCorrectSelect();
+
+    correctSelectContainer.appendChild(correctSelectLabel);
+    correctSelectContainer.appendChild(correctSelect);
+    const radioContainer = document.createElement("div");
+    radioContainer.classList.add("popup__radiocontainer");
     const correctTrue = this.getRadio({
-      name: "korrekt",
+      name: "flaeche_korrekt",
       id: "radiocorrect",
       value: "ja",
-      labelText: "ja",
+      labelText: "ja (+-)",
       latestValue
     });
     const correctFalse = this.getRadio({
-      name: "korrekt",
+      name: "flaeche_korrekt",
       id: "radioincorrect",
       value: "nein",
       labelText: "nein",
       latestValue
     });
+    radioContainer.appendChild(correctTrue);
+    radioContainer.appendChild(correctFalse);
+    const input_yes = correctTrue.querySelector("input");
+    input_yes.addEventListener("click", () => {
+      correctSelectContainer.classList.remove("correctselect__visible");
+      correctSelectContainer.classList.add("correctselect__hidden");
+    });
+    const input_no = correctFalse.querySelector("input");
+    input_no.addEventListener("click", () => {
+      correctSelectContainer.classList.remove("correctselect__hidden");
+      correctSelectContainer.classList.add("correctselect__visible");
+    });
     section.appendChild(title);
-    section.appendChild(correctTrue);
-    section.appendChild(correctFalse);
-    const helperTextElement = document.createElement("div");
-    helperTextElement.style.fontSize = "0.8em";
-    let helperText =
-      "<p>Ja - die angezeigte Fläche entspricht (annähernd) einer Ihnen bekannten Waldveränderung.</p>";
-    helperText +=
-      "Nein - wird fälschlicherweise als Waldveränderung angezeigt.";
-    helperTextElement.innerHTML = helperText;
-    section.append(helperTextElement);
-    form.appendChild(section);
-    if (next) {
-      const navButtons = this.getNavButtons({ next, previous });
-      form.appendChild(navButtons);
-    }
-    return form;
+    section.appendChild(radioContainer);
+    section.appendChild(correctSelectContainer);
+    return section;
   }
 
   /*
    * gets the form element for the category select.
-   * @param {object} params - function parameter object.
-   * @param {string} params.next - the key for the next form.
-   * @param {string} params.previous - the key for the previous form.
    * @returns {htmlElement} form - html form element.
    */
-  getKategorieForm({ next, previous }) {
-    const selectedValue = this.activeFeature.feature.get("kategorie");
-    const form = this.getForm();
-    const section = document.createElement("div");
-    const title = this.getTitle("Kategorie:");
+  getKategorieSection() {
+    const selectedValue = this.activeFeature.feature.get("grund_veraenderung");
+
+    const section = document.createElement("section");
+    const title = this.getTitle(
+      "Grund der Veränderung",
+      "Mehrfachnennungen möglich"
+    );
     section.appendChild(title);
-    const categorieSelect = this.getCategorySelect(selectedValue);
+    const categorieSelect = this.getCategoryCheckboxes(selectedValue);
     section.appendChild(categorieSelect);
-
-    form.appendChild(section);
-    if (next) {
-      const navButtons = this.getNavButtons({ next, previous });
-      form.appendChild(navButtons);
-    }
-    return form;
+    return section;
   }
 
-  /*
-   * gets the navigation buttons for the form.
-   * @param {object} params - function parameter object.
-   * @param {string} params.next - the key for the next form.
-   * @param {string} params.previous - the key for the previous form.
-   * @returns {htmlElement} buttonContainer - html div element.
-   */
-  getNavButtons({ previous, next }) {
-    const buttonContainer = document.createElement("div");
-    buttonContainer.style.display = "flex";
-    buttonContainer.style.justifyContent = "space-between";
-    if (previous) {
-      const previousButton = document.createElement("button");
-      previousButton.style.marginTop = "16px";
-      previousButton.innerText = "< zurück";
-      previousButton.addEventListener("click", e => {
-        e.preventDefault();
-        this.showForm(previous);
-      });
+  getCategoryCheckboxes() {
+    const checkboxSection = document.createElement("section");
+    checkboxSection.classList.add("popup__checkboxcontainer");
+    for (let category of this.categories) {
+      const checkboxContainer = document.createElement("div");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.id = category.value;
+      checkbox.name = "grund_veraenderung";
+      checkbox.value = category.value;
+      const label = document.createElement("label");
+      label.style.fontSize = "0.66em";
+      label.innerText = category.text;
 
-      buttonContainer.appendChild(previousButton);
+      label.setAttribute("for", category.value);
+      checkboxContainer.appendChild(checkbox);
+      checkboxContainer.appendChild(label);
+      checkboxSection.appendChild(checkboxContainer);
     }
-    if (next) {
-      const nextButton = document.createElement("button");
-      nextButton.style.marginTop = "16px";
-      nextButton.innerText = "weiter >";
-      nextButton.addEventListener("click", e => {
-        e.preventDefault();
-        this.showForm(next);
-      });
-      buttonContainer.appendChild(nextButton);
-    }
-    return buttonContainer;
+
+    return checkboxSection;
   }
 
-  /*
-   * show the edit form with the particular key and hide the others.
-   * @param {string} key - the key of the form to display.
-   */
-  showForm(key) {
-    const keys = Object.keys(this.editForm);
-    keys.forEach(entry => {
-      if (this.editForm[entry].form) {
-        this.editForm[entry].form.style.display = "none";
-      }
-      if (key === entry) {
-        this.editForm[key].form.style.display = "block";
-      }
-    });
-  }
-
-  getCategorySelect(value) {
+  getCorrectSelect() {
     const select = document.createElement("select");
     select.style.width = "100%";
     select.style.height = "30px";
-    select.name = "kategorie";
-    for (let category of this.categories) {
-      select.appendChild(this.createOption(category));
+    select.name = "flaeche_korrekt_bemerkung";
+    select.id = "flaeche_korrekt_bemerkung";
+    const options = [
+      "----------------------",
+      "Nein, es gibt hier keine Veränderung in diesem Jahr",
+      "Nein, sie ist zu klein",
+      "Nein, sie ist zu gross",
+      "Nein, die Form passt überhaupt nicht"
+    ];
+    for (let option of options) {
+      const selectOption = { value: option, text: option };
+      select.appendChild(this.createOption(selectOption));
     }
-    if (value) {
-      select.value = value;
-    }
+    select.value = options[0];
     return select;
   }
 
-  getGroessenOrdnungInput(value) {
-    const container = document.createElement("div");
-    const input = this.getInput({
-      type: "number",
-      placeholder: "bitte ca. Fläche eingeben...",
-      name: "groessenordnung_m2"
-    });
-    if (value) {
-      input.value = value;
-    }
-    container.appendChild(input);
-    return container;
-  }
-
-  getContactInputs() {
+  getEmailInput() {
+    const localStorageEmail = localStorage.getItem("waldmonitoring_email");
     const contactFields = [
-      { type: "text", placeholder: "Name...", name: "kontakt_name" },
-      { type: "email", placeholder: "E-Mail...", name: "kontakt_email" },
-      { type: "text", placeholder: "Telefon...", name: "kontakt_telefon" }
+      {
+        type: "email",
+        placeholder: "E-Mail...",
+        name: "email",
+        value: localStorageEmail || ""
+      }
     ];
-
     const container = document.createElement("div");
     for (let field of contactFields) {
       container.appendChild(this.getInput(field));
@@ -805,7 +735,7 @@ class Crowdsourcing {
     const textarea = document.createElement("textarea");
     textarea.name = "kommentar";
     textarea.rows = 5;
-    textarea.placeholder = "bitte Kommentar eingeben...";
+    textarea.placeholder = "Kommentar...";
     textarea.style.width = "100%";
     if (value) {
       textarea.value = value;
@@ -814,24 +744,31 @@ class Crowdsourcing {
     return container;
   }
 
-  getStaerkeSelect() {
-    const options = [
-      { value: "vitalitaet", text: "Nur Vitalität" },
-      { value: "einzelneBaeume", text: "Einzelne Bäume entfernt" },
-      { value: "geräumt", text: "Fläche geräumt" }
-    ];
-    const currentValue = this.activeFeature.feature.get("staerke");
-    const select = document.createElement("select");
-    select.style.width = "100%";
-    select.style.height = "30px";
-    select.name = "staerke";
-    for (let option of options) {
-      select.appendChild(this.createOption(option));
-    }
-    if (currentValue) {
-      select.value = currentValue;
-    }
-    return select;
+  getForstlichereingriffSection() {
+    const options = [{ value: "ja" }, { value: "nein" }, { value: "kA" }];
+    const section = document.createElement("section");
+
+    const title = this.getTitle(
+      "Forstlicher Eingriff?",
+      "Auf Grossteil dieser Fläche",
+      0
+    );
+    section.appendChild(title);
+    const radioContainer = document.createElement("div");
+    radioContainer.classList.add("popup__radiocontainer");
+    section.appendChild(radioContainer);
+    options.forEach(option => {
+      radioContainer.appendChild(
+        this.getRadio({
+          name: "forstlicher_eingriff",
+          id: `forstlicher_eingriff_${option.value}`,
+          value: option.value,
+          labelText: option.value,
+          latestValue: "kA"
+        })
+      );
+    });
+    return section;
   }
 
   /*
@@ -849,7 +786,7 @@ class Crowdsourcing {
     for (let key of keys) {
       if (key !== "latest") {
         const erfassungsdatum = key;
-        const text = "Feature vom: " + key;
+        const text = "Eintrag vom: " + new Date(key).toLocaleString("de-ch");
         const option = this.createOption({
           value: erfassungsdatum,
           text
@@ -872,12 +809,14 @@ class Crowdsourcing {
     return select;
   }
 
-  getDatePicker() {
+  getDatePicker({ min = null, max = null, type = "date" }) {
     const featureDate = this.activeFeature.feature.get("ereignisdatum");
     const container = document.createElement("div");
     const datePicker = this.getInput({
-      type: "date",
-      name: "ereignisdatum"
+      type,
+      name: "ereignisdatum",
+      min,
+      max
     });
     if (featureDate) {
       datePicker.value = featureDate.slice(0, featureDate.length - 1);
@@ -893,21 +832,24 @@ class Crowdsourcing {
     return option;
   }
 
-  getInput({ type = "text", placeholder, name }) {
+  getInput({ type = "text", placeholder, name, min, max, value }) {
     const input = document.createElement("input");
     input.type = type;
+    if (type === "month" || type === "date") {
+      if (min) input.min = min;
+      if (max) input.max = max;
+    }
     input.name = name;
     input.id = name;
+    if (value) input.value = value;
     if (placeholder) {
       input.placeholder = placeholder;
     }
-    const value = this.activeFeature.feature.get(name);
     if (value) {
       input.value = value;
     }
     input.style.width = "100%";
     input.style.height = "30px";
-    input.style.marginBottom = "8px";
     return input;
   }
 
@@ -922,10 +864,11 @@ class Crowdsourcing {
    * @returns {documentFragment} - a documentFragment containing the radio.
    */
   getRadio({ name, value, id, labelText, latestValue }) {
-    const container = document.createDocumentFragment();
+    const container = document.createElement("div");
+    container.style.display = "flex";
     const radio = document.createElement("input");
     const label = document.createElement("label");
-    label.style.paddingRight = "20px";
+    label.style.fontSize = "0.9em";
     label.for = id;
     label.innerText = labelText;
     radio.type = "radio";
@@ -945,11 +888,25 @@ class Crowdsourcing {
    * @param {string} titleText - the text the title should diplay.
    * @returns {htmlElement} - html header element
    */
-  getTitle(titletext) {
-    const title = document.createElement("h4");
-    title.style.margin = "0 0 8px 0";
+  getTitle(titletext, subtext = "", margin = "12px 0 0 0") {
+    const titleContainer = document.createElement("section");
+    titleContainer.style.paddingBottom = "8px";
+    const title = document.createElement("h5");
+    title.style.margin = margin;
+    title.style.backgroundColor = "#f1f1f1";
+    title.style.padding = "2px";
     title.innerHTML = titletext;
-    return title;
+    titleContainer.appendChild(title);
+    if (subtext.length > 0) {
+      const subtextElement = document.createElement("span");
+      subtextElement.style.color = "grey";
+      subtextElement.style.fontSize = "0.7em";
+      subtextElement.innerText = subtext;
+      subtextElement.style.paddingLeft = "2px";
+      titleContainer.appendChild(subtextElement);
+      title.style.marginBottom = 0;
+    }
+    return titleContainer;
   }
 
   /*
@@ -970,8 +927,6 @@ class Crowdsourcing {
     row.style.backgroundColor = layer.color;
     const td = document.createElement("td");
     td.colSpan = 2;
-    td.style.color = "white";
-    td.style.fontWeight = "bold";
     td.classList.add("popup__attributetable--title");
     td.innerText = layer.title;
     row.appendChild(td);
@@ -986,28 +941,58 @@ class Crowdsourcing {
       const tdVal = document.createElement("td");
       tdKey.classList.add("popup__attributetable--td");
       tdVal.classList.add("popup__attributetable--td");
-      tdKey.innerText = this.fieldMappings[key] || key;
-      if (
-        (key === "erfassungsdatum" || key === "ereignisdatum") &&
-        props[key] !== null
-      ) {
-        tdVal.innerText = new Date(props[key]).toLocaleDateString("de-ch");
-      } else if (key === "validiert") {
-        row.style.color = "grey";
-        row.style.fontStyle = "italic";
-        if (tdVal.innerText.length === 0) {
-          tdVal.innerText = "nein";
-        }
-      } else {
-        tdVal.innerText = props[key];
+      tdKey.innerText = this.fieldMappings[key]?.name || key;
+      switch (key) {
+        case "erfassungsdatum":
+        case "ereignisdatum":
+          if (props[key] !== null) {
+            tdVal.innerText = new Date(props[key]).toLocaleDateString("de-ch");
+          }
+          break;
+        case "validiert":
+          row.style.color = "grey";
+          row.style.fontStyle = "italic";
+          tdVal.innerText =
+            props[key] === null
+              ? "nein"
+              : new Date(props[key]).toLocaleDateString("de-ch");
+          break;
+        case "grund_veraenderung":
+          // add a blankspace between the items,
+          //otherwise the table owerflows the popup.d
+          if (props[key]) {
+            tdVal.innerText = props[key]
+              .split(",")
+              .map(string => string[0].toUpperCase() + string.slice(1))
+              .join(", ");
+          }
+          break;
+        case "flaeche_korrekt":
+          if (props[key] === "ja") {
+            tdVal.style.color = "#228b22";
+          }
+          if (props[key] === "nein") {
+            tdVal.style.color = "#ff0000";
+          }
+          tdVal.innerText = props[key];
+          break;
+        case "flaeche_korrekt_bemerkung":
+          console.log(typeof props[key]);
+          console.log(props[key]);
+          if (!props[key]) continue;
+          tdVal.innerText = props[key];
+          break;
+        default:
+          tdVal.innerText = props[key];
+          break;
       }
-
       row.appendChild(tdKey);
       row.appendChild(tdVal);
       table.appendChild(row);
     }
     return table;
   }
+
   /*
    * creates the html elements for a popup.
    */
@@ -1048,6 +1033,91 @@ class Crowdsourcing {
         }
       }
     });
+  }
+
+  /*
+   * changes to a particular tab in the edit popup.
+   * @param {object} event - click event.
+   * @param {string} tabid - id of the clicked tab.
+   */
+  switchTab(evt, tabid) {
+    // Declare all variables
+    let i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(tabid).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+
+  /*
+   * get meta information from feature
+   * @param {object} feature - ol/Feature
+   * @returns {object} - {layername, years, title, color, date}
+   */
+  getFeatureMetadata(feature) {
+    const layername = feature.id_.split(".")[0];
+    const splitted = layername.split("_");
+    const years = `${splitted[splitted.length - 1]}-${
+      splitted[splitted.length - 2]
+    }`;
+    const title = `Veränderung (Zeitraum ${years})`;
+    const color = change_overlay_colors[layername];
+    const date = feature.get("validiert");
+    return {
+      layername,
+      years,
+      title,
+      color,
+      date
+    };
+  }
+
+  /*
+   * creates the deckungsgrad radios.
+   * @param {object} params - function parameter object.
+   * @param {string} params.radiotitle - the title.
+   * @param {string} params.radioname - name attribute of the radio input.
+   * @returns {section Element} section - html section element with the radios.
+   */
+  getDeckungsgradRadios({ radiotitle, radioname }) {
+    const section = document.createElement("section");
+    const title = this.getTitle(`${radiotitle}`, "Veränderung geschätzt");
+    section.appendChild(title);
+    const radioContainer = document.createElement("div");
+    radioContainer.classList.add("popup__radiocontainer");
+    section.appendChild(radioContainer);
+    const radios = [
+      { value: "0%" },
+      { value: "25%" },
+      { value: "50%" },
+      { value: "75%" },
+      { value: "100%" },
+      { value: "kA" }
+    ];
+    radios.forEach(radio => {
+      radioContainer.appendChild(
+        this.getRadio({
+          name: `${radioname}`,
+          id: `${radioname}_${radio.value}`,
+          value: radio.value,
+          labelText: radio.value,
+          latestValue: "kA"
+        })
+      );
+    });
+    return section;
   }
 }
 
