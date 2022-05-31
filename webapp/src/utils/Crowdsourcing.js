@@ -351,14 +351,23 @@ class Crowdsourcing {
         localStorage.setItem("waldmonitoring_email", updatedProps.email);
       }
       updatedProps.validiert = new Date().toISOString();
-      updatedProps.ereignisdatum = new Date(
-        updatedProps.ereignisdatum
-      ).toISOString();
+      if (updatedProps.ereignisdatum) {
+        updatedProps.ereignisdatum = new Date(
+          updatedProps.ereignisdatum
+        ).toISOString();
+      }
+
       // no "bemerkung" needed when flaeche is korrekt.
       if (updatedProps.flaeche_korrekt === "ja")
         delete updatedProps.flaeche_korrekt_bemerkung;
       // create a new feature and give them the attributes from the form.
       const cloneFeature = activeFeature.feature.clone();
+      // unset all editable properties in order to have no "old" values from the original feature.
+      Object.keys(this.fieldMappings).forEach(key => {
+        if (this.fieldMappings[key].editable) {
+          cloneFeature.unset(key);
+        }
+      });
       cloneFeature.setId(activeFeature.feature.getId());
       cloneFeature.setProperties(updatedProps);
       const wfsName = cloneFeature.getId().split(".")[0];
@@ -947,6 +956,8 @@ class Crowdsourcing {
         case "ereignisdatum":
           if (props[key] !== null) {
             tdVal.innerText = new Date(props[key]).toLocaleDateString("de-ch");
+          } else {
+            tdVal.innerText = "kA";
           }
           break;
         case "validiert":
@@ -965,6 +976,8 @@ class Crowdsourcing {
               .split(",")
               .map(string => string[0].toUpperCase() + string.slice(1))
               .join(", ");
+          } else {
+            tdVal.innerText = "kA";
           }
           break;
         case "flaeche_korrekt":
