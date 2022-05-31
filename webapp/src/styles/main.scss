@@ -67,7 +67,6 @@ body:after {
   line-height: 27px;
   transform: rotate(-45deg);
 }
-
 .top-app-bar {
   align-items: center;
   background-color: $mdc-theme-primary;
@@ -212,7 +211,6 @@ body:after {
   display: none;
   width: 100%;
 }
-
 #map {
   background-size: 20px 20px;
   background-image: linear-gradient(to right, grey 1px, transparent 1px),
@@ -279,19 +277,16 @@ body:after {
   text-align: center;
   width: 100%;
 }
-
 .vhmControl__info {
   width: 15px;
   height: 15px;
 }
-
 .vhmControl__waiting {
   color: dimgray;
   display: flex;
   justify-content: center;
   text-align: center;
 }
-
 .vhm__text {
   align-items: center;
   color: $mdc-theme-primary;
@@ -300,7 +295,6 @@ body:after {
   font-weight: bold;
   height: 100%;
 }
-
 .viewerControl__title,
 .viewerControl__controls {
   align-items: center;
@@ -311,22 +305,18 @@ body:after {
   max-width: 245px;
   position: absolute;
 }
-
 .viewerControl__controls-control {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
 }
-
 .viewerControl__controls-control:first-child {
   padding-top: 8px;
 }
-
 .viewerControl__controls-control:not(:last-child) {
   margin-bottom: 12px;
   border-bottom: 1px dotted grey;
 }
-
 .viewerControl__title {
   background-color: $mdc-theme-secondary;
   cursor: pointer;
@@ -334,7 +324,6 @@ body:after {
   top: 0em;
   padding: 8px;
 }
-
 .viewerControl__controls {
   background-color: rgba(255, 255, 255, 0.9);
   top: 2.5em;
@@ -345,79 +334,64 @@ body:after {
   transform-origin: top left;
   transition: transform, opacity, 0.3s;
 }
-
 .viewerControl__helpertext,
 .viewerControl__yearinfo {
   font-size: 13px;
 }
-
 .viewerControl__helpertext {
   padding: 16px 8px 0 8px;
 }
-
 .viewerControl__yearinfo {
   padding: 16px 8px 4px 8px;
 }
-
 .title__arrow {
   transition: transform 0.3s;
 }
-
 .viewerControl__dropdown {
   width: 100%;
 }
-
 .viewerControl__layerselect {
   width: 100%;
   min-width: 100%;
 }
-
 .layer-button {
   width: 30px;
   height: 30px;
   padding: 0;
 }
-
 .slidercontainer {
   display: flex;
   align-items: center;
   padding: 0;
   flex-grow: 1;
 }
-
 .mdc-slider {
   margin-right: 12px;
 }
 .mdc-slider__thumb-container {
   height: auto;
 }
-
 .basemapControl:hover {
   background-color: none;
 }
-
 .ol-attribution {
   font-size: 11px;
 }
-
 .ol-zoom {
   bottom: 2.1em !important;
   right: 0.5em !important;
   top: unset !important;
   left: unset !important;
 }
-
 .ol-zoom-in,
 .ol-zoom-out,
 .ol-rotate-reset {
   cursor: pointer !important;
 }
-
 .ol-rotate {
   bottom: 7em !important;
   top: unset !important;
 }
-
 .autocomplete {
   background-color: white;
   max-height: 400px;
@@ -428,7 +402,6 @@ body:after {
   transform-origin: top left;
   transition: transform, 0.3s;
 }
-
 .ol-popup {
   position: absolute;
   background-color: white;
@@ -438,49 +411,7 @@ body:after {
   border: 1px solid #cccccc;
   bottom: 12px;
   left: -50px;
-  min-width: 280px;
-}
-
-.ol-popup:after,
-.ol-popup:before {
-  top: 100%;
-  border: solid transparent;
-  content: " ";
-  height: 0;
-  width: 0;
-  position: absolute;
-  pointer-events: none;
-}
-
-.ol-popup:after {
-  border-top-color: white;
-  border-width: 10px;
-  left: 48px;
-  margin-left: -10px;
-}
-
-.ol-popup:before {
-  border-top-color: #cccccc;
-  border-width: 11px;
-  left: 48px;
-  margin-left: -11px;
-}
-
-.ol-popup-closer {
-  text-decoration: none;
-  position: absolute;
-  top: 2px;
-  right: 8px;
-}
-.ol-popup {
-  position: absolute;
-  background-color: white;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  padding: 15px;
-  border-radius: 10px;
-  border: 1px solid #cccccc;
-  bottom: 12px;
-  left: -50px;
+  max-width: 280px;
   min-width: 280px;
 }
 .ol-popup:after,
@@ -511,38 +442,94 @@ body:after {
   top: 2px;
   right: 8px;
 }
+.ol-popup {
+  position: absolute;
+  background-color: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #cccccc;
+  bottom: 12px;
+  left: -50px;
+  min-width: 280px;
+}
+.ol-popup:after,
+.ol-popup:before {
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+.ol-popup-closer {
+  text-decoration: none;
+  position: absolute;
+  top: 2px;
+  right: 8px;
+}
 .ol-popup-closer:after {
   content: "✖";
 }
 .ol-popup-closer:after {
   content: "✖";
+}
+.popup__editform {
+  padding: 8px;
 }
 .popup__attributetable,
-.popup__editform {
-  padding-bottom: 12px;
-}
-.popup__attributetable {
+.popup__formcontainer {
   margin-top: 12px;
   width: 100%;
+}
+.popup__attributetable {
+  padding-bottom: 12px;
 }
 .popup__attributetable--td {
   font-size: 0.8em;
   padding: 4px;
 }
 .popup__attributetable--title {
+  color: white;
+  font-weight: bold;
   font-size: 0.9em;
   height: 40px;
   padding: 4px;
   text-align: center;
 }
 .popup__buttoncontainer {
-  border-top: 1px solid gainsboro;
   padding: 12px 0 0 0;
 }
 .button__fullwidth {
   width: 100%;
 }
-
+.correctselect__hidden {
+  height: 0;
+  overflow: hidden;
+  transition: height 0.3s ease-out;
+}
+.correctselect__visible {
+  height: 58px;
+  overflow: hidden;
+  padding-top: 8px;
+  transition: height 0.3s ease-out;
+}
+.popup__radiocontainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  column-gap: 8px;
+  row-gap: 2px;
+}
+.popup__checkboxcontainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  column-gap: 8px;
+  row-gap: 8px;
+}
+.red {
+  color: red;
+}
 /*
 * position button animation
 */
@@ -557,4 +544,48 @@ body:after {
   100% {
     transform: scale(1);
   }
+}
+
+/*
+* popup tabs
+*/
+/* Style the tab */
+.tab {
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 8px;
+  transition: 0.3s;
+  width: 33%;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #344955;
+  color: #f9aa33;
+  font-weight: bold;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  border: 1px solid #ccc;
+  border-top: none;
 }
