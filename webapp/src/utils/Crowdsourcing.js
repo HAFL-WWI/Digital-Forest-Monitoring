@@ -986,8 +986,6 @@ class Crowdsourcing {
           tdVal.innerText = props[key];
           break;
         case "flaeche_korrekt_bemerkung":
-          console.log(typeof props[key]);
-          console.log(props[key]);
           if (!props[key]) continue;
           tdVal.innerText = props[key];
           break;
