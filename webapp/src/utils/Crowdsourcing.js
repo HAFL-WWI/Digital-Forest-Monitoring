@@ -607,12 +607,10 @@ class Crowdsourcing {
    * @returns {htmlElement} section - html section element.
    */
   getKorrektEditSection() {
-    const latestValue = this.activeFeature.feature.get("flaeche_korrekt");
     const section = document.createElement("div");
     const title = this.getTitle(
       "Stimmt die Ausdehnung der Fläche? <span class='red'>*</span>"
     );
-
     const correctSelectContainer = document.createElement("section");
     correctSelectContainer.classList.add(
       "correctselect",
@@ -632,15 +630,13 @@ class Crowdsourcing {
       name: "flaeche_korrekt",
       id: "radiocorrect",
       value: "ja",
-      labelText: "ja (+-)",
-      latestValue
+      labelText: "ja (+-)"
     });
     const correctFalse = this.getRadio({
       name: "flaeche_korrekt",
       id: "radioincorrect",
       value: "nein",
-      labelText: "nein",
-      latestValue
+      labelText: "nein"
     });
     radioContainer.appendChild(correctTrue);
     radioContainer.appendChild(correctFalse);
