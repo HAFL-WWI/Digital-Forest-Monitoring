@@ -595,9 +595,12 @@ class Crowdsourcing {
 
   getColoredTitle({ color, yearvon, yearbis }) {
     const coloredTitle = document.createElement("div");
-    coloredTitle.style.color = color.hex;
+    coloredTitle.style.backgroundColor = color.hex;
+    coloredTitle.style.borderRadius = "4px";
+    coloredTitle.style.color = "white";
     coloredTitle.style.fontWeight = "bold";
     coloredTitle.style.fontSize = "0.8em";
+    coloredTitle.style.padding = "8px";
     coloredTitle.innerHTML = `Zeitraum Juni ${yearvon} - Juni ${yearbis}`;
 
     return coloredTitle;
