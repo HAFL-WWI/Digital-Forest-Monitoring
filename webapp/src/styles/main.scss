@@ -555,7 +555,7 @@ body:after {
   justify-content: space-between;
   overflow: hidden;
   border: 1px solid #ccc;
-  border-bottom: none;
+  border-top: none;
   background-color: #f1f1f1;
 }
 
@@ -587,5 +587,6 @@ body:after {
 .tabcontent {
   display: none;
   border: 1px solid #ccc;
-  border-top: none;
+  border-bottom: none;
+  padding-bottom: 12px;
 }

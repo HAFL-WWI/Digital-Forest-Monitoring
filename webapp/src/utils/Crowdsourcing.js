@@ -259,7 +259,7 @@ class Crowdsourcing {
     formSection.classList.add("popup__formcontainer");
     const tabContainer = document.createElement("div");
     tabContainer.classList.add("tab");
-    formSection.appendChild(tabContainer);
+
     // next we add each form to the formSection.
     this.formTabs.forEach((tab, i) => {
       // add the tabs
@@ -282,6 +282,7 @@ class Crowdsourcing {
       }
       formSection.appendChild(content);
     });
+    formSection.appendChild(tabContainer);
     return formSection;
   }
 
