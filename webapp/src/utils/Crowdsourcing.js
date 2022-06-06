@@ -531,9 +531,9 @@ class Crowdsourcing {
     );
     section.appendChild(title);
     const datePicker = this.getDatePicker({
-      min: `${yearvon}-06`,
-      max: `${yearbis}-06`,
-      type: "month"
+      min: `${yearvon}-06-01`,
+      max: `${yearbis}-06-01`,
+      type: "date"
     });
     section.appendChild(datePicker);
 
