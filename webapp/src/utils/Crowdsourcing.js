@@ -619,7 +619,6 @@ class Crowdsourcing {
     this.formDataList.forEach(formData => {
       const entries = Array.from(formData.entries());
       entries.forEach(entry => {
-        console.log(entry);
         // case when multiple values for a property, concat them.
         // for instance "Grund der Veränderung?"
         if (data[entry[0]]) {
@@ -640,7 +639,6 @@ class Crowdsourcing {
     const consideredEmpty = ["kA", "", "--"];
     const keys = Object.keys(formValues);
     const filled = [];
-    console.log(formValues);
     for (const key of keys) {
       if (consideredEmpty.indexOf(formValues[key]) === -1) {
         if (key === "flaeche_korrekt_bemerkung") {
