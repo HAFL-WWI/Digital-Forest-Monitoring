@@ -701,17 +701,20 @@ class Crowdsourcing {
     correctSelectContainer.appendChild(correctSelect);
     const radioContainer = document.createElement("div");
     radioContainer.classList.add("popup__radiocontainer");
+    const latestValue = this.activeFeature.feature.get("flaeche_korrekt");
     const correctTrue = this.getRadio({
       name: "flaeche_korrekt",
       id: "radiocorrect",
       value: "ja",
-      labelText: "ja (+-)"
+      labelText: "ja (+-)",
+      latestValue
     });
     const correctFalse = this.getRadio({
       name: "flaeche_korrekt",
       id: "radioincorrect",
       value: "nein",
-      labelText: "nein"
+      labelText: "nein",
+      latestValue
     });
     radioContainer.appendChild(correctTrue);
     radioContainer.appendChild(correctFalse);
