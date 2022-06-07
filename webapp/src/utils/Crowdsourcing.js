@@ -838,6 +838,8 @@ class Crowdsourcing {
 
   getForstlichereingriffSection() {
     const options = [{ value: "ja" }, { value: "nein" }, { value: "kA" }];
+    const latestValue =
+      this.activeFeature.feature.get("forstlicher_eingriff") || "kA";
     const section = document.createElement("section");
 
     const title = this.getTitle(
@@ -856,7 +858,7 @@ class Crowdsourcing {
           id: `forstlicher_eingriff_${option.value}`,
           value: option.value,
           labelText: option.value,
-          latestValue: "kA"
+          latestValue
         })
       );
     });
