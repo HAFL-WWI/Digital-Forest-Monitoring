@@ -475,6 +475,10 @@ body:after {
 .ol-popup-closer:after {
   content: "✖";
 }
+#popup__completionmessage {
+  font-size: 0.8em;
+  padding: 8px 0;
+}
 .popup__editform {
   padding: 8px;
 }
@@ -497,9 +501,6 @@ body:after {
   height: 40px;
   padding: 4px;
   text-align: center;
-}
-.popup__buttoncontainer {
-  padding: 12px 0 0 0;
 }
 .button__fullwidth {
   width: 100%;
