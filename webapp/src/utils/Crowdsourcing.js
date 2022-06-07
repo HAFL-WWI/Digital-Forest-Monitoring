@@ -1205,6 +1205,7 @@ class Crowdsourcing {
    * @returns {section Element} section - html section element with the radios.
    */
   getDeckungsgradRadios({ radiotitle, radioname }) {
+    const latestValue = this.activeFeature.feature.get(radioname) || "kA";
     const section = document.createElement("section");
     const title = this.getTitle(`${radiotitle}`, "Veränderung geschätzt");
     section.appendChild(title);
@@ -1226,7 +1227,7 @@ class Crowdsourcing {
           id: `${radioname}_${radio.value}`,
           value: radio.value,
           labelText: radio.value,
-          latestValue: "kA"
+          latestValue
         })
       );
     });
