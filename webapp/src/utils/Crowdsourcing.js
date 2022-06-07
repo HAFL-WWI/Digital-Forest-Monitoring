@@ -682,15 +682,16 @@ class Crowdsourcing {
    * @returns {htmlElement} section - html section element.
    */
   getKorrektEditSection() {
+    const latestValue = this.activeFeature.feature.get("flaeche_korrekt");
     const section = document.createElement("div");
     const title = this.getTitle(
       "Stimmt die Ausdehnung der Fläche? <span class='red'>*</span>"
     );
     const correctSelectContainer = document.createElement("section");
-    correctSelectContainer.classList.add(
-      "correctselect",
-      "correctselect__hidden"
-    );
+    correctSelectContainer.classList.add("correctselect");
+    if (latestValue !== "nein") {
+      correctSelectContainer.classList.add("correctselect__hidden");
+    }
     const correctSelectLabel = document.createElement("label");
     correctSelectLabel.style.fontSize = "0.8em";
     correctSelectLabel.setAttribute("for", "flaeche_korrekt_bemerkung");
@@ -701,7 +702,6 @@ class Crowdsourcing {
     correctSelectContainer.appendChild(correctSelect);
     const radioContainer = document.createElement("div");
     radioContainer.classList.add("popup__radiocontainer");
-    const latestValue = this.activeFeature.feature.get("flaeche_korrekt");
     const correctTrue = this.getRadio({
       name: "flaeche_korrekt",
       id: "radiocorrect",
@@ -776,6 +776,9 @@ class Crowdsourcing {
   }
 
   getCorrectSelect() {
+    const latestValue = this.activeFeature.feature.get(
+      "flaeche_korrekt_bemerkung"
+    );
     const select = document.createElement("select");
     select.style.width = "100%";
     select.style.height = "30px";
@@ -792,7 +795,7 @@ class Crowdsourcing {
       const selectOption = { value: option, text: option };
       select.appendChild(this.createOption(selectOption));
     }
-    select.value = options[0];
+    select.value = latestValue || options[0];
     return select;
   }
 
