@@ -227,6 +227,17 @@ class Crowdsourcing {
       const formTabs = this.getFormTabs();
       this.popup.editForm.appendChild(formTabs);
 
+      // add event listeners in order to show the completion status to the user
+      for (const key in this.editForm) {
+        const form = this.editForm[key].form;
+        if (form) {
+          form.addEventListener("change", () => {
+            this.updateFormDataList();
+            const formValues = this.getFormDataAsObject();
+            this.updateCompletionStatus(formValues);
+          });
+        }
+      }
       // add the save/edit buttons to the popup.
       const buttonContainer = this.getButtonContainer(
         this.activeFeature,
@@ -294,6 +305,9 @@ class Crowdsourcing {
    */
   getButtonContainer(activeFeature, formContainer) {
     const buttonContainer = document.createElement("div");
+    const completionMessage = document.createElement("section");
+    completionMessage.id = "popup__completionmessage";
+    buttonContainer.appendChild(completionMessage);
     buttonContainer.classList.add("popup__buttoncontainer");
     const saveButton = this.createButton("speichern", "save");
     saveButton.style.display = "none";
@@ -318,28 +332,15 @@ class Crowdsourcing {
           display: "block"
         });
       });
+      // show the completion message when the edit form is loaded.
+      this.updateFormDataList();
+      const formValues = this.getFormDataAsObject();
+      this.updateCompletionStatus(formValues);
     });
     saveButton.addEventListener("click", e => {
       e.preventDefault();
-      this.formDataList = [];
-      for (const key of Object.keys(this.editForm)) {
-        if (this.editForm[key].form) {
-          // add  a new FormData Object for every form to the formDataList.
-          this.formDataList.push(new FormData(this.editForm[key].form));
-        }
-      }
-      const updatedProps = {};
-      this.formDataList.forEach(element => {
-        for (var entry of element.entries()) {
-          // case when multiple values for a property, concat them.
-          // for instance "Grund der Veränderung?"
-          if (updatedProps[entry[0]]) {
-            updatedProps[entry[0]] = updatedProps[entry[0]] + "," + entry[1];
-          } else {
-            updatedProps[entry[0]] = entry[1] || null;
-          }
-        }
-      });
+      this.updateFormDataList();
+      const updatedProps = this.getFormDataAsObject();
       // check if the mandatory field is filled out.
       if (!updatedProps.flaeche_korrekt) {
         alert(
@@ -356,8 +357,10 @@ class Crowdsourcing {
         updatedProps.ereignisdatum = new Date(
           updatedProps.ereignisdatum
         ).toISOString();
+      } else {
+        // we can not save an empty string as a date.
+        delete updatedProps.ereignisdatum;
       }
-
       // no "bemerkung" needed when flaeche is korrekt.
       if (updatedProps.flaeche_korrekt === "ja")
         delete updatedProps.flaeche_korrekt_bemerkung;
@@ -593,6 +596,76 @@ class Crowdsourcing {
     return form;
   }
 
+  /*
+   * refill the FormData with current values.
+   */
+  updateFormDataList() {
+    // empty the list first in order to have no old values in it.
+    this.formDataList = [];
+    for (const key in this.editForm) {
+      if (this.editForm[key].form) {
+        // add  a new FormData Object for every form to the formDataList.
+        this.formDataList.push(new FormData(this.editForm[key].form));
+      }
+    }
+  }
+
+  /*
+   * create an Object with key/value pairs of each form element
+   * @returns {object} data - object with keys of the form element names and values of the form element values
+   */
+  getFormDataAsObject() {
+    const data = {};
+    this.formDataList.forEach(formData => {
+      const entries = Array.from(formData.entries());
+      entries.forEach(entry => {
+        console.log(entry);
+        // case when multiple values for a property, concat them.
+        // for instance "Grund der Veränderung?"
+        if (data[entry[0]]) {
+          data[entry[0]] = data[entry[0]] + "," + entry[1];
+        } else {
+          data[entry[0]] = entry[1];
+        }
+      });
+    });
+    return data;
+  }
+
+  /*
+   * updates the completion message above the "speichern" button.
+   * @param {object} formValues - key/value pairs of the form data.
+   */
+  updateCompletionStatus(formValues) {
+    const consideredEmpty = ["kA", "", "--"];
+    const keys = Object.keys(formValues);
+    const filled = [];
+    console.log(formValues);
+    for (const key of keys) {
+      if (consideredEmpty.indexOf(formValues[key]) === -1) {
+        if (key === "flaeche_korrekt_bemerkung") {
+          // this is only a subpart of a question.
+          continue;
+        }
+        filled.push([key, formValues[key]]);
+      }
+    }
+    const completionMessage = document.getElementById(
+      "popup__completionmessage"
+    );
+    const editableFields = [];
+    for (const key in this.fieldMappings) {
+      if (this.fieldMappings[key].editable) {
+        editableFields.push(this.fieldMappings[key]);
+      }
+    }
+    completionMessage.style.color =
+      filled.length === editableFields.length - 2 ? "green" : "#f9aa33";
+    completionMessage.innerText = `Sie haben ${filled.length}/${
+      editableFields.length - 2
+    } Fragen beantwortet.`;
+  }
+
   getColoredTitle({ color, yearvon, yearbis }) {
     const coloredTitle = document.createElement("div");
     coloredTitle.style.backgroundColor = color.hex;
@@ -708,7 +781,7 @@ class Crowdsourcing {
     select.name = "flaeche_korrekt_bemerkung";
     select.id = "flaeche_korrekt_bemerkung";
     const options = [
-      "----------------------",
+      "--",
       "Nein, es gibt hier keine Veränderung in diesem Jahr",
       "Nein, sie ist zu klein",
       "Nein, sie ist zu gross",
@@ -729,7 +802,8 @@ class Crowdsourcing {
         type: "email",
         placeholder: "E-Mail...",
         name: "email",
-        value: localStorageEmail || ""
+        value: localStorageEmail || "",
+        updateCompletionStatus: true
       }
     ];
     const container = document.createElement("div");
@@ -746,6 +820,11 @@ class Crowdsourcing {
     textarea.rows = 5;
     textarea.placeholder = "Kommentar...";
     textarea.style.width = "100%";
+    textarea.addEventListener("input", () => {
+      this.updateFormDataList();
+      const formData = this.getFormDataAsObject();
+      this.updateCompletionStatus(formData);
+    });
     if (value) {
       textarea.value = value;
     }
@@ -841,7 +920,15 @@ class Crowdsourcing {
     return option;
   }
 
-  getInput({ type = "text", placeholder, name, min, max, value }) {
+  getInput({
+    type = "text",
+    placeholder,
+    name,
+    min,
+    max,
+    value,
+    updateCompletionStatus = false
+  }) {
     const input = document.createElement("input");
     input.type = type;
     if (type === "month" || type === "date") {
@@ -859,6 +946,13 @@ class Crowdsourcing {
     }
     input.style.width = "100%";
     input.style.height = "30px";
+    if (updateCompletionStatus) {
+      input.addEventListener("input", () => {
+        this.updateFormDataList();
+        const formValues = this.getFormDataAsObject();
+        this.updateCompletionStatus(formValues);
+      });
+    }
     return input;
   }
 
