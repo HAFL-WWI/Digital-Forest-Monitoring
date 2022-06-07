@@ -223,26 +223,8 @@ class Crowdsourcing {
       // add the table with attributes to the popup.
       this.popup.attributeTable.appendChild(this.activeFeature.attributeTable);
 
-      // get the tabs for the edit form.
-      const formTabs = this.getFormTabs();
-      this.popup.editForm.appendChild(formTabs);
-
-      // add event listeners in order to show the completion status to the user
-      for (const key in this.editForm) {
-        const form = this.editForm[key].form;
-        if (form) {
-          form.addEventListener("change", () => {
-            this.updateFormDataList();
-            const formValues = this.getFormDataAsObject();
-            this.updateCompletionStatus(formValues);
-          });
-        }
-      }
       // add the save/edit buttons to the popup.
-      const buttonContainer = this.getButtonContainer(
-        this.activeFeature,
-        formTabs
-      );
+      const buttonContainer = this.getButtonContainer();
       this.popup.buttonContainer.appendChild(buttonContainer);
 
       // display the overlay/popup on the clicked position on the map.
@@ -299,11 +281,9 @@ class Crowdsourcing {
 
   /*
    * gets the container with the save/edit buttons.
-   * @param {object} activeFeature - the currently selected feature.
-   * @param {htmlElement} formContainer - the div containing the edit form.
    * @returns {htmlElement} buttonContainer - the div element with the buttons.
    */
-  getButtonContainer(activeFeature, formContainer) {
+  getButtonContainer() {
     const buttonContainer = document.createElement("div");
     const completionMessage = document.createElement("section");
     completionMessage.id = "popup__completionmessage";
@@ -315,6 +295,22 @@ class Crowdsourcing {
     buttonContainer.appendChild(editButton);
     buttonContainer.appendChild(saveButton);
     editButton.addEventListener("click", () => {
+      // get the tabs for the edit form.
+      const formContainer = this.getFormTabs();
+      this.popup.editForm.innerHTML = "";
+      this.popup.editForm.appendChild(formContainer);
+
+      // add event listeners in order to show the completion status to the user
+      for (const key in this.editForm) {
+        const form = this.editForm[key].form;
+        if (form) {
+          form.addEventListener("change", () => {
+            this.updateFormDataList();
+            const formValues = this.getFormDataAsObject();
+            this.updateCompletionStatus(formValues);
+          });
+        }
+      }
       requestAnimationFrame(() => {
         this.setDisplay({
           elements: [
@@ -365,14 +361,14 @@ class Crowdsourcing {
       if (updatedProps.flaeche_korrekt === "ja")
         delete updatedProps.flaeche_korrekt_bemerkung;
       // create a new feature and give them the attributes from the form.
-      const cloneFeature = activeFeature.feature.clone();
+      const cloneFeature = this.activeFeature.feature.clone();
       // unset all editable properties in order to have no "old" values from the original feature.
       Object.keys(this.fieldMappings).forEach(key => {
         if (this.fieldMappings[key].editable) {
           cloneFeature.unset(key);
         }
       });
-      cloneFeature.setId(activeFeature.feature.getId());
+      cloneFeature.setId(this.activeFeature.feature.getId());
       cloneFeature.setProperties(updatedProps);
       const wfsName = cloneFeature.getId().split(".")[0];
       this.wfsTransactionEngine.setGMLFormat(wfsName);
