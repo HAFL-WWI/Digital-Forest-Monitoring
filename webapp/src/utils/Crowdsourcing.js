@@ -753,6 +753,9 @@ class Crowdsourcing {
   }
 
   getCategoryCheckboxes() {
+    const latestValue = this.activeFeature.feature.get("grund_veraenderung");
+    let splitted = [];
+    if (latestValue) splitted = latestValue.split(",");
     const checkboxSection = document.createElement("section");
     checkboxSection.classList.add("popup__checkboxcontainer");
     for (let category of this.categories) {
@@ -767,6 +770,9 @@ class Crowdsourcing {
       label.innerText = category.text;
 
       label.setAttribute("for", category.value);
+      if (splitted.length > 0 && splitted.indexOf(category.value) !== -1) {
+        checkbox.checked = true;
+      }
       checkboxContainer.appendChild(checkbox);
       checkboxContainer.appendChild(label);
       checkboxSection.appendChild(checkboxContainer);
