@@ -877,7 +877,6 @@ class Crowdsourcing {
     select.style.width = "100%";
     select.style.height = "30px";
     select.style.margin = "12px 0 0 0";
-    select.style.backgroundColor = "gainsboro";
     select.name = "features";
     for (let key of keys) {
       if (key !== "latest") {
