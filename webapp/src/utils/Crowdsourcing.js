@@ -1098,6 +1098,7 @@ class Crowdsourcing {
         case "flaeche_korrekt_bemerkung":
           if (!props[key]) continue;
           tdVal.innerText = props[key];
+          tdVal.style.color = "#ff0000";
           break;
         default:
           tdVal.innerText = props[key];
