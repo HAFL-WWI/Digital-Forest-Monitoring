@@ -58,7 +58,7 @@ class Crowdsourcing {
       },
       { value: "sonstiges", text: "Sonstiges", color: "rgba(255,0,0,1)" }
     ];
-    this.formTabs = ["FLÄCHE", "URSACHE", "ERFASSER"];
+    this.formTabs = ["BASISDATEN", "GRUND", "KOMMENTAR"];
     this.features = {};
     this.formDataList = [];
     /*
@@ -466,7 +466,7 @@ class Crowdsourcing {
     for (let i = 0; i < this.formTabs.length; i++) {
       const prop = this.formTabs[i];
       switch (prop) {
-        case "FLÄCHE":
+        case "BASISDATEN":
           result[prop] = {
             form: this.getFlaecheForm({
               color,
@@ -475,12 +475,12 @@ class Crowdsourcing {
             })
           };
           break;
-        case "URSACHE":
+        case "GRUND":
           result[prop] = {
             form: this.getUrsacheForm()
           };
           break;
-        case "ERFASSER":
+        case "KOMMENTAR":
           result[prop] = {
             form: this.getErfasserForm()
           };
