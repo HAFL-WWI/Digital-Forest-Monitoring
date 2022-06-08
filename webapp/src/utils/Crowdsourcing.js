@@ -633,14 +633,16 @@ class Crowdsourcing {
    */
   updateCompletionStatus(formValues) {
     const consideredEmpty = ["kA", "", "--"];
+    const excludedFields = [
+      "flaeche_korrekt_bemerkung",
+      "kommentar",
+      "validiert"
+    ];
     const keys = Object.keys(formValues);
     const filled = [];
     for (const key of keys) {
       if (consideredEmpty.indexOf(formValues[key]) === -1) {
-        if (key === "flaeche_korrekt_bemerkung") {
-          // this is only a subpart of a question.
-          continue;
-        }
+        if (excludedFields.indexOf(key) !== -1) continue;
         filled.push([key, formValues[key]]);
       }
     }
@@ -650,14 +652,13 @@ class Crowdsourcing {
     const editableFields = [];
     for (const key in this.fieldMappings) {
       if (this.fieldMappings[key].editable) {
+        if (excludedFields.indexOf(key) !== -1) continue;
         editableFields.push(this.fieldMappings[key]);
       }
     }
     completionMessage.style.color =
-      filled.length === editableFields.length - 2 ? "green" : "#f9aa33";
-    completionMessage.innerText = `Sie haben ${filled.length}/${
-      editableFields.length - 2
-    } Fragen beantwortet.`;
+      filled.length === editableFields.length ? "green" : "#f9aa33";
+    completionMessage.innerText = `Sie haben ${filled.length}/${editableFields.length} Fragen beantwortet.`;
   }
 
   getColoredTitle({ color, yearvon, yearbis }) {
