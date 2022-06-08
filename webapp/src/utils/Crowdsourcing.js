@@ -15,8 +15,8 @@ class Crowdsourcing {
       flaeche_korrekt_bemerkung: { name: "Fläche Bemerkung", editable: true },
       forstlicher_eingriff: { name: "Forstlicher Eingriff?", editable: true },
       grund_veraenderung: { name: "Grund der Veränderung?", editable: true },
-      deckungsgrad_vor: { name: "Deckungsgrad VORHER", editable: true },
-      deckungsgrad_nach: { name: "Deckungsgrad NACHHER", editable: true },
+      deckungsgrad_vor: { name: "Deckungsgrad VORHER?", editable: true },
+      deckungsgrad_nach: { name: "Deckungsgrad NACHHER?", editable: true },
       kommentar: { name: "Kommentar", editable: true },
       email: { name: "E-Mail Adresse", editable: true }
     };
