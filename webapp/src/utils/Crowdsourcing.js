@@ -104,7 +104,7 @@ class Crowdsourcing {
   }
 
   /*
-   * this function sorts features by "erfassungsdatum" and
+   * this function sorts features by "validiert (erfassungsdatum)" and
    * creates an object with timestamp keys and a corresponding object.
    * containing the feature. the object can eventually also hold oder properties like the table, form etc.
    * @param {array} features - ol/features.
@@ -136,8 +136,8 @@ class Crowdsourcing {
    */
   sortByDate(features) {
     const sortedFeatures = features.sort((a, b) => {
-      const dateA = new Date(a.get("erfassungsdatum"));
-      const dateB = new Date(b.get("erfassungsdatum"));
+      const dateA = new Date(a.get("validiert"));
+      const dateB = new Date(b.get("validiert"));
       return dateB - dateA;
     });
     return sortedFeatures;
@@ -881,10 +881,10 @@ class Crowdsourcing {
     select.name = "features";
     for (let key of keys) {
       if (key !== "latest") {
-        const erfassungsdatum = key;
+        const validiert = key;
         const text = "Eintrag vom: " + new Date(key).toLocaleString("de-ch");
         const option = this.createOption({
-          value: erfassungsdatum,
+          value: validiert,
           text
         });
         select.appendChild(option);
@@ -1054,10 +1054,11 @@ class Crowdsourcing {
       tdVal.classList.add("popup__attributetable--td");
       tdKey.innerHTML = this.fieldMappings[key]?.name || key;
       switch (key) {
-        case "erfassungsdatum":
         case "ereignisdatum":
           if (props[key] !== null) {
-            tdVal.innerText = new Date(props[key]).toLocaleDateString("de-ch");
+            tdVal.innerText = new Date(
+              props[key].slice(0, props[key].length - 1)
+            ).toLocaleDateString("de-ch");
           } else {
             if (props["validiert"]) {
               tdVal.innerText = "kA";
