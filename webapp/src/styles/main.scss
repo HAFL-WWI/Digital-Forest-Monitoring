@@ -411,8 +411,8 @@ body:after {
   border: 1px solid #cccccc;
   bottom: 12px;
   left: -50px;
-  max-width: 280px;
-  min-width: 280px;
+  max-width: 290px;
+  min-width: 290px;
 }
 .ol-popup:after,
 .ol-popup:before {
@@ -435,33 +435,6 @@ body:after {
   border-width: 11px;
   left: 48px;
   margin-left: -11px;
-}
-.ol-popup-closer {
-  text-decoration: none;
-  position: absolute;
-  top: 2px;
-  right: 8px;
-}
-.ol-popup {
-  position: absolute;
-  background-color: white;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  padding: 15px;
-  border-radius: 10px;
-  border: 1px solid #cccccc;
-  bottom: 12px;
-  left: -50px;
-  min-width: 280px;
-}
-.ol-popup:after,
-.ol-popup:before {
-  top: 100%;
-  border: solid transparent;
-  content: " ";
-  height: 0;
-  width: 0;
-  position: absolute;
-  pointer-events: none;
 }
 .ol-popup-closer {
   text-decoration: none;
@@ -569,7 +542,6 @@ body:after {
   cursor: pointer;
   padding: 8px;
   transition: 0.3s;
-  width: 33%;
 }
 
 /* Change background color of buttons on hover */
