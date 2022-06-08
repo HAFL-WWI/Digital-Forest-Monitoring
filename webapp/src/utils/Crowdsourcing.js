@@ -7,7 +7,7 @@ class Crowdsourcing {
   constructor(map) {
     this.map = map;
     this.fieldMappings = {
-      area: { name: "Fläche (m2)", editable: false },
+      area: { name: "Fläche (m<sup><small>2</small></sup>)", editable: false },
       meandiff: { name: "Vitalitätsreduktion", editable: false },
       validiert: { name: "Fläche validiert?", editable: true },
       ereignisdatum: { name: "Genaues Datum?", editable: true },
@@ -1052,7 +1052,7 @@ class Crowdsourcing {
       const tdVal = document.createElement("td");
       tdKey.classList.add("popup__attributetable--td");
       tdVal.classList.add("popup__attributetable--td");
-      tdKey.innerText = this.fieldMappings[key]?.name || key;
+      tdKey.innerHTML = this.fieldMappings[key]?.name || key;
       switch (key) {
         case "erfassungsdatum":
         case "ereignisdatum":
