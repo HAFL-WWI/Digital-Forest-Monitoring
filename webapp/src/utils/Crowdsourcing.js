@@ -780,7 +780,7 @@ class Crowdsourcing {
       if (category.value === "sonstiges") {
         userInput = this.getInput({
           type: "text",
-          placeholder: "",
+          placeholder: "Grund eingeben",
           name: "grund_veraenderung_sonstiges"
         });
         userInput.classList.add("popup__checkboxcontainer_customreason");
