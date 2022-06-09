@@ -785,15 +785,23 @@ class Crowdsourcing {
         });
         userInput.classList.add("popup__checkboxcontainer_customreason");
         userInput.addEventListener("input", e => {
-          const sonstigesCheckbox = document.getElementById("sonstiges");
           if (e.target.value.length > 0) {
-            sonstigesCheckbox.value = `sonstiges,${e.target.value}`;
-            sonstigesCheckbox.checked = true;
+            checkbox.value = `sonstiges,${e.target.value}`;
+            checkbox.checked = true;
           } else {
-            sonstigesCheckbox.checked = false;
+            checkbox.checked = false;
+          }
+          this.updateFormDataList();
+          const formData = this.getFormDataAsObject();
+          this.updateCompletionStatus(formData);
+        });
+        // if the checkbox get's unchecked, empty the user input.
+        checkbox.addEventListener("change", e => {
+          if (e.target.checked === false) {
+            userInput.value = "";
           }
         });
-        // if there is a custom user value, set it as the value for the input
+        // if there is a custom user value, set it as the value for the input.
         const categoryValues = this.categories.map(category => category.value);
         splitted.forEach(value => {
           if (categoryValues.indexOf(value) === -1) {
