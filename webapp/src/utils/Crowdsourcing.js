@@ -431,6 +431,7 @@ class Crowdsourcing {
    */
   createButton(content, iconname) {
     const button = document.createElement("button");
+    button.id = `button__${iconname}`;
     button.classList.add(
       "mdc-button",
       "mdc-button--raised",
@@ -656,9 +657,13 @@ class Crowdsourcing {
         editableFields.push(this.fieldMappings[key]);
       }
     }
-    completionMessage.style.color =
-      filled.length === editableFields.length ? "green" : "#f9aa33";
+    const formCompleted = filled.length === editableFields.length;
+    completionMessage.style.color = formCompleted ? "green" : "#f9aa33";
     completionMessage.innerText = `Sie haben ${filled.length}/${editableFields.length} Fragen beantwortet.`;
+    const button = document.getElementById("button__save");
+    button.lastChild.innerText = formCompleted
+      ? "speichern"
+      : "trotzdem speichern";
   }
 
   getColoredTitle({ color, yearvon, yearbis }) {
