@@ -501,6 +501,14 @@ body:after {
   column-gap: 8px;
   row-gap: 8px;
 }
+.popup__checkboxcontainer_customreason {
+  border: none;
+  border-bottom: 1px dashed black;
+}
+.popup__checkboxcontainer_customreason:focus {
+  background-color: gainsboro;
+  outline: none;
+}
 .red {
   color: red;
 }

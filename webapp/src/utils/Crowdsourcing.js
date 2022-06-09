@@ -775,8 +775,34 @@ class Crowdsourcing {
       if (splitted.length > 0 && splitted.indexOf(category.value) !== -1) {
         checkbox.checked = true;
       }
+      let userInput = null;
+      if (category.value === "sonstiges") {
+        userInput = this.getInput({
+          type: "text",
+          placeholder: "",
+          name: "grund_veraenderung_sonstiges"
+        });
+        userInput.classList.add("popup__checkboxcontainer_customreason");
+        userInput.addEventListener("input", e => {
+          const sonstigesCheckbox = document.getElementById("sonstiges");
+          if (e.target.value.length > 0) {
+            sonstigesCheckbox.value = `sonstiges,${e.target.value}`;
+            sonstigesCheckbox.checked = true;
+          } else {
+            sonstigesCheckbox.checked = false;
+          }
+        });
+        // if there is a custom user value, set it as the value for the input
+        const categoryValues = this.categories.map(category => category.value);
+        splitted.forEach(value => {
+          if (categoryValues.indexOf(value) === -1) {
+            userInput.value = value;
+          }
+        });
+      }
       checkboxContainer.appendChild(checkbox);
       checkboxContainer.appendChild(label);
+      if (userInput) checkboxContainer.appendChild(userInput);
       checkboxSection.appendChild(checkboxContainer);
     }
 
