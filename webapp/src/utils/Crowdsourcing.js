@@ -637,7 +637,8 @@ class Crowdsourcing {
     const excludedFields = [
       "flaeche_korrekt_bemerkung",
       "kommentar",
-      "validiert"
+      "validiert",
+      "grund_veraenderung_sonstiges"
     ];
     const keys = Object.keys(formValues);
     const filled = [];
