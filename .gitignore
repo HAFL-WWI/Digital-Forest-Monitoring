@@ -31,11 +31,14 @@ methods/use-case4/output/*
 # code for local execution (outside of docker)
 methods/use-case4/UC4_main_loc.R
 methods/use-case4/UC4_main_locM.R
+methods/use-case4/UC4_main_locP.R
 methods/use-case4/UC4_main_locMP.R
+methods/use-case4/UC4_main_locMP2.R
 
 # QGIS project
-methods/use-case4/uc4-lidar.qgz
 methods/use-case4/uc4_lidar.qgz
+methods/use-case4/data_gis
+methods/use-case4/data_gis/*
 
 #-------------------------------#
 ####          WEBAPP         ####
