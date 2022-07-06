@@ -286,14 +286,20 @@ class Crowdsourcing {
   getButtonContainer() {
     const buttonContainer = document.createElement("div");
     const completionMessage = document.createElement("section");
+    completionMessage.style.display = "none";
     completionMessage.id = "popup__completionmessage";
     buttonContainer.appendChild(completionMessage);
+    const mandatoryMessage = document.createElement("section");
+    mandatoryMessage.id = "popup__mandatorymessage";
+    mandatoryMessage.classList.add("red");
+    buttonContainer.appendChild(mandatoryMessage);
     buttonContainer.classList.add("popup__buttoncontainer");
-    const saveButton = this.createButton("speichern", "save");
-    saveButton.style.display = "none";
+    this.saveButton = this.createButton("speichern", "save");
+    this.saveButton.setAttribute("disabled", "");
+    this.saveButton.style.display = "none";
     const editButton = this.createButton("edit", "edit");
     buttonContainer.appendChild(editButton);
-    buttonContainer.appendChild(saveButton);
+    buttonContainer.appendChild(this.saveButton);
     editButton.addEventListener("click", () => {
       // get the tabs for the edit form.
       const formContainer = this.getFormTabs();
@@ -308,6 +314,7 @@ class Crowdsourcing {
             this.updateFormDataList();
             const formValues = this.getFormDataAsObject();
             this.updateCompletionStatus(formValues);
+            this.updateMandatoryMessage(formValues);
           });
         }
       }
@@ -324,26 +331,20 @@ class Crowdsourcing {
 
       requestAnimationFrame(() => {
         this.setDisplay({
-          elements: [formContainer, saveButton],
+          elements: [formContainer, this.saveButton],
           display: "block"
         });
       });
-      // show the completion message when the edit form is loaded.
+      // show the completion and mandatory messages when the edit form is loaded.
       this.updateFormDataList();
       const formValues = this.getFormDataAsObject();
       this.updateCompletionStatus(formValues);
+      this.updateMandatoryMessage(formValues);
     });
-    saveButton.addEventListener("click", e => {
+    this.saveButton.addEventListener("click", e => {
       e.preventDefault();
       this.updateFormDataList();
       const updatedProps = this.getFormDataAsObject();
-      // check if the mandatory field is filled out.
-      if (!updatedProps.flaeche_korrekt) {
-        alert(
-          "Bitte beantworten Sie mindestens die Frage: \n 'Stimmt die Ausdehnung der Fläche?'"
-        );
-        return;
-      }
       // save the e-mail adress to the localStorage.
       if (updatedProps.email && updatedProps.email.length > 4) {
         localStorage.setItem("waldmonitoring_email", updatedProps.email);
@@ -390,6 +391,47 @@ class Crowdsourcing {
         });
     });
     return buttonContainer;
+  }
+
+  /*
+   * checks if the mandatory fields 'ausdehnung der Fläche' and 'email' are filled out.
+   * @param {object} formValues - all the properties of the form.
+   * @returns {string} - "ok" when mandatory fields are filled out, otherwise a helper text for the user.
+   */
+  checkMandatoryFields(formValues) {
+    if (!formValues.flaeche_korrekt && !formValues.email) {
+      const text =
+        "• Bitte beantworten sie die erste Frage. \n • Bitte EMail Kontaktadresse angeben.";
+      return text;
+    }
+    if (!formValues.flaeche_korrekt && formValues.email) {
+      const text = "• Bitte beantworten Sie die erste Frage.";
+      return text;
+    }
+    if (formValues.flaeche_korrekt && !formValues.email) {
+      const text = "• Bitte EMail-Kontaktadresse angeben.";
+      return text;
+    }
+    return "ok";
+  }
+
+  /*
+   * updates the mandatory message above the send button.
+   * @param {object} formValues - all the properties of the form.
+   * @returns void.
+   */
+  updateMandatoryMessage(formValues) {
+    const mandatoryMessage = document.getElementById("popup__mandatorymessage");
+    const mandatoryText = this.checkMandatoryFields(formValues);
+    if (mandatoryText === "ok") {
+      this.saveButton.removeAttribute("disabled");
+      mandatoryMessage.innerText = "";
+      mandatoryMessage.style.display = "none";
+    } else {
+      this.saveButton.setAttribute("disabled", "");
+      mandatoryMessage.innerText = mandatoryText;
+      mandatoryMessage.style.display = "block";
+    }
   }
 
   /*
@@ -514,7 +556,6 @@ class Crowdsourcing {
    */
   getEmailForm() {
     const section = document.createElement("div");
-    section.style.paddingBottom = "8px";
     const emailInput = this.getEmailInput();
     section.appendChild(emailInput);
     return section;
@@ -651,6 +692,7 @@ class Crowdsourcing {
     const completionMessage = document.getElementById(
       "popup__completionmessage"
     );
+    completionMessage.style.display = "block";
     const editableFields = [];
     for (const key in this.fieldMappings) {
       if (this.fieldMappings[key].editable) {
@@ -852,6 +894,8 @@ class Crowdsourcing {
       }
     ];
     const container = document.createElement("div");
+    const title = this.getTitle("E-Mail <span class='red'>*</span>", "", "0");
+    container.appendChild(title);
     for (let field of contactFields) {
       container.appendChild(this.getInput(field));
     }
@@ -873,6 +917,8 @@ class Crowdsourcing {
     if (value) {
       textarea.value = value;
     }
+    const title = this.getTitle("Kommentar");
+    container.appendChild(title);
     container.appendChild(textarea);
     return container;
   }
@@ -997,6 +1043,7 @@ class Crowdsourcing {
         this.updateFormDataList();
         const formValues = this.getFormDataAsObject();
         this.updateCompletionStatus(formValues);
+        this.updateMandatoryMessage(formValues);
       });
     }
     return input;
