@@ -660,11 +660,9 @@ class Crowdsourcing {
     }
     const formCompleted = filled.length === editableFields.length;
     completionMessage.style.color = formCompleted ? "green" : "#f9aa33";
-    completionMessage.innerText = `Sie haben ${filled.length}/${editableFields.length} Fragen beantwortet.`;
+    completionMessage.innerText = `${filled.length}/${editableFields.length} Felder sind ausgefüllt.`;
     const button = document.getElementById("button__save");
-    button.lastChild.innerText = formCompleted
-      ? "speichern"
-      : "trotzdem speichern";
+    button.lastChild.innerText = formCompleted ? "senden" : "trotzdem senden";
   }
 
   getColoredTitle({ color, yearvon, yearbis }) {
