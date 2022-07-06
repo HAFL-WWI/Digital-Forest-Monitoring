@@ -568,8 +568,8 @@ class Crowdsourcing {
   getDatumSection({ yearvon, yearbis }) {
     const section = document.createElement("div");
     const title = this.getTitle(
-      "Genaues Datum bekannt?",
-      "Monat/Jahr der Veränderung"
+      "Datum bekannt?",
+      "Monat/Jahr der Veränderung reicht aus"
     );
     section.appendChild(title);
     const datePicker = this.getDatePicker({
