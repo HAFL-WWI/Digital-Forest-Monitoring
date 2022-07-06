@@ -450,7 +450,12 @@ body:after {
 }
 #popup__completionmessage {
   font-size: 0.8em;
-  padding: 8px 0;
+  padding: 8px 0 8px 0;
+}
+#popup__mandatorymessage {
+  font-size: 0.8em;
+  display: none;
+  padding: 0 0 8px 0;
 }
 .popup__editform {
   padding: 8px;
