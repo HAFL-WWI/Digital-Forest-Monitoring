@@ -11,7 +11,7 @@ library(rgdal) # OGR driver (shp files)
 library(lidR) # LAS processing
 library(raster) # raster/grid processing
 
-# library(viridis) # for color palette
+library(viridis) # for color palette
 library(RColorBrewer) # for color palette
 library(rstac) # get STAC info (swisssurface3D)
 library(magrittr) # for pipe operator (%>%)
@@ -23,7 +23,7 @@ library(mapview) # for debugging
 #-------------------------------#
 # Base Path:  allows to switch easily between server/local path or various platforms 
 #             if you copy/move the folder with all subfolders
-# BASE_PATH = "P:/HAFL/7 WWI/74a FF WG/742a Aktuell/R.010499-52-FWWG-01_Wissenstransfer_Fernerkundung/Entwicklung/UC4_LiDAR/docker_conn" # on HARA
+# BASE_PATH = "P:/HAFL/7 WWI/74a FF WG/742a Aktuell/R.010499-52-FWWG-01_Wissenstransfer_Fernerkundung/Entwicklung/Digital_Forest_Monitoring_git/methods/use-case4" # on HARA
 BASE_PATH = "C:/Users/hbh1/Projects/H02_Wissenstransfer_Fernerkundung/Digital-Forest-Monitoring_git/methods/use-case4" # local dev
 # BASE_PATH = "/usr/local/src/uc4" # in docker
 
@@ -36,15 +36,17 @@ WD = file.path(BASE_PATH, "")
 #-------------------------------#
 
 # write intermediate results
-OUTPUT_INTERMEDIATE = FALSE
+OUTPUT_INTERMEDIATE = TRUE
 # generate and write CHM
-OUTPUT_CHM = FALSE
+OUTPUT_CHM = TRUE
 # write LAS files
-OUTPUT_LAS = FALSE
+OUTPUT_LAS = TRUE
 # write PDF with plots for coverage
-OUTPUT_PLOTPDF = FALSE
+OUTPUT_PLOTPDF = TRUE
 # write HTML including mapview with all raster layers
-OUTPUT_MAPVIEW = FALSE
+OUTPUT_MAPVIEW = TRUE
+# write final results (cover_shp, class-tifs) in subdirs for easier post-proc
+OUTPUT_SUBDIRS = TRUE
 
 # use KML file
 #TODO replace by
@@ -55,10 +57,11 @@ VERBOSE = TRUE
 START_ITER = 1
 # IDX_ITER = c(1:4,19:20,30:37)
 
-# if working with normalized las
+# if working with normalized las, set to FALSE
 NORMALIZE = TRUE
 # turn on manual normalization 
-MANUAL_NORMALIZATION = TRUE
+MANUAL_NORMALIZATION = FALSE
+# TRUE
 
 #-------------------------------#
 ####      SETTINGS USER      ####
@@ -74,15 +77,16 @@ if(exists("FILE_DTM")) remove("FILE_DTM")
 DIR_INPUT = file.path(WD, "input") 
 # path 
 DIR_BASE_OUTPUT = file.path(WD, "output", gsub(" ", "_", gsub(":", "", Sys.time())))
+# substr(gsub(" ", "_", gsub(":", "", Sys.time())),3,10) # extract only YY-MM-DD
 
 # specify LAS dataset to use (LAS dataset(s) to crop from)
 # if specified (not empty ("") or missing) overrides LAS_STAC_DOWNLOAD (= FALSE)
-PATH_LAS_BASE = "C:/Users/hbh1/Projects/data/LAS/ALS_Bern_4_perimeters"
+# PATH_LAS_BASE = "C:/Users/hbh1/Projects/data/LAS/ALS_Bern_4_perimeters"
 # PATH_LAS_BASE = "P:/HAFL/7 WWI/74b FF GNG/742b Aktuell/2018-2020_FINTCH_R.009030-52-FWGN-01/AP6_Abgrenzung_der_WST/Entwicklung/TBk_Bern/BGB_20191114/LiDAR_Daten_Festmeter/ALS_Bern_all_data_ETRS89_ell_H"
 
 # input DTM (if you have a pre-calculated/external DTM for the area of interest)
 # if not specified, DTM for normalization will be generated on-the-fly
-FILE_DTM = "C:/Users/hbh1/Projects/H05_LiDAR/LiDAR_Profiles/data/DHM/dtm_ALS_Bern_2019_nNA.tif"
+# FILE_DTM = "C:/Users/hbh1/Projects/H05_LiDAR/LiDAR_Profiles/data/DHM/dtm_ALS_Bern_2019_nNA.tif"
 # FILE_DTM = "P:/HAFL/7 WWI/74b FF GNG/742b Aktuell/2018-2020_FINTCH_R.009030-52-FWGN-01/AP6_Abgrenzung_der_WST/Entwicklung/TBk_Bern/BGB_20191114/LiDAR_Daten_Festmeter/DTM_Bern_05m/dtm_ALS_Bern_2019_nNA.tif"
 
 #.............. parameters for STAC download/storage ................... #
@@ -323,7 +327,6 @@ for(id in START_ITER:length(roi_shp)){
       } else { dtm = grid_terrain(las, algorithm = kriging(k = 10L)) }
       
       lasn = normalize_height(las, dtm, na.rm=T)
-      
       # lasg = filter_poi(lasn, Classification ==CLASS_GROUND)
       # hist(lasg$Z, main = "", xlab = "Elevation manual ground", breaks = 800)
       # lasg$Z <- lasg$Z - 48.894 # lower point cloud # for BERN ALS
@@ -477,9 +480,22 @@ for(id in START_ITER:length(roi_shp)){
   covered[covered==0] = NA
   covered_vec = rasterToPolygons(covered) # creates a polygon for each pixel
   covered_vec = aggregate(covered_vec, dissolve=T) # merges pixel-polygons
-  shapefile(covered_vec, 
-            paste0(tools::file_path_sans_ext(FILE_LAS_CLIPPED), "__", "cover", 
-                   HEIGHT_CLASSES_min[IDX_COVERCLASS], "-", HEIGHT_CLASSES_max[IDX_COVERCLASS], ".shp"), overwrite=T)
+  # write shapefile for cover
+  if(OUTPUT_SUBDIRS){
+    dir.create(file.path(dirname(FILE_LAS_CLIPPED), "cover_shp"), recursive = TRUE, showWarnings = FALSE)
+    shapefile(covered_vec, 
+              file.path(dirname(FILE_LAS_CLIPPED), "cover_shp", 
+                        paste0(tools::file_path_sans_ext(basename(FILE_LAS_CLIPPED)), "__", "cover", 
+                               HEIGHT_CLASSES_min[IDX_COVERCLASS], "-", 
+                               HEIGHT_CLASSES_max[IDX_COVERCLASS], ".shp")), overwrite=T)
+  }else {
+    shapefile(covered_vec, 
+              paste0(tools::file_path_sans_ext(FILE_LAS_CLIPPED), "__", "cover", 
+                     HEIGHT_CLASSES_min[IDX_COVERCLASS], "-", 
+                     HEIGHT_CLASSES_max[IDX_COVERCLASS], ".shp"), overwrite=T)
+  }
+
+
 
   #### > compute final grids ####
   #### > // ******* ####
@@ -494,7 +510,7 @@ for(id in START_ITER:length(roi_shp)){
     layer_resampled = resample(class_dgridr_list[[c]], dgrid_ref, method="ngb")
     # mapview(class_dgridr_list[[4]], alpha= 0.42) + mapview(layer_resampled, alpha= 0.42)
     
-    # covered areas only; remove areas that are free (not under cover)
+    # covered areas only; remove areas that are open (not under cover)
     layer_cov = layer_resampled * (covered)
     # make NA values 0 for addition (otherwise it will work as a mask)
     layer_cov[is.na(layer_cov)] = 0
@@ -508,18 +524,36 @@ for(id in START_ITER:length(roi_shp)){
     
     layer_cov = layer_combined * (covered)
     
-    # free areas only; remove covered areas
-    layer_free = layer_resampled * (is.na(covered))
-    layer_free[layer_free < THRESH_DENS_NA] = NA
+    # open areas only; remove covered areas
+    layer_open = layer_resampled * (is.na(covered))
+    layer_open[layer_open < THRESH_DENS_NA] = NA
     
     #### >> output raster ####
-    # write layer with open vegetation
-    writeRaster(layer_free, paste0(tools::file_path_sans_ext(FILE_LAS_CLIPPED), "_", c, "free", c_min, "-", c_max, ".tif"), overwrite=T)
-    # write layer with vegetation under cover
-    writeRaster(layer_cov, paste0(tools::file_path_sans_ext(FILE_LAS_CLIPPED), "_", c, "cov", c_min, "-", c_max, ".tif"), overwrite=T)
-    # write layer with both
-    # writeRaster(layer_combined, paste0(tools::file_path_sans_ext(FILE_LAS_CLIPPED), "_", c, "all", c_min, "-", c_max, ".tif"), overwrite=T)
-    
+    if(OUTPUT_SUBDIRS){
+      # write layer with open vegetation
+      dir.create(file.path(dirname(FILE_LAS_CLIPPED), paste0("open", c)), recursive = TRUE, showWarnings = FALSE)
+      writeRaster(layer_open,
+                  file.path(dirname(FILE_LAS_CLIPPED), paste0("open", c), 
+                          paste0(tools::file_path_sans_ext(basename(FILE_LAS_CLIPPED)), "_", c, "open", c_min, "-", c_max, ".tif")), overwrite=T)
+      # write layer with vegetation under cover
+      dir.create(file.path(dirname(FILE_LAS_CLIPPED), paste0("cov", c)), recursive = TRUE, showWarnings = FALSE)
+      writeRaster(layer_cov,
+                  file.path(dirname(FILE_LAS_CLIPPED), paste0("cov", c), 
+                            paste0(tools::file_path_sans_ext(basename(FILE_LAS_CLIPPED)), "_", c, "cov", c_min, "-", c_max, ".tif")), overwrite=T)
+      # write layer with both
+      # dir.create(file.path(dirname(FILE_LAS_CLIPPED), paste0("both", c)), recursive = TRUE, showWarnings = FALSE)
+      # writeRaster(layer_combined,
+      #             file.path(dirname(FILE_LAS_CLIPPED), paste0("both", c), 
+      #                       paste0(tools::file_path_sans_ext(basename(FILE_LAS_CLIPPED)), "_", c, "both", c_min, "-", c_max, ".tif")), overwrite=T)
+    }else {
+      # write layer with open vegetation
+      writeRaster(layer_open, paste0(tools::file_path_sans_ext(FILE_LAS_CLIPPED), "_", c, "open", c_min, "-", c_max, ".tif"), overwrite=T)
+      # write layer with vegetation under cover
+      writeRaster(layer_cov, paste0(tools::file_path_sans_ext(FILE_LAS_CLIPPED), "_", c, "cov", c_min, "-", c_max, ".tif"), overwrite=T)
+      # write layer with both
+      # writeRaster(layer_combined, paste0(tools::file_path_sans_ext(FILE_LAS_CLIPPED), "_", c, "both", c_min, "-", c_max, ".tif"), overwrite=T)
+    }
+
     #### >> add to mapview ####
     if(OUTPUT_MAPVIEW){
       if(c >= 7){
@@ -530,14 +564,14 @@ for(id in START_ITER:length(roi_shp)){
                            at=seq(0,1,0.2), col.regions=c('#FFFFFFFF',  brewer.pal(n = 9, name = "Greens")), hide = TRUE)  + 
           mapview(layer_cov, layer.name = c(paste0(HEIGHT_CLASSES_min[c], "-", HEIGHT_CLASSES_max[c], " m [cov]")), na.color="#FFFFFF00",
                   at=seq(0,1,0.2), col.regions=c('#FFFFFFFF', brewer.pal(n = 9, name = "Greys")), hide = TRUE) +
-          mapview(layer_free, layer.name = c(paste0(HEIGHT_CLASSES_min[c], "-", HEIGHT_CLASSES_max[c], " m [open]")), na.color="#FFFFFF00",
+          mapview(layer_open, layer.name = c(paste0(HEIGHT_CLASSES_min[c], "-", HEIGHT_CLASSES_max[c], " m [open]")), na.color="#FFFFFF00",
                   at=seq(0,1,0.2), col.regions=c('#FFFFFFFF', brewer.pal(n = 9, name = "YlGn")), hide = TRUE)
       
         # doesn't work:
-        # map_temp = mapview(list(layer_combined, layer_cov, layer_free), 
+        # map_temp = mapview(list(layer_combined, layer_cov, layer_open), 
         #                    layer.name = c(paste0(HEIGHT_CLASSES_min[c], "-", HEIGHT_CLASSES_max[c], " m"), 
         #                                   paste0(HEIGHT_CLASSES_min[c], "-", HEIGHT_CLASSES_max[c], " m [cov]"), 
-        #                                   paste0(HEIGHT_CLASSES_min[c], "-", HEIGHT_CLASSES_max[c], " m [free]")), 
+        #                                   paste0(HEIGHT_CLASSES_min[c], "-", HEIGHT_CLASSES_max[c], " m [open]")), 
         #                    na.color="#FFFFFF00", hide = TRUE,
         #                    at=seq(0,1,0.2), col.regions=c('#FFFFFFFF',  brewer.pal(n = 9, name = "Greens")))
       }
@@ -546,7 +580,7 @@ for(id in START_ITER:length(roi_shp)){
     if(c == IDX_INCLUDECLASS[1]){
       layer_list_com = list(layer_combined)
       layer_list_cov = list(layer_cov)
-      layer_list_free = list(layer_free)
+      layer_list_open = list(layer_open)
       layer_names = c(paste0(HEIGHT_CLASSES_min[c], "-", HEIGHT_CLASSES_max[c], " m"))
       
       if(OUTPUT_MAPVIEW) my_map = map_temp
@@ -554,7 +588,7 @@ for(id in START_ITER:length(roi_shp)){
     } else  {
       layer_list_com <- append(layer_list_com, list(layer_combined))
       layer_list_cov <- append(layer_list_cov, list(layer_cov))
-      layer_list_free <- append(layer_list_free, list(layer_free))
+      layer_list_open <- append(layer_list_open, list(layer_open))
       layer_names = cbind(layer_names, paste0(HEIGHT_CLASSES_min[c], "-", HEIGHT_CLASSES_max[c], " m"))
       
       if(OUTPUT_MAPVIEW) my_map = my_map + map_temp
@@ -576,8 +610,8 @@ for(id in START_ITER:length(roi_shp)){
   # clean up RAM
   remove("lasn", "lasp", "lasp_c", "class_dgrid_list", "class_dgridr_list", 
          "dgrid_c", "dgrid_ref", "dgrid_rel_c",
-         "layer_list_com", "layer_list_cov", "layer_list_free",
-         "layer_combined", "layer_cov", "layer_free", 
+         "layer_list_com", "layer_list_cov", "layer_list_open",
+         "layer_combined", "layer_cov", "layer_open", 
          "covered", "covered_vec", "class_df",
          "my_map", "map_temp")
 }#\endfor (polygons loop close)
