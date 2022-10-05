@@ -1,30 +1,39 @@
-############################################################
+#---------------------------------------------------------------------#
 # Vectorization of NDVI Max change surfaces
 #
-# by Alexandra Erbach & Dominique Weber, BFH-HAFL
-############################################################
+# by Alexandra Erbach, Dominique Weber, Hannes Horneber (BFH-HAFL)
+#---------------------------------------------------------------------#
 
 library(raster)
 library(rgdal)
-library(velox)
+library(sf) # for use with exactextractr
+library(exactextractr) # replaces velox (fast raster extraction)
+# for parallelization
 library(foreach)
 library(doParallel)
 
 # parameters
-minsize = 300 # m^2
+minsize = units::set_units(300, m^2)
 thrvalue = -1000
 out_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1"
-years = c("2021_2020")
+years = c("2022_2021")
 
-cl = makeCluster(detectCores() -1)
-registerDoParallel(cl)
-foreach(i=1:length(years), .packages=c("raster", "rgdal", "velox")) %dopar% {
-  
+# init in_path
+in_path = paste0("//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/ndvi_diff_", years[1], "_Int16_reproj_bilinear.tif")
+
+#------------------------------------------------#
+####              PARALLELIZATION             ####
+#------------------------------------------------#
+# parallelization makes only sense when processing multiple rasters
+# uncomment the following lines if you want to activate parallelization
+#------------------------------------------------#
+# cl = makeCluster(detectCores() -1)
+# registerDoParallel(cl)
+# foreach(i=1:length(years), .packages=c("raster", "rgdal", "sf", "exactextractr")) %dopar% {
+  # year = years[i]
+  # in_path = paste0("//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/ndvi_diff_", year, "_Int16_reproj_bilinear.tif")
+#------------------------------------------------#
   start_time <- Sys.time()
-  
-  # parameters
-  year = years[i]
-  in_path = paste0("//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/ndvi_diff_", year, "_Int16_reproj_bilinear.tif")
   
   # out shp layer & raster
   lyr = paste0("ndvi_diff_", year)
@@ -44,29 +53,35 @@ foreach(i=1:length(years), .packages=c("raster", "rgdal", "velox")) %dopar% {
   system(paste("gdal_polygonize.py", out_mask, out_shp, sep=" "))
   
   print("calculate area and mean diff...")
-  diffmask_vec = readOGR(out_shp)
+  diffmask_sf = read_sf(out_shp)
   # calculate area
-  diffmask_vec$area = round(area(diffmask_vec),0)
-  
-  # filter out surfaces smaller than min. size
-  diffmask_vec = diffmask_vec[which(diffmask_vec$area > minsize),]
-  
+  diffmask_sf$area = diffmask_sf$area <- round(st_area(diffmask_sf))
+  #filter out surfaces smaller than min. size
+  diffmask_sf = diffmask_sf[which(diffmask_sf$area > minsize),]
+
   # calculate mean change per polygon
+  # this was implemented using R-package velox, which no longer is maintained (https://github.com/hunzikp/velox/issues/43)
+  # switched to exact_extract in Oct 2022
+  print("calculate mean change per polygon...")
   diff_raster = raster(in_path)
-  velox_mask = velox(diff_raster, res=res(diff_raster))
-  diffmask_vec$meandiff <- round(as.vector(velox_mask$extract(diffmask_vec, fun=mean))/10000, 2)
+  meandiff = exact_extract(diff_raster, diffmask_sf, 'mean')
+  # prettify values (raster values were multiplied by 10000 to be stored as int)
+  diffmask_sf$meandiff <- round(meandiff/10000, 2)
   
-  # delete first column
-  diffmask_vec = diffmask_vec[,-1]
+  # drop first column
+  diffmask_sf = diffmask_sf[,-1]
   
-  # reproject > doesn't make a difference...
-  #diffmask_vec = spTransform(diffmask_vec, "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +ellps=WGS84 +datum=WGS84 +units=m +nadgrids=@null +wktext +no_defs")
+  ## shape deprecated, use geopackage instead (for better performance and an overall better format :])
+  ## save shapefile > careful, CRS might not be correctly set. Check with GIS.
+  # print("save shapefile...")
+  # st_write(diffmask_sf, file.path(out_path, paste0(lyr, ".shp")), delete_dsn = T )
   
-  # save shapefile > careful, CRS ist not correctly written by writeOGR, has to be manually set in GIS
-  print("save shapefile...")
-  writeOGR(diffmask_vec, dsn=out_path, layer=lyr, driver="ESRI Shapefile", overwrite_layer = T)
-  
-  print(Sys.time() - start_time) # ca. 6 mins
-  
-}
-stopCluster(cl)
+  print("save geopackage...")
+  st_write(diffmask_sf, file.path(out_path, paste0(lyr, ".gpkg")) )
+           
+  print(Sys.time() - start_time) 
+
+#------------------------------------------------#
+# }
+# stopCluster(cl)
+#------------------------------------------------#
