@@ -1,12 +1,15 @@
 import { Control } from "ol/control";
-import { WMSCapabilities } from "ol/format";
+import { WMSCapabilities, GeoJSON } from "ol/format";
 import { transform } from "ol/proj";
 import TileLayer from "ol/layer/Tile";
-import { TileWMS } from "ol/source";
+import VectorLayer from "ol/layer/Vector";
+import { TileWMS, Vector as VectorSource } from "ol/source";
+import { bbox as bboxStrategy } from "ol/loadingstrategy";
 import { MDCSlider } from "@material/slider";
 import { MDCSwitch } from "@material/switch";
 import { MDCSelect } from "@material/select";
-import { getLayerInfo, openSidebar } from "./main_util";
+import { getLayerInfo, openSidebar, change_overlay_colors } from "./main_util";
+import Crowdsourcing from "./Crowdsourcing";
 import {
   addLayerToUrl,
   getQueryParams,
@@ -43,7 +46,8 @@ class ViewerControl {
         visible: true,
         opacity: 1,
         toc: false,
-        color: { hex: "#a444d6ff", name: "Dark-Orchid" }
+        color: change_overlay_colors["ndvi_decrease_2021_2020"],
+        wfs: "karten-werk:ndvi_decrease_crowd_2021_2020"
       },
       {
         layername: "karten-werk:ndvi_decrease_2020_2019",
@@ -52,7 +56,8 @@ class ViewerControl {
         visible: false,
         opacity: 1,
         toc: false,
-        color: { hex: "#4545d9ff", name: "Iris" }
+        color: change_overlay_colors["ndvi_decrease_2020_2019"],
+        wfs: "karten-werk:ndvi_decrease_crowd_2020_2019"
       },
       {
         layername: "karten-werk:ndvi_decrease_2019_2018",
@@ -61,7 +66,8 @@ class ViewerControl {
         visible: false,
         opacity: 1,
         toc: false,
-        color: { hex: "#46d8d5ff", name: "Medium-Turquoise" }
+        color: change_overlay_colors["ndvi_decrease_2019_2018"],
+        wfs: "karten-werk:ndvi_decrease_crowd_2019_2018"
       },
       {
         layername: "karten-werk:ndvi_decrease_2018_2017",
@@ -70,7 +76,8 @@ class ViewerControl {
         visible: false,
         opacity: 1,
         toc: false,
-        color: { hex: "#80c757ff", name: "Mantis" }
+        color: change_overlay_colors["ndvi_decrease_2018_2017"],
+        wfs: "karten-werk:ndvi_decrease_crowd_2018_2017"
       },
       {
         layername: "karten-werk:ndvi_decrease_2017_2016",
@@ -79,7 +86,8 @@ class ViewerControl {
         visible: false,
         opacity: 1,
         toc: false,
-        color: { hex: "#f8e025ff", name: "Yellow-Pantone" }
+        color: change_overlay_colors["ndvi_decrease_2017_2016"],
+        wfs: "karten-werk:ndvi_decrease_crowd_2017_2016"
       }
     ];
     this.disorderOverlays = [
@@ -181,6 +189,7 @@ class ViewerControl {
     ];
     this.disorderlayers = [];
     this.activeLayers = [];
+    this.crowdsourcing = new Crowdsourcing(map);
   }
 
   /*
@@ -275,6 +284,14 @@ class ViewerControl {
           urlParams: this.urlParams,
           tocLayers: this.changeOverlays,
           layerType: "veraenderung"
+        });
+        // add the click event listener for crowdsourcing
+        this.map.addEventListener("click", e => {
+          const features = this.map.getFeaturesAtPixel(e.pixel);
+          this.crowdsourcing.selectFeature({
+            coordinate: e.coordinate,
+            features
+          });
         });
         break;
       case "Vitalität der Wälder":
@@ -700,9 +717,16 @@ class ViewerControl {
     if (!layer.wmsLayer) {
       layer.wmsLayer = this.createWmsLayer(layer);
     }
+    if (layer.wfs) {
+      layer.wfsLayer = this.createWfsLayer(layer);
+    }
     layer.wmsLayer.setOpacity(layer.opacity);
     layer.wmsLayer.setVisible(layer.visible);
     this.map.addLayer(layer.wmsLayer);
+    // add the wfs on top of the wms
+    if (layer.wfsLayer) {
+      this.map.addLayer(layer.wfsLayer);
+    }
     layer.domElement = this.createLayerControl(layer);
     domContainer.prepend(layer.domElement);
     if (layer.chip) {
@@ -720,6 +744,9 @@ class ViewerControl {
   removeLayer(layer) {
     layer.toc = false;
     this.map.removeLayer(layer.wmsLayer);
+    if (layer.wfsLayer) {
+      this.map.removeLayer(layer.wfsLayer);
+    }
     const layers = document.querySelector(".layers");
     if (layers.contains(layer.domElement)) {
       layers.removeChild(layer.domElement);
@@ -983,6 +1010,36 @@ class ViewerControl {
   }
 
   /*
+   * creates a ol/VectorLayer for a geoserver WFS.
+   * @param {object} overlay - overlay object like stored in the model.
+   * @returns {object} VectorLayer - ol.Layer.Vector instance.
+   */
+  createWfsLayer(overlay) {
+    const host = "https://geoserver.karten-werk.ch/wfs?";
+    const vectorSource = new VectorSource({
+      format: new GeoJSON(),
+      url: function (extent) {
+        return (
+          host +
+          "wfs?service=WFS&" +
+          "version=1.1.0&request=GetFeature&typename=" +
+          overlay.wfs +
+          "&outputFormat=application/json&srsname=EPSG:3857&" +
+          "bbox=" +
+          extent.join(",") +
+          ",EPSG:3857"
+        );
+      },
+      strategy: bboxStrategy
+    });
+    const wfsLayer = new VectorLayer({
+      source: vectorSource,
+      style: this.crowdsourcing.wfsStyle
+    });
+    return wfsLayer;
+  }
+
+  /*
    * creates the layer info (i) icon.
    * @param {object} overlay - overlay item like stored in this.changeOverlays.
    * @returns {HTMLElement} layerInfo - the info icon.
@@ -1102,6 +1159,9 @@ class ViewerControl {
     if (overlay.wmsLayer && overlay.displayName) {
       input.addEventListener("change", e => {
         overlay.wmsLayer.setVisible(e.target.checked);
+        if (overlay.wfsLayer) {
+          overlay.wfsLayer.setVisible(e.target.checked);
+        }
         overlay.visible = e.target.checked;
         input.setAttribute("aria-checked", e.target.checked.toString());
         updateUrlVisibilityOpacity({
@@ -1133,7 +1193,7 @@ class ViewerControl {
    * @returns {Div Element} sliderContainer - transparency slider.
    */
   getSlider(layer) {
-    const { wmsLayer } = layer;
+    const { wmsLayer, wfsLayer } = layer;
     const sliderContainer = document.createElement("div");
     sliderContainer.classList.add("slidercontainer");
     const opacityIcon = document.createElement("i");
@@ -1173,6 +1233,9 @@ class ViewerControl {
       mdcslider.listen("MDCSlider:input", e => {
         opacity = parseFloat(e.target.getAttribute("aria-valuenow") / 100);
         wmsLayer.setOpacity(opacity);
+        if (wfsLayer) {
+          wfsLayer.setOpacity(opacity);
+        }
         layer.opacity = opacity;
       });
       // wait for the change to be commited before
