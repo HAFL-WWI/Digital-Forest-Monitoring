@@ -52,6 +52,7 @@
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
     />
     <link rel="mask-icon" href="./img/safari-pinned-tab.svg" color="#5bbad5" />
+    <script src="https://cdn.jsdelivr.net/gh/thealphadollar/vanilla-i18n/src/vanilla-i18n.min.js"></script>
     <title>Digital-Forest-Monitoring</title>
   </head>
   <body>
@@ -70,7 +71,16 @@
     <header class="top-app-bar">
       <section class="top-app-bar__section top-app-bar__section--align-start">
         <!-- dynamically set based on screen size-->
-        <span class="top-app-bar__title">Waldmonitoring</span>
+        <span
+          id="top-app-bar__title-long"
+          vanilla-i18n="homepage.title.long"
+          class="top-app-bar__title"
+        ></span>
+        <span
+          id="top-app-bar__title-short"
+          vanilla-i18n="homepage.title.short"
+          class="top-app-bar__title"
+        ></span>
         <!-- search -->
         <div
           class="mdc-text-field mdc-text-field--with-trailing-icon mdc-text-field--with-leading-icon search"
@@ -102,6 +112,10 @@
         >
           info
         </button>
+        <select id="vanilla-i18n-toggler" class="top-app-bar__language-toggler">
+          <option>de</option>
+          <option>fr</option>
+        </select>
       </section>
     </header>
     <div class="autocomplete">
@@ -136,5 +150,19 @@
     </div>
     <!-- end impressum Dialog -->
     <script type="module" src="./index.js" async defer></script>
+    <script>
+      const languages = ["de", "fr"];
+      window.translator = new vanilla_i18n(
+        languages,
+        (opts = {
+          path: "i18n",
+          debug: true,
+          i18n_attr_name: "vanilla-i18n",
+          toggler_id: "vanilla-i18n-toggler",
+          default_language: languages[0]
+        })
+      );
+      window.translator.run();
+    </script>
   </body>
 </html>
