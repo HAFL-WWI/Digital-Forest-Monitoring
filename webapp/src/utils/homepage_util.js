@@ -1,5 +1,5 @@
 import { router } from "./router";
-import { createGrid } from "./main_util";
+import { createGrid, setI18nAttribute } from "./main_util";
 const useCase1ImageWebp = new URL("../img/Use-Case1_600.webp", import.meta.url);
 const useCase2ImageWebp = new URL("../img/Use-Case2_600.webp", import.meta.url);
 const useCase3ImageWebp = new URL("../img/Use-Case3_600.webp", import.meta.url);
@@ -135,9 +135,10 @@ const homepageUtil = {
       const grid = createGrid();
       const cards = document.createDocumentFragment();
       for (const card in homepageUtil.model.cards) {
-        const cardElement = homepageUtil.view.createCard(
-          homepageUtil.model.cards[card]
-        );
+        const cardElement = homepageUtil.view.createCard({
+          key: card,
+          attributes: homepageUtil.model.cards[card]
+        });
         cards.appendChild(cardElement);
       }
       grid.firstChild.appendChild(cards);
@@ -188,15 +189,8 @@ const homepageUtil = {
      @param {string} params.route - the url to open when the user clicks on the card.
      @returns {HTMLElement} cell - a single grid cell containing a card Element.
     */
-    createCard: ({
-      image,
-      imageWebp,
-      title,
-      subtitle,
-      description,
-      linktext,
-      route
-    }) => {
+    createCard: ({ key, attributes }) => {
+      const { image, imageWebp, title, route } = attributes;
       const cell = document.createElement("div");
       const card = document.createElement("div");
       const cardPrimaryAction = document.createElement("div");
@@ -204,19 +198,30 @@ const homepageUtil = {
       const picture = document.createElement("picture");
       const cardTitleContainer = document.createElement("div");
       const cardTitle = document.createElement("h2");
+      setI18nAttribute({
+        element: cardTitle,
+        attributeValue: `homepage.${key}.title`
+      });
       const cardSubTitle = document.createElement("h3");
+      setI18nAttribute({
+        element: cardSubTitle,
+        attributeValue: `homepage.${key}.subtitle`
+      });
       const cardDescription = document.createElement("div");
+      setI18nAttribute({
+        element: cardDescription,
+        attributeValue: `homepage.${key}.description`
+      });
       const cardActions = document.createElement("div");
       const cardActionButtons = document.createElement("div");
       const actionButton = document.createElement("button");
-
-      cardTitle.innerHTML = title;
-      cardDescription.innerHTML = description;
-      cardSubTitle.innerHTML = subtitle;
+      setI18nAttribute({
+        element: actionButton,
+        attributeValue: `homepage.${key}.linktext`
+      });
       actionButton.addEventListener("click", () => {
         homepageUtil.controller.navigate(route);
       });
-      actionButton.innerHTML = linktext;
 
       cell.classList.add(
         "mdc-layout-grid__cell",
