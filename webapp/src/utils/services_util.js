@@ -1,4 +1,9 @@
-import { content, removeContent, createGrid } from "./main_util";
+import {
+  content,
+  removeContent,
+  createGrid,
+  setI18nAttribute
+} from "./main_util";
 const servicesUtil = {
   model: {
     /*
@@ -15,36 +20,24 @@ const servicesUtil = {
     cards: {
       wms: {
         title: "Web Map Service (WMS)",
-        subtitle: "Provided by: karten-werk GmbH",
-        description: `Dieser OGC konforme WMS liefert Kartenbilder- Layer und Legendeninformationen.`,
         serviceUrl:
           "https://geoserver.karten-werk.ch/wms?request=GetCapabilities",
         videoUrl: "https://www.youtube.com/embed/g7t_tz2OJpg"
       },
       wmts: {
         title: "Web Map Tile Service (WMTS)",
-        subtitle: "Provided by: karten-werk GmbH",
-        description: `Der WMTS Service liefert vorprozessierte (gecachte) Bilder und ist somit schneller als der WMS Service.
-          Er eignet sich gut zum Einbinden in Web Applikationen wo man nicht immer mit einem schneller Internet rechnen kann.`,
         serviceUrl:
           "https://geoserver.karten-werk.ch/gwc/service/wmts?request=getCapabilities",
         videoUrl: "https://www.youtube.com/embed/g7t_tz2OJpg"
       },
       wfs: {
         title: "Web Feature Service (WFS)",
-        subtitle: "Provided by: karten-werk GmbH",
-        description: `Der WFS Service lierfert Vektor Geometrien inklusive Attribut Informationen.
-          Er lässt sich in verschiedene GIS Systemen einbinden und bei Bedarf kann man die Daten exportieren und lokal abspeichern.`,
         serviceUrl:
           "https://geoserver.karten-werk.ch/wfs?request=GetCapabilities",
         videoUrl: "https://www.youtube.com/embed/aZbNjFLe884"
       },
       wcs: {
         title: "Web Coverage Service (WCS)",
-        subtitle: "Provided by: karten-werk GmbH",
-        description: `Unser WCS Service stellt (rohe) Rasterdaten zur Verfügung. Entsprechend ist er
-          typischweise etwas langsamer als ein WMTS oder WMS, aber dafür umso mächtiger.
-          Die Daten lassen sich beliebig klassieren, einfärben, für Geoprocessing nutzen, oder gar herunterladen.`,
         serviceUrl:
           "https://geoserver.karten-werk.ch/wcs?request=GetCapabilities",
         videoUrl: "https://www.youtube.com/embed/0nzgaLhqFGU"
@@ -58,8 +51,25 @@ const servicesUtil = {
     init: () => {
       removeContent();
       servicesUtil.controller.createJumbotron();
+      servicesUtil.controller.createTitle();
       servicesUtil.controller.createServiceCards();
+      window.translator.run();
     },
+
+    /*
+     * diplays the title
+     */
+    createTitle: () => {
+      const title = document.createElement("h1");
+      title.classList.add("page__title", "mdc-layout-grid");
+      title.innerText = "Geodienste";
+      setI18nAttribute({
+        element: title,
+        attributeValue: "services.heading"
+      });
+      content.appendChild(title);
+    },
+
     /*
      * displays the jumbotron.
      */
@@ -78,9 +88,11 @@ const servicesUtil = {
       const grid = createGrid();
       const cards = document.createDocumentFragment();
       for (const card in servicesUtil.model.cards) {
-        const cardElement = servicesUtil.view.createCard(
-          servicesUtil.model.cards[card]
-        );
+        const cardElement = servicesUtil.view.createCard({
+          key: card,
+          attributes: servicesUtil.model.cards[card]
+        });
+
         cards.appendChild(cardElement);
       }
       grid.firstChild.appendChild(cards);
@@ -99,6 +111,10 @@ const servicesUtil = {
       const jumbotronText = document.createElement("div");
       jumbotron.classList.add("jumbotron");
       jumbotronText.classList.add("jumbotron__text");
+      setI18nAttribute({
+        element: jumbotronText,
+        attributeValue: "services.jumbotron"
+      });
       jumbotronText.innerHTML = text;
       jumbotron.appendChild(jumbotronText);
       return jumbotron;
@@ -113,15 +129,28 @@ const servicesUtil = {
      @param {string} params.route - the url to open when the user clicks on the card.
      @returns {HTMLElement} cell - a single grid cell containing a card Element.
     */
-    createCard: ({ videoUrl, title, subtitle, description, serviceUrl }) => {
+    createCard: ({ key, attributes }) => {
+      const { title, serviceUrl, videoUrl } = attributes;
       const cell = document.createElement("div");
       const card = document.createElement("div");
       const cardPrimaryAction = document.createElement("div");
       const cardMedia = document.createElement("div");
       const cardTitleContainer = document.createElement("div");
       const cardTitle = document.createElement("h2");
+      setI18nAttribute({
+        element: cardTitle,
+        attributeValue: `services.${key}.title`
+      });
       const cardSubTitle = document.createElement("h3");
+      setI18nAttribute({
+        element: cardSubTitle,
+        attributeValue: `services.${key}.subtitle`
+      });
       const cardDescription = document.createElement("div");
+      setI18nAttribute({
+        element: cardDescription,
+        attributeValue: `services.${key}.description`
+      });
       const cardActions = document.createElement("div");
       cardActions.style.flexDirection = "column";
       cardActions.style.alignItems = "flex-start";
@@ -137,9 +166,6 @@ const servicesUtil = {
       cardActions.appendChild(serviceTitle);
       cardActions.appendChild(serviceLink);
       const cardActionButtons = document.createElement("div");
-      cardTitle.innerHTML = title;
-      cardDescription.innerHTML = description;
-      cardSubTitle.innerHTML = subtitle;
 
       cell.classList.add(
         "mdc-layout-grid__cell",
