@@ -8,10 +8,9 @@ import {
   dialogContent,
   impressum,
   removeGeojsonOverlays,
-  setTitle,
-  getTitle,
   searchResults,
-  closeSidebar
+  closeSidebar,
+  updateTitle
 } from "./main_util";
 import viewerUtil from "./viewer_util";
 import { register } from "ol/proj/proj4";
@@ -108,7 +107,7 @@ document.getElementById("impressum-button").addEventListener("click", () => {
  * neccessary because is possible that the topAppBar change it's height.
  */
 window.addEventListener("resize", () => {
-  setTitle(getTitle());
+  updateTitle();
 });
 
 /*

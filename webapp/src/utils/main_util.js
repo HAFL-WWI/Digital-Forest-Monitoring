@@ -11,7 +11,9 @@ export const GEO_ADMIN_WMS_INFO_URL =
 export const topAppBarRight = document.querySelector(
   ".top-app-bar__section--align-end"
 );
-const appBarTitle = document.getElementsByClassName("top-app-bar__title")[0];
+const appBarTitleShort = document.getElementById("top-app-bar__title-short");
+const appBarTitleLong = document.getElementById("top-app-bar__title-long");
+const homeButton = document.getElementById("home-button");
 const sidebarContent = document.querySelector(".sidebar__content");
 export const sidebar = document.querySelector(".sidebar");
 export const content = document.getElementsByClassName("content")[0];
@@ -21,6 +23,13 @@ export const content = document.getElementsByClassName("content")[0];
  */
 export const removeContent = () => {
   content.innerHTML = "";
+};
+
+export const hideHomeButton = () => {
+  homeButton.style.display = "none";
+};
+export const showHomeButton = () => {
+  homeButton.style.display = "inline-block";
 };
 
 /*
@@ -37,19 +46,6 @@ export const createGrid = () => {
 };
 
 /*
- * changes the top appbar title.
- * @param {string} title - the new title to display.
- * @returns {boolean} - true if title changed successfully, false otherwise.
- */
-export const setTitle = title => {
-  if (!title) {
-    return false;
-  }
-  appBarTitle.innerHTML = title;
-  return true;
-};
-
-/*
  * remove old video links from the top-app-bar and add add a new one.
  * @param {object} params - function parameter object.
  * @param {string} params.title - the video title.
@@ -61,7 +57,11 @@ export const addVideoLink = ({ title, videoId } = {}) => {
     return false;
   }
   removeVideoLink();
-  topAppBarRight.appendChild(getVideoLink({ title, videoId }));
+  topAppBarRight.insertBefore(
+    getVideoLink({ title, videoId }),
+    topAppBarRight.children[2]
+  );
+  //topAppBarRight.appendChild(getVideoLink({ title, videoId }));
   return true;
 };
 
@@ -69,7 +69,7 @@ export const addVideoLink = ({ title, videoId } = {}) => {
  * remove the video link from the top-app-bar
  */
 export const removeVideoLink = () => {
-  if (topAppBarRight.children.length === 3) {
+  if (topAppBarRight.children.length === 4) {
     topAppBarRight.removeChild(topAppBarRight.children[2]);
   }
 };
@@ -105,28 +105,26 @@ export const getVideoLink = ({ title, videoId } = {}) => {
 export const getVideoElement = videoId =>
   `<div class="videoWrapper"><iframe width="560" height="349" src="https://www.youtube.com/embed/${videoId}?rel=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
 
-/*
- * calculates the title based on the window.width.
- * @returns {string} title - title to use based on the current window.width.
- */
-export const getTitle = () => {
-  const width = window.innerWidth;
-  const title =
-    width <= 550 ? "Waldmonitoring" : "Waldmonitoring mit Fernerkundungsdaten";
-  return title;
+export const updateTitle = () => {
+  const path = window.location.pathname;
+  if (path === "/" || path === "/services") {
+    const width = window.innerWidth;
+    if (width <= 700) {
+      appBarTitleShort.style.display = "initial";
+      appBarTitleLong.style.display = "none";
+    } else {
+      appBarTitleShort.style.display = "none";
+      appBarTitleLong.style.display = "initial";
+    }
+  }
 };
 
 /*
  * hide the appBar title
  */
 export const hideTitle = () => {
-  appBarTitle.style.display = "none";
-};
-/*
- * show the appBar title
- */
-export const showTitle = () => {
-  appBarTitle.style.display = "block";
+  appBarTitleLong.style.display = "none";
+  appBarTitleShort.style.display = "none";
 };
 
 export const impressum = {
