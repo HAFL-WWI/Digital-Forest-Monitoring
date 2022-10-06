@@ -373,3 +373,15 @@ export const change_overlay_colors = {
   ndvi_decrease_2017_2016: changeLayerColors.yellow_pantone,
   ndvi_decrease_crowd_2017_2016: changeLayerColors.yellow_pantone
 };
+
+/*
+ * adds a i18n attribute to a specific element.
+ * @param {object} params - function parameter object.
+ * @param {htmlElement} params.element - the html element to add the attribute.
+ * @param {string} params.attributeValue - the attribute value to set.
+ * @returns {void}
+ */
+export const setI18nAttribute = ({ element, attributeValue } = {}) => {
+  if (!element || !attributeValue) return;
+  element.setAttribute("vanilla-i18n", attributeValue);
+};
