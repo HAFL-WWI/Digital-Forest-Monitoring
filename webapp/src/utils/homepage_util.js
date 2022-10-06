@@ -109,6 +109,7 @@ const homepageUtil = {
       homepageUtil.controller.removeContent();
       homepageUtil.controller.createJumbotron();
       homepageUtil.controller.createHomepageCards();
+      window.translator.run();
     },
     /*
      * removes 'old' content like viewers, services etc.
@@ -173,6 +174,7 @@ const homepageUtil = {
       jumbotron.classList.add("jumbotron");
       jumbotronText.classList.add("jumbotron__text");
       jumbotronText.innerHTML = text;
+      jumbotronText.setAttribute("vanilla-i18n", "homepage.jumbotron");
       jumbotron.appendChild(jumbotronText);
       return jumbotron;
     },
