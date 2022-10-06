@@ -169,13 +169,15 @@ const homepageUtil = {
      * @param {string} text - the text to display inside the jumbotron.
      * @returns {HTMLElement} jumbotron - div cotaining the jumbotron.
      */
-    createJumbotron: text => {
+    createJumbotron: () => {
       const jumbotron = document.createElement("div");
       const jumbotronText = document.createElement("div");
       jumbotron.classList.add("jumbotron");
       jumbotronText.classList.add("jumbotron__text");
-      jumbotronText.innerHTML = text;
-      jumbotronText.setAttribute("vanilla-i18n", "homepage.jumbotron");
+      setI18nAttribute({
+        element: jumbotronText,
+        attributeValue: "homepage.jumbotron"
+      });
       jumbotron.appendChild(jumbotronText);
       return jumbotron;
     },
