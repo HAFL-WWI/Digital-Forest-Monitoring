@@ -38,66 +38,38 @@ const homepageUtil = {
         image: useCase1Image,
         imageWebp: useCase1ImageWebp,
         title: "Jährliche Veränderung",
-        subtitle: "Geodaten: Alexandra Erbach, HAFL",
-        description:
-          "Der Wald verändert sich ständig. Hier können Sie sehen, " +
-          "wo Veränderungen z.B. durch Holzschläge stattgefunden haben.",
-        linktext: "zum viewer",
         route: "/veraenderung"
       },
       stoerung: {
         image: useCase2Image,
         imageWebp: useCase2ImageWebp,
         title: "Test Sommersturmschäden",
-        subtitle: "Geodaten: Alexandra Erbach, HAFL",
-        description:
-          "Hier können Sie sehen, wo der Wald natürlichen Störungen wie z.B. " +
-          "Borkenkäferbefall oder Sommersturmschäden ausgesetzt ist.",
-        route: "/stoerungen",
-        linktext: "zum viewer"
+        route: "/stoerungen"
       },
       vitalitaet: {
         image: useCase3Image,
         imageWebp: useCase3ImageWebp,
         title: "Hinweiskarten zur Vitalität",
-        subtitle: "Geodaten: Alexandra Erbach, HAFL",
-        description:
-          "Trockenheit führte in den vergangen Jahren vermehrt zu Waldschäden. " +
-          "Hier finden Sie Hinweiskarten zur Vitalität der Wälder.",
-        route: "/vitalitaet",
-        linktext: "zum viewer"
+        route: "/vitalitaet"
       },
       verjuengung: {
         image: useCase4Image,
         imageWebp: useCase4ImageWebp,
         title: "Hinweiskarten zur Verjüngung",
-        subtitle: "Geodaten: Hannes Horneber, HAFL",
-        description:
-          "Ergänzend zu Vegetationshöhenmodellen zeigt diese Hinweiskarte das mögliche Vorhandensein von Vegetation unter Schirm." +
-          "<br /><strong>Prototyp: Bisher nur Daten der Burgergemeinde Bern. Wird noch erweitert um die Bereiche der swissSurface3D Daten.</strong>",
-        route: "/verjuengung",
-        linktext: "zum viewer"
+
+        route: "/verjuengung"
       },
       geodienste: {
         image: geoservices,
         imageWebp: geoservicesWebp,
         title: "Geodienste",
-        subtitle: "Services: karten-werk GmbH",
-        description:
-          "Die WMS, WMTS und WFS Geodienste, können Sie in Ihr GIS " +
-          "importieren und mit Ihren eigenen Geodaten kombinieren.",
-        route: "/services",
-        linktext: "zu den Services"
+        route: "/services"
       },
       wiki: {
         image: wikiImage,
         imageWebp: wikiImageWebp,
         title: "Waldmonitoring Wiki",
-        subtitle: "bereitgestellt von HAFL und BAFU",
-        description:
-          "Das Wiki bietet Austauschmöglichkeiten, Hintergrundwissen und Einsatzbeispiele der Waldmonitoring-Anwendungen.",
-        route: "https://wiki.waldmonitoring.ch/index.php/Hauptseite",
-        linktext: "zum Wiki"
+        route: "https://wiki.waldmonitoring.ch/index.php/Hauptseite"
       }
     }
   },
