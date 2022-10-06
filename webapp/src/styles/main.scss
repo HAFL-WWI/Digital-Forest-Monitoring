@@ -88,10 +88,15 @@ body:after {
 .top-app-bar__section--align-start {
   justify-content: flex-start;
   flex-grow: 1;
-  max-width: 500px;
+  max-width: 100%;
 }
 .top-app-bar__section--align-end {
   justify-content: flex-end;
+  align-items: center;
+}
+.top-app-bar__language-toggler {
+  max-height: 24px;
+  margin: 12px 0 12px 12px;
 }
 .top-app-bar__title {
   font-family: Roboto, sans-serif;
@@ -210,6 +215,7 @@ body:after {
   @include mdc-text-field-height(40px);
   display: none;
   width: 100%;
+  max-width: 500px;
 }
 #map {
   background-size: 20px 20px;
