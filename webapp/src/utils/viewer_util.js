@@ -44,6 +44,7 @@ const viewerUtil = {
         viewerUtil.controller.showSearchGeometry();
         viewerUtil.controller.closeSearchResults(searchResults);
       });
+      window.translator.run();
     },
     /*
      * displays the geometry from the currently selected search result on the map
