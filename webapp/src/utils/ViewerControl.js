@@ -705,10 +705,12 @@ class ViewerControl {
   createDropdownList(layers) {
     const list = new DocumentFragment();
     layers.forEach(layer => {
+      const i18n = layer.displayName.split(" ").join("").toLowerCase();
       const li = document.createElement("li");
       li.classList.add("mdc-list-item");
       li.setAttribute("data-value", layer.displayName);
       li.innerHTML = layer.displayName;
+      setI18nAttribute({ element: li, attributeValue: `viewer.layer.${i18n}` });
       list.appendChild(li);
     });
     return list;
