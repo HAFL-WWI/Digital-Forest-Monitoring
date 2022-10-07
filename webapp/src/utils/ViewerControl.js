@@ -8,7 +8,12 @@ import { bbox as bboxStrategy } from "ol/loadingstrategy";
 import { MDCSlider } from "@material/slider";
 import { MDCSwitch } from "@material/switch";
 import { MDCSelect } from "@material/select";
-import { getLayerInfo, openSidebar, change_overlay_colors } from "./main_util";
+import {
+  getLayerInfo,
+  openSidebar,
+  change_overlay_colors,
+  setI18nAttribute
+} from "./main_util";
 import Crowdsourcing from "./Crowdsourcing";
 import {
   addLayerToUrl,
@@ -241,6 +246,7 @@ class ViewerControl {
    * @returns {HTMLElement} veraenderungControlElement - a div with all the necessary children.
    */
   createControl({ type }) {
+    const i18nType = type.split(" ").join("_").toLowerCase();
     const veraenderungContainer = document.createElement("div");
     //title section
     const viewerTitle = document.createElement("div");
@@ -258,8 +264,11 @@ class ViewerControl {
       }
     });
     const title = document.createElement("span");
-    title.style.flexGrow = 1;
-    title.style.fontSize = "17px";
+    title.classList.add("viewerControl__title-text");
+    setI18nAttribute({
+      element: title,
+      attributeValue: `${i18nType}.viewer.title`
+    });
     title.innerHTML = this.title;
     const titleIcon = document.createElement("i");
     titleIcon.classList.add("material-icons");
@@ -569,6 +578,10 @@ class ViewerControl {
     mdcSelectText.classList.add("mdc-select__selected-text");
     const mdcSelectLabel = document.createElement("span");
     mdcSelectLabel.classList.add("mdc-floating-label");
+    setI18nAttribute({
+      element: mdcSelectLabel,
+      attributeValue: "viewer.addlayer"
+    });
     mdcSelectLabel.innerHTML = label;
     const mdcSelectRipple = document.createElement("div");
     mdcSelectRipple.classList.add("mdc-line-ripple");
