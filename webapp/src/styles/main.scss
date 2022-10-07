@@ -311,6 +311,14 @@ body:after {
   max-width: 245px;
   position: absolute;
 }
+.viewerControl__title-text {
+  flex-grow: 1;
+  font-size: 17px;
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .viewerControl__controls-control {
   display: flex;
   flex-wrap: wrap;
