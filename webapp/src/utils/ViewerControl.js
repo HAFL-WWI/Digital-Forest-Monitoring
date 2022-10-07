@@ -1153,6 +1153,7 @@ class ViewerControl {
    * @returns {DocumentFragment} switchFragment- the labeled switch.
    */
   getSwitch({ overlay } = {}) {
+    const i18n = overlay.displayName.split(" ").join("").toLowerCase();
     const switchFragment = new DocumentFragment();
     const layerSwitch = document.createElement("div");
     layerSwitch.title = "Layer ein/aus";
@@ -1186,6 +1187,10 @@ class ViewerControl {
       });
     }
     label.setAttribute("for", `${overlay.layername}_switch`);
+    setI18nAttribute({
+      element: label,
+      attributeValue: `viewer.layer.${i18n}`
+    });
     label.innerHTML = `${overlay.displayName}`;
     label.style.padding = "0 0 0 12px";
     label.style.minWidth = "60%";
