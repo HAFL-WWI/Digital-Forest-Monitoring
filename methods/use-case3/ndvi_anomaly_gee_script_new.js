@@ -1,11 +1,19 @@
 //////////////////////////////////////////////////////////////
 // Analysis of Sentinel-2 images for drought stress detection > z-score
 //
-// Script prepared by Alexandra Erbach, BFH-HAFL
+// by Alexandra Erbach, Hannes Horneber (BFH-HAFL)
 /////////////////////////////////////////////////////////////
 
 // IMAGE COLLECTIONS
-var s2Sr = ee.ImageCollection('COPERNICUS/S2');
+
+// Sentine-2 imagery --> S2 (for L1C), S2_SR (for L2A)
+// in 2021 the AlexErbach switched from Sentinel-2 L2A to L1C data. 
+// originally S2_SR (processing level L2A) was used
+
+// data after 25.01.2022 is incompatible due to the processing baseline update 04.00
+// use S2_HARMONIZED (L1C) or S2_SR_HARMONIZED (L2A), which remove the baseline offset
+
+var s2Sr = ee.ImageCollection('COPERNICUS/S2_HARMONIZED');
 var s2Clouds = ee.ImageCollection('COPERNICUS/S2_CLOUD_PROBABILITY');
 
 //LOCATION
@@ -25,12 +33,18 @@ var aoi = swiss;
 
 
 // PARAMS
+
+// by default first year of sentinel-2 data 
 var reference_year_from = 2015;
-var reference_year_to = 2017;
-var monitoring_year_from = 2018;
-var monitoring_year_to = 2018;
-var month_from = 8;
-var month_to = 9;
+// use latest year before monitoring year (monitoring_year_from - 1)
+var reference_year_to = 2021;
+// the year/timefram you want monitoring data for
+var monitoring_year_from = 2022; 
+var monitoring_year_to = 2022;
+// usually execute three times: from-to: 6-7, 7-8, 8-9
+var month_from = 6; 
+var month_to = 7;
+// used to be 65, now is down to 10 to avoid too cloudy scenes
 var MAX_CLOUD_PROBABILITY = 10;
 
 /////////////////////////////////////////////////////////////
@@ -159,7 +173,7 @@ var stacked = z_score.addBands(valid_mon).rename(['zsc','no_valid']);
 // Export image
 Export.image.toDrive({
   image: stacked,
-  description: 'z_score_08-09_2018',
+  description: 'z_score_06-07_2022',
   scale: 10,
   maxPixels: 2000000000,
   region: aoi,
