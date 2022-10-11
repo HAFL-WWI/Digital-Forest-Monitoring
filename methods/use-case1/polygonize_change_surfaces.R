@@ -13,8 +13,8 @@ library(foreach)
 library(doParallel)
 
 # parameters
-minsize = units::set_units(300, m^2)
-thrvalue = -1000
+minsize = units::set_units(399, m^2) # default is >399 (>= 400), but may be increased as threshold is lowered (e.g. 499 for thr=-600)
+thrvalue = -1000 # threshold was -1000, but -600 seems more appropriate. 
 out_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1"
 years = c("2022_2021")
 
@@ -36,7 +36,7 @@ in_path = paste0("//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/ndvi
   start_time <- Sys.time()
   
   # out shp layer & raster
-  lyr = paste0("ndvi_diff_", year)
+  lyr = paste0("ndvi_diff_", year, "_thr", abs(thrvalue))
   out_shp = paste0(out_path, "/", lyr, ".shp")
   out_ras_name = paste0(lyr,"_Int16_reproj_bilinear_forWMS.tif")
   out_ras = paste0(out_path,"/",out_ras_name)
