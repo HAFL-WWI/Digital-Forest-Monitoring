@@ -1,5 +1,7 @@
-Processing Steps for Calculating NDVI Max Differences (updated Oct 2022)
+Processing Steps for Calculating NDVI Max Differences 
 =======================================================================
+***(updated Oct 2022)***
+
 The following steps are to be reproduced every year, as soon as the first of September passed.
 The steps are executed on two to three plattforms:
 - A: Google Earth Engine (account required)
@@ -10,9 +12,9 @@ In our example, for B/C we will be servers connected to the BFH-network drive `P
 
 Follow these steps:
 
-1. Execute **ndvi_max_gee_script.js** in Google Earth Engine (account required). Change `.filterDate('2022-06-01', '2022-09-01')` to the required time frame. If a ndvi_max-composite is already present for the previous year (check on network under the path provided above in our case), you'll only need to calculate the current year, otherwise you'll need to execute this twice. You may manually need to start the task that saves the resulting file to your google drive (this may take quite a while).
+1. Execute **ndvi_max_gee_script.js** in Google Earth Engine (account required). Change `.filterDate('2022-06-01', '2022-09-01')` to the required time frame. If a ndvi_max-composite is already present for the previous year (check on network under the path provided above in our case), you'll only need to calculate the current year, otherwise you'll need to execute this twice. You may manually need to start the **task** that saves the resulting file to your google drive. This may take quite a while, in our experience ~30 min for one attempt, while some attempts may fail (for unknown reasons).
 
-2. Download the resulting file(s) from Google Drive and store it/them to your processing folder. In our example, this will be `P:\LFE\HAFL\WWI-Sentinel-2\Use-Cases\Use-Case1\NDVI_max_2022`, respectively `//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/NDVI_max_2022` (as seen from bfh.science).
+2. Download the resulting file(s) from Google Drive and store it/them to your processing folder. In our example, this will be `P:\LFE\HAFL\WWI-Sentinel-2\Use-Cases\Use-Case1\NDVI_max_2022`, respectively `//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/NDVI_max_2022` (as seen from bfh.science) and the resulting files are two large GeoTIFFs.
 
 3. Run Postprocessing-Script (mosaic & clip to forest mask) in R: **ndvi_max_gee_postprocess.R** (requires function mosaic.R)
 
