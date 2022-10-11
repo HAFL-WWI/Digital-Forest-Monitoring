@@ -1069,8 +1069,15 @@ class ViewerControl {
     layerInfo.innerHTML = "info";
     layerInfo.title = "Layer Infos";
     layerInfo.addEventListener("click", () => {
+      const i18n = overlay.infoTitle
+        ? overlay.infoTitle.split(" ").join("")
+        : overlay.displayName.split(" ").join("").toLowerCase();
       const content = new DocumentFragment();
       const title = document.createElement("h3");
+      setI18nAttribute({
+        element: title,
+        attributeValue: `viewer.layer.${i18n}`
+      });
       title.innerHTML = overlay.infoTitle
         ? overlay.infoTitle
         : overlay.displayName;
@@ -1078,6 +1085,7 @@ class ViewerControl {
       description.innerHTML = getLayerInfo(overlay);
       content.appendChild(title);
       content.appendChild(description);
+      window.translator.run();
       openSidebar({ content });
     });
     return layerInfo;

@@ -6,7 +6,8 @@ import {
   sidebar,
   closeSidebar,
   clearSidebar,
-  GEO_ADMIN_WMS_INFO_URL
+  GEO_ADMIN_WMS_INFO_URL,
+  setI18nAttribute
 } from "./main_util";
 const vegetationImage = new URL(
   "../img/basemapVegetation.jpg",
@@ -41,6 +42,7 @@ class VHMControl {
         // populate the sidebar with content
         this.getVHMInfoContent().then(content => {
           clearSidebar();
+          window.translator.run();
           openSidebar({ content });
         });
       } else {
@@ -100,6 +102,7 @@ class VHMControl {
   async getVHMInfoContent() {
     const info = document.createElement("div");
     const title = document.createElement("h3");
+    setI18nAttribute({ element: title, attributeValue: "viewer.layer.vhm" });
     try {
       const response = await fetch(
         `${GEO_ADMIN_WMS_INFO_URL}layername=ch.bafu.landesforstinventar-vegetationshoehenmodell`
@@ -114,6 +117,7 @@ class VHMControl {
         "https://api.geo.admin.ch/static/images/legends/ch.bafu.landesforstinventar-vegetationshoehenmodell_de.png";
 
       const legend = document.createElement("h4");
+      setI18nAttribute({ element: legend, attributeValue: "sidebar.legende" });
       legend.textContent = "Legende:";
       const legendImage = document.createElement("img");
       legendImage.src = legendUrl;
@@ -121,6 +125,10 @@ class VHMControl {
       info.appendChild(legend);
       info.appendChild(legendImage);
       const description = document.createElement("h4");
+      setI18nAttribute({
+        element: description,
+        attributeValue: "sidebar.beschreibung"
+      });
       description.textContent = "Beschreibung:";
       info.appendChild(description);
       const abstract = document.createElement("div");
