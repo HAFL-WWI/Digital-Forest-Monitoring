@@ -15,6 +15,7 @@ Thumbs.db
 
 # local R-Studio files
 Digital-Forest-Monitoring_git.Rproj
+Digital-Forest-Monitoring.Rproj
 .Rproj.user
 .Rhistory
 .RData
