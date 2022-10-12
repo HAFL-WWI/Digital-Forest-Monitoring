@@ -1081,9 +1081,7 @@ class ViewerControl {
     layerInfo.innerHTML = "info";
     layerInfo.title = "Layer Infos";
     layerInfo.addEventListener("click", () => {
-      const i18n = overlay.infoTitle
-        ? overlay.infoTitle.split(" ").join("")
-        : overlay.displayName.split(" ").join("").toLowerCase();
+      let i18n = overlay.displayName.split(" ").join("").toLowerCase();
       const content = new DocumentFragment();
       const title = document.createElement("h3");
       setI18nAttribute({
