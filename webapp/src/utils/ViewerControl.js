@@ -401,6 +401,7 @@ class ViewerControl {
         this.addLayer({ layer: layersToAdd[i], domContainer });
       }
     }
+    window.translator.run();
   }
 
   /*
@@ -974,6 +975,7 @@ class ViewerControl {
           domContainer
         });
       }
+      window.translator.run();
     });
     return chip;
   }
