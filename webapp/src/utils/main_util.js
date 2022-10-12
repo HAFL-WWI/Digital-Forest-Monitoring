@@ -146,7 +146,13 @@ export const impressum = {
 };
 
 export const getLayerInfo = overlay => {
-  const i18n = overlay.displayName.split(" ").join("").toLowerCase();
+  let i18n = overlay.displayName.split(" ").join("").toLowerCase();
+  if (overlay.layername.indexOf(":nbr") !== -1) {
+    i18n = "nbr";
+  }
+  if (overlay.layername.indexOf(":ndvi_decrease") !== -1) {
+    i18n = "ndvi_decrease";
+  }
   return `<div>
   <h4 vanilla-i18n="sidebar.legende">Legende:</h4>
   <img src="https://geoserver.karten-werk.ch//wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&height=15&LAYER=${overlay.layername}&legend_options=forceLabels:on"  alt="legende"/>
