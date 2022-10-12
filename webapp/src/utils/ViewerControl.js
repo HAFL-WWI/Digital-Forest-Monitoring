@@ -526,6 +526,10 @@ class ViewerControl {
     monthChips.classList.add("monthchips");
     const title = document.createElement("div");
     title.classList.add("viewerControl__yearinfo");
+    setI18nAttribute({
+      element: title,
+      attributeValue: "viewer.vitality.helpertext"
+    });
     title.innerText = "Monate:";
     monthChips.appendChild(title);
     const chipsetEl = document.createElement("div");
@@ -823,6 +827,7 @@ class ViewerControl {
         disorderOverlay,
         disorderLayerControls
       });
+      window.translator.run();
     };
     // dropdown for case selection
     const dropdown = this.createLayerDropdown({
@@ -862,13 +867,18 @@ class ViewerControl {
   }) {
     //clear the element from previous content.
     disorderLayerControls.innerHTML = "";
+    const i18n = disorderOverlay.layername.split(":").join("_");
     this.disorderlayers = [];
-
     const intro = document.createElement("div");
     intro.classList.add("viewerControl__helpertext");
-    intro.innerHTML = `<strong>${disorderOverlay.displayName}</strong> <br /><br /> ${disorderOverlay.intro}`;
+    intro.innerHTML = `<strong vanilla-i18n="viewer.disorder.${i18n}.title">${disorderOverlay.displayName}</strong>
+    <br /><br /><span vanilla-i18n="viewer.disorder.${i18n}.intro">${disorderOverlay.intro}</span>`;
     disorderLayerControls.appendChild(intro);
     const yearInfo = document.createElement("div");
+    setI18nAttribute({
+      element: yearInfo,
+      attributeValue: `viewer.disorder.${i18n}.yearinfo`
+    });
     yearInfo.classList.add("viewerControl__yearinfo");
     disorderLayerControls.appendChild(yearInfo);
     const dateChips = document.createElement("div");
@@ -880,8 +890,6 @@ class ViewerControl {
     disorderLayerControls.appendChild(chipsetEl);
     disorderLayerControls.appendChild(layers);
     this.getDimensions(disorderOverlay.layername).then(response => {
-      const year = response[0].split("-")[0];
-      yearInfo.innerHTML = `Jahr ${year}`;
       response.forEach(date => {
         const layer = this.getTimeLayerObject(date, disorderOverlay.layername);
         const printDate = date.substring(0, 10);
