@@ -206,7 +206,9 @@ class ViewerControl {
    * @returns {object} layer object to use in the createWmsLayer function.
    */
   getTimeLayerObject(date, layername, visibility = true, opacity = 1) {
-    const fromDate = new Date(date.substring(0, 10)).toLocaleDateString();
+    const fromDate = new Date(date.substring(0, 10)).toLocaleDateString(
+      "de-ch"
+    );
     return {
       layername,
       time: date || "2017-08-18",
