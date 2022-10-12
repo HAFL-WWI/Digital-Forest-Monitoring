@@ -118,7 +118,6 @@ class VHMControl {
 
       const legend = document.createElement("h4");
       setI18nAttribute({ element: legend, attributeValue: "sidebar.legende" });
-      legend.textContent = "Legende:";
       const legendImage = document.createElement("img");
       legendImage.src = legendUrl;
       legendImage.alt = "vhm legende";
@@ -129,7 +128,6 @@ class VHMControl {
         element: description,
         attributeValue: "sidebar.beschreibung"
       });
-      description.textContent = "Beschreibung:";
       info.appendChild(description);
       const abstract = document.createElement("div");
       abstract.innerText = json?.layer?.abstract[0];
