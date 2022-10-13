@@ -153,6 +153,9 @@ export const getLayerInfo = overlay => {
   if (overlay.layername.indexOf(":ndvi_decrease") !== -1) {
     i18n = "ndvi_decrease";
   }
+  if (overlay.layername.indexOf(":ndvi_anomaly") !== -1) {
+    i18n = "ndvi_anomaly";
+  }
   return `<div>
   <h4 vanilla-i18n="sidebar.legende">Legende:</h4>
   <img src="https://geoserver.karten-werk.ch//wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&height=15&LAYER=${overlay.layername}&legend_options=forceLabels:on"  alt="legende"/>
