@@ -127,24 +127,6 @@ export const hideTitle = () => {
   appBarTitleShort.style.display = "none";
 };
 
-export const impressum = {
-  tite: "IMRESSUM",
-  content: `Dies ist ein Forschungsprojekt der BFH-HAFL im Auftrag bzw. 
-  mit Unterstützung des BAFU. Im Rahmen dieses Projektes sollen vorhandene, 
-  möglichst schweizweit flächendeckende und frei verfügbare Fernerkundungsdaten 
-  für konkrete Use-Cases und mit einem klaren Mehrwert für die Praxis eingesetzt werden. 
-  Das Hauptziel dieses Projektes ist die Implementierung von Kartenviewern sowie 
-  Geodiensten zu den entsprechenden Use-Cases.
-<br /></br />
-<strong>Zur Zeit sind die bereitgestellten Daten und Services ausschliesslich für Testzwecke gedacht.</strong>
-<br />
-<h4 style="margin-bottom:8px">Ansprechpersonen:</h4>
-<strong>BFH-HAFL:</strong> Alexandra Erbach (+41 31 910 22 75,
-<a href="mailto:alexandra.erbach@bfh.ch">alexandra.erbach@bfh.ch</a>)<br />
-<strong>Website/Geodienste:</strong> Karten-Werk GmbH, Hanskaspar Frei, (+41 79 360 72 83,
-  <a href="mailto:hkfrei@karten-werk.ch">hkfrei@karten-werk.ch</a>)</p>`
-};
-
 export const getLayerInfo = overlay => {
   let i18n = overlay.displayName.split(" ").join("").toLowerCase();
   if (overlay.layername.indexOf(":nbr") !== -1) {
