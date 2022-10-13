@@ -23,7 +23,9 @@ crs = "EPSG:3857"
 # START...
 start_time <- Sys.time()
 
-# call function (see function code to understand behavior)
+# call function
+# can be called with suffix to determine output name pattern
+# defaults to crs (without :, e.g. EPSG:3857 -> EPSG3857)
 project(path, crs, filename_pattern)
 
 # END ...
