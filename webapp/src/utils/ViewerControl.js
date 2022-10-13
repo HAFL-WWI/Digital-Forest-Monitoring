@@ -27,27 +27,10 @@ class ViewerControl {
     this.map = map;
     this.title = title;
     this.urlParams = urlParams;
-    this.uc1description = `Hinweiskarte für Waldveränderungen (z.B. Holzschläge) 
-      auf Basis von Sentinel-2-Satellitenbildern. Die Werte in der Legende 
-      beschreiben die Abnahme des <a href="https://de.wikipedia.org/wiki/Normalized_Difference_Vegetation_Index"> NDVI Vegetationsindex</a> zwischen den zwei 
-      Zeitpunkten. Werte näher bei -1 weisen auf stärkere Waldveränderungen (z.B. Räumungen) hin.`;
-    this.uc2description = `Hinweiskarte für Sommersturmschäden auf Basis von Sentinel-2-Satellitenbildern. Die Werte in der Legende stellen die
-       <strong>Abnahme des NBR (Normalized Burn Ratio) Index</strong> multipliziert mit 100 dar, 
-       gemittelt pro Fläche. Die Differenzbildung erfolgt dabei jeweils aus dem Bild des <strong>ausgewählten 
-       Datums</strong> und einem wolkenfreien <strong>Referenz-Composite aller verfügbaren Bilder der vorhergehenden 45 Tage.</strong> 
-       Werte näher bei -100 weisen auf stärkere Schäden hin. Veränderungsflächen wurden ab einer 
-       Mindestgrösse von 500 m2 ausgeschieden.`;
-    this.uc3description = `Hinweiskarte für die Veränderung der Vitalität in Bezug zum Medianwert seit 2015. 
-    Dargestellt sind standardisierte NDVI-Anomalien. Negative Werte deuten auf eine Abnahme der Vitalität hin, 
-    positive Werte auf eine Zunahme. Jedoch kann auch Holznutzung die Ursache der Veränderung sein. 
-    Je tiefer bzw. höher die Werte sind, desto wahrscheinlicher ist es, dass eine effektive Veränderung stattfand. 
-    Potenzielle Fehlerquellen sind Wolken und andere atmosphärische Störungen. Insbesondere Veränderungen an den Rändern 
-    der aufgrund von Wolken ausgegrauten Flächen ("nicht genug Daten") sind mit Vorsicht zu interpretieren.`;
     this.changeOverlays = [
       {
         layername: "karten-werk:ndvi_decrease_2021_2020",
         displayName: "Juni 2020 - Juni 2021",
-        description: this.uc1description,
         visible: true,
         opacity: 1,
         toc: false,
@@ -57,7 +40,6 @@ class ViewerControl {
       {
         layername: "karten-werk:ndvi_decrease_2020_2019",
         displayName: "Juni 2019 - Juni 2020",
-        description: this.uc1description,
         visible: false,
         opacity: 1,
         toc: false,
@@ -67,7 +49,6 @@ class ViewerControl {
       {
         layername: "karten-werk:ndvi_decrease_2019_2018",
         displayName: "Juni 2018 - Juni 2019",
-        description: this.uc1description,
         visible: false,
         opacity: 1,
         toc: false,
@@ -77,7 +58,6 @@ class ViewerControl {
       {
         layername: "karten-werk:ndvi_decrease_2018_2017",
         displayName: "Juni 2017 - Juni 2018",
-        description: this.uc1description,
         visible: false,
         opacity: 1,
         toc: false,
@@ -87,7 +67,6 @@ class ViewerControl {
       {
         layername: "karten-werk:ndvi_decrease_2017_2016",
         displayName: "Juni 2016 - Juni 2017",
-        description: this.uc1description,
         visible: false,
         opacity: 1,
         toc: false,
@@ -99,9 +78,6 @@ class ViewerControl {
       {
         layername: "karten-werk:nbr_ch_2017",
         displayName: "Sommersturm 2017",
-        intro:
-          "Wählen Sie ein Datum um Veränderungsflächen der letzten <br /><strong>45 Tage</strong> zu sehen.",
-        description: this.uc2description,
         visible: false,
         opacity: 1,
         toc: false
@@ -109,9 +85,6 @@ class ViewerControl {
       {
         layername: "karten-werk:nbr_ch_2021",
         displayName: "Sommersturm 2021 Kt. Zug",
-        intro:
-          "Das Sturmereignis war am 21.6.2021. Betroffen war insbes. die Region Risch ZG. <strong>Bitte wählen sie ein Datum</strong>.",
-        description: this.uc2description,
         visible: false,
         opacity: 1,
         toc: false
@@ -121,8 +94,6 @@ class ViewerControl {
       {
         layername: "karten-werk:verj_blaetterdach_groesser_12m",
         displayName: "Blätterdach (>12 m)",
-        description: `Die Blätterdach-Maske zeigt Waldgebiete, in denen die Deckung der Vegetation >12 m über 33% beträgt. 
-          Dies wird verwendet, um zu ermitteln ob niedrigere Vegetation unter Schirm steht oder (weitestgehend) frei.`,
         visible: false,
         opacity: 1,
         toc: false
@@ -130,9 +101,6 @@ class ViewerControl {
       {
         layername: "karten-werk:verj_0-2m_unter_schirm",
         displayName: "Verj. 0-2 m unter Schirm",
-        description: `Gibt die modellierte Wahrscheinlichkeit an, dass hier unter dem Blätterdach Vegetation zwischen 0-2 m vorhanden ist. 
-        Die Wahrscheinlichkeit basiert auf der Punktdichte der Vegetationsschicht relativ zur allgemeinen Punktdichte in dieser Zelle.
-        Werte reichen von 20 - 100%, alles unter 20% ist komplett transparent.`,
         visible: true,
         opacity: 1,
         toc: false
@@ -140,9 +108,6 @@ class ViewerControl {
       {
         layername: "karten-werk:verj_0-2m_frei",
         displayName: "Verj. 0-2 m frei",
-        description: `Gibt die modellierte Wahrscheinlichkeit an, dass hier Vegetation zwischen 0-2 m vorhanden ist. 
-        Die Wahrscheinlichkeit basiert auf der Punktdichte der Vegetationsschicht relativ zur allgemeinen Punktdichte in dieser Zelle.
-        Werte reichen von 20 - 100%, alles unter 20% ist komplett transparent.`,
         visible: false,
         opacity: 1,
         toc: false
@@ -150,9 +115,6 @@ class ViewerControl {
       {
         layername: "karten-werk:verj_0-5m_unter_schirm",
         displayName: "Verj. 0-5 m unter Schirm",
-        description: `Gibt die modellierte Wahrscheinlichkeit an, dass hier unter dem Blätterdach Vegetation zwischen 0-5 m vorhanden ist. 
-        Die Wahrscheinlichkeit basiert auf der Punktdichte der Vegetationsschicht relativ zur allgemeinen Punktdichte in dieser Zelle.
-        Werte reichen von 20 - 100%, alles unter 20% ist komplett transparent.`,
         visible: false,
         opacity: 1,
         toc: false
@@ -160,9 +122,6 @@ class ViewerControl {
       {
         layername: "karten-werk:verj_0-5m_frei",
         displayName: "Verj. 0-5 m frei",
-        description: `Gibt die modellierte Wahrscheinlichkeit an, dass hier Vegetation zwischen 0-5 m vorhanden ist. 
-        Die Wahrscheinlichkeit basiert auf der Punktdichte der Vegetationsschicht relativ zur allgemeinen Punktdichte in dieser Zelle.
-        Werte reichen von 20 - 100%, alles unter 20% ist komplett transparent.`,
         visible: false,
         opacity: 1,
         toc: false
@@ -212,9 +171,7 @@ class ViewerControl {
     return {
       layername,
       time: date || "2017-08-18",
-      infoTitle: `Hinweis auf Veränderungen gemäss Bild vom ${fromDate}`,
       displayName: `Veränderung ${fromDate}`,
-      description: this.uc2description,
       visible: visibility,
       opacity,
       toc: false
@@ -872,8 +829,8 @@ class ViewerControl {
     this.disorderlayers = [];
     const intro = document.createElement("div");
     intro.classList.add("viewerControl__helpertext");
-    intro.innerHTML = `<strong vanilla-i18n="viewer.disorder.${i18n}.title">${disorderOverlay.displayName}</strong>
-    <br /><br /><span vanilla-i18n="viewer.disorder.${i18n}.intro">${disorderOverlay.intro}</span>`;
+    intro.innerHTML = `<strong vanilla-i18n="viewer.disorder.${i18n}.title"></strong>
+    <br /><br /><span vanilla-i18n="viewer.disorder.${i18n}.intro"></span>`;
     disorderLayerControls.appendChild(intro);
     const yearInfo = document.createElement("div");
     setI18nAttribute({
@@ -1088,9 +1045,7 @@ class ViewerControl {
         element: title,
         attributeValue: `viewer.layer.${i18n}`
       });
-      title.innerHTML = overlay.infoTitle
-        ? overlay.infoTitle
-        : overlay.displayName;
+      title.innerHTML = overlay.displayName;
       const description = document.createElement("div");
       description.innerHTML = getLayerInfo(overlay);
       content.appendChild(title);

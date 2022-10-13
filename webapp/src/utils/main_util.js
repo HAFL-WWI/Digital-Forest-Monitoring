@@ -142,7 +142,7 @@ export const getLayerInfo = overlay => {
   <h4 vanilla-i18n="sidebar.legende">Legende:</h4>
   <img src="https://geoserver.karten-werk.ch//wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&height=15&LAYER=${overlay.layername}&legend_options=forceLabels:on"  alt="legende"/>
   <h4 vanilla-i18n="sidebar.beschreibung">Beschreibung:</h4>
-  <section vanilla-i18n="sidebar.layer.${i18n}.description">${overlay.description}</section>
+  <section vanilla-i18n="sidebar.layer.${i18n}.description"></section>
   </div>`;
 };
 
