@@ -73,7 +73,9 @@ in_path = paste0("//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/ndvi
     # output is always Integer; sieve doesn't allow creation options, set NA value to 0 again
     system(paste("gdal_translate -ot Byte -a_nodata 0 -co \"COMPRESS=LZW\" ", out_mask_sieved, out_mask_sieved_b, sep=" "))
     # clean up (large) temporary files
-    file.remove(out_mask_sieved) # mask sieved is an uncompressed Int16 and probably >1GB
+    file.remove(out_mask_sieved) # mask sieved is an unnecessary, uncompressed Int16-raster with probably >1GB
+    
+    # continue further processing with sieved raster
     out_mask = out_mask_sieved_b
   }
 

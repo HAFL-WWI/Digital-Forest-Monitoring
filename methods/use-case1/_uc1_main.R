@@ -44,9 +44,14 @@ crs = "EPSG:3857"
 # parameters for vectorization
 # parameters
 minsize = units::set_units(399, m^2) # default is >399 (>= 400), but may be increased as threshold is lowered (e.g. 499 for thr=-600)
+minsize_pixels = round(units::drop_units(minsize) / 100) # 1 pixel = 100 m^2, for gdal_sieve
 thrvalue = -1000 # threshold was -1000, but -600 seems more appropriate. 
 out_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1"
+add_suffix = paste0("_NA-", abs(thrvalue)) # added to files where threshold is applied
 year_diff = c(paste0(curryear, "_", prevyear))
+
+# use gdal_sieve to remove patches smaller than threshhold before polygonization (usually faster computation time!)
+GDAL_SIEVE = TRUE  
 
 
 #-----------------------------------------#
@@ -78,9 +83,26 @@ out_ras_name = paste0(lyr,"_Int16_reproj_bilinear_forWMS.tif")
 out_ras = paste0(out_path,"/",out_ras_name)
 out_mask_name = paste0(lyr,"_mask.tif")
 out_mask = paste0(out_path,"/",out_mask_name)
+
+if(GDAL_SIEVE){
+  out_mask_sieved_name = paste0(lyr,"_mask_sieved.tif")
+  out_mask_sieved = file.path(out_path,"temp",out_mask_sieved_name)
+  out_mask_sieved_b_name = paste0(lyr,"_mask_sieved_byte.tif")
+  out_mask_sieved_b = file.path(out_path,"temp",out_mask_sieved_b_name)
+}
 #-----------------------------------------#
 
+#------------------------------------------------------------------#
+#### 1 GEE  #### 
+# make sure you have executed the ndvi_max_gee_script.js
+# on google earth engine (GEE) and saved results in the respective folder
+#------------------------------------------------------------------#
+
 start_time_overall <- Sys.time()
+
+#------------------------------------------------------------------#
+#### 2 GEE Postprocessing #### 
+#------------------------------------------------------------------#
 
 # START gee postprocessing...
 print("Start google earth engine output post processing")
@@ -103,7 +125,7 @@ print("DONE with gee postprocessing.")
 
 
 #------------------------------------------------------------------#
-#### CALC DIFF #### 
+#### 3 CALC DIFF #### 
 #------------------------------------------------------------------#
 # Calculate NDVI max composite difference 
 #-----------------------------------------#
@@ -118,7 +140,7 @@ print(Sys.time()- start_time)
 print("DONE calculating difference.")
 
 #------------------------------------------------------------------#
-#### REPROJECT ####
+#### 4 REPROJECT ####
 #------------------------------------------------------------------#
 # Reproject diff rasters
 
@@ -138,13 +160,28 @@ print("DONE reprojecting.")
 
 
 #------------------------------------------------------------------#
-####        POLYGONIZE      ####
-#------------------------------------------------------------------# nb 
+####       5 POLYGONIZE      ####
+#------------------------------------------------------------------#
 # Vectorization of NDVI Max change surfaces
 
 # START reprojecting...
 print("Start vectorization")
 start_time <- Sys.time()
+
+if(GDAL_SIEVE){
+  # sieve with gdal (remove patches smaller than threshhold)
+  # change no data value, since sieve doesn't filter areas surrounded by NA
+  system(paste("gdal_edit.py -a_nodata 255", out_mask, sep=" ")) 
+  # sieve with -st AREA_THRESHOLD = minsize_pixels
+  system(paste("gdal_sieve.py -st", minsize_pixels, out_mask, out_mask_sieved, sep=" "))
+  # output is always Integer; sieve doesn't allow creation options, set NA value to 0 again
+  system(paste("gdal_translate -ot Byte -a_nodata 0 -co \"COMPRESS=LZW\" ", out_mask_sieved, out_mask_sieved_b, sep=" "))
+  # clean up (large) temporary files
+  file.remove(out_mask_sieved) # mask sieved is an unnecessary, uncompressed Int16-raster with probably >1GB
+  
+  # continue further processing with sieved raster
+  out_mask = out_mask_sieved_b
+}
 
 # create binary mask & raster for WMS publication (values > thrvalue auf NA)
 print("create binary mask...")
