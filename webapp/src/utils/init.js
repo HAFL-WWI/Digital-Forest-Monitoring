@@ -4,9 +4,6 @@ import { MDCTextField } from "@material/textfield";
 import { MDCTextFieldIcon } from "@material/textfield/icon";
 import { initRouter } from "./router";
 import {
-  dialogTitle,
-  dialogContent,
-  impressum,
   removeGeojsonOverlays,
   searchResults,
   closeSidebar,
@@ -98,9 +95,8 @@ textFieldIcon.listen("click", () => {
  */
 export const dialog = new MDCDialog(document.querySelector(".mdc-dialog"));
 document.getElementById("impressum-button").addEventListener("click", () => {
-  dialogTitle.innerHTML = impressum.tite;
-  dialogContent.innerHTML = impressum.content;
   dialog.open();
+  window.translator.run();
 });
 
 /* event listener to set the map height when browser gets resized.
