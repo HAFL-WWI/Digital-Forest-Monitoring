@@ -359,9 +359,6 @@ class Crowdsourcing {
         // we can not save an empty string as a date.
         delete updatedProps.ereignisdatum;
       }
-      // no "bemerkung" needed when flaeche is korrekt.
-      if (updatedProps.flaeche_korrekt === "ja")
-        delete updatedProps.flaeche_korrekt_bemerkung;
       // create a new feature and give them the attributes from the form.
       const cloneFeature = this.activeFeature.feature.clone();
       // unset all editable properties in order to have no "old" values from the original feature.
@@ -733,9 +730,6 @@ class Crowdsourcing {
     );
     const correctSelectContainer = document.createElement("section");
     correctSelectContainer.classList.add("correctselect");
-    if (latestValue !== "nein") {
-      correctSelectContainer.classList.add("correctselect__hidden");
-    }
     const correctSelectLabel = document.createElement("label");
     correctSelectLabel.style.fontSize = "0.8em";
     correctSelectLabel.setAttribute("for", "flaeche_korrekt_bemerkung");
@@ -762,16 +756,6 @@ class Crowdsourcing {
     });
     radioContainer.appendChild(correctTrue);
     radioContainer.appendChild(correctFalse);
-    const input_yes = correctTrue.querySelector("input");
-    input_yes.addEventListener("click", () => {
-      correctSelectContainer.classList.remove("correctselect__visible");
-      correctSelectContainer.classList.add("correctselect__hidden");
-    });
-    const input_no = correctFalse.querySelector("input");
-    input_no.addEventListener("click", () => {
-      correctSelectContainer.classList.remove("correctselect__hidden");
-      correctSelectContainer.classList.add("correctselect__visible");
-    });
     section.appendChild(title);
     section.appendChild(radioContainer);
     section.appendChild(correctSelectContainer);

@@ -497,16 +497,8 @@ body:after {
 .button__fullwidth {
   width: 100%;
 }
-.correctselect__hidden {
-  height: 0;
-  overflow: hidden;
-  transition: height 0.3s ease-out;
-}
-.correctselect__visible {
-  height: 58px;
-  overflow: hidden;
+.correctselect {
   padding-top: 8px;
-  transition: height 0.3s ease-out;
 }
 .popup__radiocontainer {
   display: grid;
