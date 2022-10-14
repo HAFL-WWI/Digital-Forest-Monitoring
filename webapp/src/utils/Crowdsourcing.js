@@ -1,4 +1,4 @@
-import { change_overlay_colors } from "./main_util";
+import { change_overlay_colors, setI18nAttribute } from "./main_util";
 import Overlay from "ol/Overlay";
 import { Stroke, Style, Fill } from "ol/style";
 import WfsTransationEngine from "./WfsTransactionEngine";
@@ -230,6 +230,7 @@ class Crowdsourcing {
       // display the overlay/popup on the clicked position on the map.
       this.overlay.setPosition(coordinate);
       this.map.addOverlay(this.overlay);
+      window.translator.run();
     }
   }
 
@@ -1124,7 +1125,10 @@ class Crowdsourcing {
     const td = document.createElement("td");
     td.colSpan = 2;
     td.classList.add("popup__attributetable--title");
-    td.innerText = layer.title;
+    setI18nAttribute({
+      element: td,
+      attributeValue: `popup.title.${layer.title.split(" ").join(".")}`
+    });
     row.appendChild(td);
     table.appendChild(row);
     for (var i = 0; i < keys.length; i++) {
@@ -1134,10 +1138,13 @@ class Crowdsourcing {
       const backgrundColor = i < 6 ? "#d6d6d6" : "#f0f0f0";
       row.style.backgroundColor = backgrundColor;
       const tdKey = document.createElement("td");
+      setI18nAttribute({
+        element: tdKey,
+        attributeValue: `popup.info.${key}`
+      });
       const tdVal = document.createElement("td");
       tdKey.classList.add("popup__attributetable--td");
       tdVal.classList.add("popup__attributetable--td");
-      tdKey.innerHTML = this.fieldMappings[key]?.name || key;
       switch (key) {
         case "ereignisdatum":
           if (props[key] !== null) {
