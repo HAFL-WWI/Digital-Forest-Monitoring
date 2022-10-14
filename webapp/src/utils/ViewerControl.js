@@ -1017,6 +1017,8 @@ class ViewerControl {
       strategy: bboxStrategy
     });
     const wfsLayer = new VectorLayer({
+      minZoom: 15,
+      maxZoom: 21,
       source: vectorSource,
       style: this.crowdsourcing.wfsStyle
     });
