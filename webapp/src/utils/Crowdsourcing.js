@@ -714,6 +714,12 @@ class Crowdsourcing {
     coloredTitle.style.fontSize = "0.8em";
     coloredTitle.style.padding = "8px";
     coloredTitle.innerHTML = `Zeitraum Juni ${yearvon} - Juni ${yearbis}`;
+    setI18nAttribute({
+      element: coloredTitle,
+      attributeValue: `popup.edit.title.${coloredTitle.innerHTML
+        .split(" ")
+        .join("")}`
+    });
 
     return coloredTitle;
   }
