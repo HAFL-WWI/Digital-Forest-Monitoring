@@ -565,10 +565,10 @@ class Crowdsourcing {
    */
   getDatumSection({ yearvon, yearbis }) {
     const section = document.createElement("div");
-    const title = this.getTitle(
-      "Datum bekannt?",
-      "Monat/Jahr der Veränderung reicht aus"
-    );
+    const title = this.getTitle({
+      text: "Datum bekannt?",
+      subtext: "Monat/Jahr der Veränderung reicht aus"
+    });
     section.appendChild(title);
     const datePicker = this.getDatePicker({
       min: `${yearvon}-06-01`,
@@ -731,9 +731,10 @@ class Crowdsourcing {
   getKorrektEditSection() {
     const latestValue = this.activeFeature.feature.get("flaeche_korrekt");
     const section = document.createElement("div");
-    const title = this.getTitle(
-      "Stimmt die Ausdehnung der Fläche? <span class='red'>*</span>"
-    );
+    const title = this.getTitle({
+      text: "Stimmt die Ausdehnung der Fläche? <span class='red'>*</span>",
+      i18n: "popup.edit.ausdehnung.title"
+    });
     const correctSelectContainer = document.createElement("section");
     correctSelectContainer.classList.add("correctselect");
     const correctSelectLabel = document.createElement("label");
@@ -751,14 +752,16 @@ class Crowdsourcing {
       id: "radiocorrect",
       value: "ja",
       labelText: "ja (+-)",
-      latestValue
+      latestValue,
+      i18n: "popup.edit.ausdehnung.yes"
     });
     const correctFalse = this.getRadio({
       name: "flaeche_korrekt",
       id: "radioincorrect",
       value: "nein",
       labelText: "nein",
-      latestValue
+      latestValue,
+      i18n: "popup.edit.ausdehnung.no"
     });
     radioContainer.appendChild(correctTrue);
     radioContainer.appendChild(correctFalse);
@@ -776,10 +779,10 @@ class Crowdsourcing {
     const selectedValue = this.activeFeature.feature.get("grund_veraenderung");
 
     const section = document.createElement("section");
-    const title = this.getTitle(
-      "Grund der Veränderung",
-      "Mehrfachnennungen möglich"
-    );
+    const title = this.getTitle({
+      text: "Grund der Veränderung",
+      subtext: "Mehrfachnennungen möglich"
+    });
     section.appendChild(title);
     const categorieSelect = this.getCategoryCheckboxes(selectedValue);
     section.appendChild(categorieSelect);
@@ -885,7 +888,10 @@ class Crowdsourcing {
       }
     ];
     const container = document.createElement("div");
-    const title = this.getTitle("E-Mail <span class='red'>*</span>", "", "0");
+    const title = this.getTitle({
+      text: "E-Mail <span class='red'>*</span>",
+      margin: "0"
+    });
     container.appendChild(title);
     for (let field of contactFields) {
       container.appendChild(this.getInput(field));
@@ -908,7 +914,7 @@ class Crowdsourcing {
     if (value) {
       textarea.value = value;
     }
-    const title = this.getTitle("Kommentar");
+    const title = this.getTitle({ text: "Kommentar" });
     container.appendChild(title);
     container.appendChild(textarea);
     return container;
@@ -920,11 +926,11 @@ class Crowdsourcing {
       this.activeFeature.feature.get("forstlicher_eingriff") || "kA";
     const section = document.createElement("section");
 
-    const title = this.getTitle(
-      "Forstlicher Eingriff?",
-      "Auf Grossteil dieser Fläche",
-      0
-    );
+    const title = this.getTitle({
+      text: "Forstlicher Eingriff?",
+      subtext: "Auf Grossteil dieser Fläche",
+      margin: 0
+    });
     section.appendChild(title);
     const radioContainer = document.createElement("div");
     radioContainer.classList.add("popup__radiocontainer");
@@ -1048,9 +1054,10 @@ class Crowdsourcing {
    * @param {string} params.id - the id of the radio element.
    * @param {string} params.labelText - the text to label the radio.
    * @param {string} params.latestsValue - check the radio if latestValue === value.
+   * @param {string} params.i18n - the key for the translation.
    * @returns {documentFragment} - a documentFragment containing the radio.
    */
-  getRadio({ name, value, id, labelText, latestValue }) {
+  getRadio({ name, value, id, labelText, latestValue, i18n }) {
     const container = document.createElement("div");
     container.style.display = "flex";
     const radio = document.createElement("input");
@@ -1062,6 +1069,9 @@ class Crowdsourcing {
     radio.id = id;
     radio.name = name;
     radio.value = value;
+    if (i18n) {
+      setI18nAttribute({ element: label, attributeValue: i18n });
+    }
     if (latestValue && latestValue === value) {
       radio.checked = true;
     }
@@ -1075,14 +1085,14 @@ class Crowdsourcing {
    * @param {string} titleText - the text the title should diplay.
    * @returns {htmlElement} - html header element
    */
-  getTitle(titletext, subtext = "", margin = "12px 0 0 0") {
+  getTitle({ text, subtext = "", margin = "12px 0 0 0", i18n }) {
     const titleContainer = document.createElement("section");
     titleContainer.style.paddingBottom = "8px";
     const title = document.createElement("h5");
     title.style.margin = margin;
     title.style.backgroundColor = "#f1f1f1";
     title.style.padding = "2px";
-    title.innerHTML = titletext;
+    title.innerHTML = text;
     titleContainer.appendChild(title);
     if (subtext.length > 0) {
       const subtextElement = document.createElement("span");
@@ -1092,6 +1102,9 @@ class Crowdsourcing {
       subtextElement.style.paddingLeft = "2px";
       titleContainer.appendChild(subtextElement);
       title.style.marginBottom = 0;
+    }
+    if (i18n) {
+      setI18nAttribute({ element: title, attributeValue: i18n });
     }
     return titleContainer;
   }
@@ -1295,7 +1308,10 @@ class Crowdsourcing {
   getDeckungsgradRadios({ radiotitle, radioname }) {
     const latestValue = this.activeFeature.feature.get(radioname) || "kA";
     const section = document.createElement("section");
-    const title = this.getTitle(`${radiotitle}`, "Veränderung geschätzt");
+    const title = this.getTitle({
+      text: `${radiotitle}`,
+      subtext: "Veränderung geschätzt"
+    });
     section.appendChild(title);
     const radioContainer = document.createElement("div");
     radioContainer.classList.add("popup__radiocontainer");
