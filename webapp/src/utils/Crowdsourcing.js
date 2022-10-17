@@ -1117,7 +1117,7 @@ class Crowdsourcing {
     td.classList.add("popup__attributetable--title");
     setI18nAttribute({
       element: td,
-      attributeValue: `popup.title.${layer.title.split(" ").join(".")}`
+      attributeValue: `popup.info.title.${layer.title.split(" ").join(".")}`
     });
     row.appendChild(td);
     table.appendChild(row);
