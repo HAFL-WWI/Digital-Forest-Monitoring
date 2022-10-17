@@ -867,17 +867,27 @@ class Crowdsourcing {
     select.name = "flaeche_korrekt_bemerkung";
     select.id = "flaeche_korrekt_bemerkung";
     const options = [
-      "--",
-      "Nein, es gibt hier keine Veränderung in diesem Jahr",
-      "Nein, sie ist zu klein",
-      "Nein, sie ist zu gross",
-      "Nein, die Form passt überhaupt nicht"
+      { text: "--", i18n: "--" },
+      {
+        text: "Nein, es gibt hier keine Veränderung in diesem Jahr",
+        i18n: "keine_veraenderung_in_diesem_jahr"
+      },
+      { text: "Nein, sie ist zu klein", i18n: "nein_zu_klein" },
+      { text: "Nein, sie ist zu gross", i18n: "nein_zu_gross" },
+      {
+        text: "Nein, die Form passt überhaupt nicht",
+        i18n: "nein_form_passt_nicht"
+      }
     ];
     for (let option of options) {
-      const selectOption = { value: option, text: option };
+      const selectOption = {
+        value: option.text,
+        text: option.text,
+        i18n: `popup.edit.ausdehnung.option.${option.i18n}`
+      };
       select.appendChild(this.createOption(selectOption));
     }
-    select.value = latestValue || options[0];
+    select.value = latestValue || options[0].text;
     return select;
   }
 
@@ -1007,10 +1017,13 @@ class Crowdsourcing {
     return container;
   }
 
-  createOption({ value, text }) {
+  createOption({ value, text, i18n }) {
     const option = document.createElement("option");
     option.value = value;
     option.innerText = text;
+    if (i18n) {
+      setI18nAttribute({ element: option, attributeValue: i18n });
+    }
     return option;
   }
 
