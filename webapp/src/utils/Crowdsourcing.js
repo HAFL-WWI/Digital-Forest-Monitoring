@@ -341,6 +341,7 @@ class Crowdsourcing {
       const formValues = this.getFormDataAsObject();
       this.updateCompletionStatus(formValues);
       this.updateMandatoryMessage(formValues);
+      window.translator.run();
     });
     this.saveButton.addEventListener("click", e => {
       e.preventDefault();
@@ -741,6 +742,10 @@ class Crowdsourcing {
     correctSelectLabel.style.fontSize = "0.8em";
     correctSelectLabel.setAttribute("for", "flaeche_korrekt_bemerkung");
     correctSelectLabel.innerText = "Bitte wählen sie eine Option...";
+    setI18nAttribute({
+      element: correctSelectLabel,
+      attributeValue: "popup.edit.ausdehnung.options.label"
+    });
     const correctSelect = this.getCorrectSelect();
 
     correctSelectContainer.appendChild(correctSelectLabel);
