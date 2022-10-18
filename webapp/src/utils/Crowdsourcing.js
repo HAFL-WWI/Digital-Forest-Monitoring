@@ -710,6 +710,7 @@ class Crowdsourcing {
     completionMessage.innerHTML = `${filled.length}/${editableFields.length} <span vanilla-i18n="popup.edit.completionmessage">Felder sind ausgefüllt.</span>`;
     const button = document.getElementById("button__save");
     button.lastChild.innerText = formCompleted ? "senden" : "trotzdem senden";
+    window.translator.run();
   }
 
   getColoredTitle({ color, yearvon, yearbis }) {
