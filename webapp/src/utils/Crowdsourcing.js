@@ -938,7 +938,6 @@ class Crowdsourcing {
     const textarea = document.createElement("textarea");
     textarea.name = "kommentar";
     textarea.rows = 5;
-    textarea.placeholder = "Kommentar...";
     textarea.style.width = "100%";
     textarea.addEventListener("input", () => {
       this.updateFormDataList();
@@ -948,7 +947,10 @@ class Crowdsourcing {
     if (value) {
       textarea.value = value;
     }
-    const title = this.getTitle({ text: "Kommentar" });
+    const title = this.getTitle({
+      text: "Kommentar",
+      i18nTitle: "popup.edit.kommentar.title"
+    });
     container.appendChild(title);
     container.appendChild(textarea);
     return container;
