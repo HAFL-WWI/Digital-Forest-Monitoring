@@ -75,6 +75,7 @@ class BasemapControl {
         this.basemapControl.appendChild(this.createBasemap(iconBasemap));
         iconBasemap.layer.setVisible(false);
         newBasemap.layer.setVisible(true);
+        window.translator.run();
       },
       false
     );
