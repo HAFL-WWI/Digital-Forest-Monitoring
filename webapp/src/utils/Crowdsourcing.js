@@ -800,7 +800,9 @@ class Crowdsourcing {
     const section = document.createElement("section");
     const title = this.getTitle({
       text: "Grund der Veränderung",
-      subtext: "Mehrfachnennungen möglich"
+      subtext: "Mehrfachnennungen möglich",
+      i18nTitle: "popup.edit.grundveraenderung.title",
+      i18nSubtitle: "popup.edit.grundveraenderung.subtitle"
     });
     section.appendChild(title);
     const categorieSelect = this.getCategoryCheckboxes(selectedValue);
@@ -824,6 +826,10 @@ class Crowdsourcing {
       const label = document.createElement("label");
       label.style.fontSize = "0.66em";
       label.innerText = category.text;
+      setI18nAttribute({
+        element: label,
+        attributeValue: `popup.edit.grundveraenderung.${category.value}`
+      });
 
       label.setAttribute("for", category.value);
       if (splitted.length > 0 && splitted.indexOf(category.value) !== -1) {
@@ -833,7 +839,6 @@ class Crowdsourcing {
       if (category.value === "sonstiges") {
         userInput = this.getInput({
           type: "text",
-          placeholder: "Grund eingeben",
           name: "grund_veraenderung_sonstiges"
         });
         userInput.classList.add("popup__checkboxcontainer_customreason");
