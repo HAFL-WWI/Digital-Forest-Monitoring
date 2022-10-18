@@ -568,7 +568,9 @@ class Crowdsourcing {
     const section = document.createElement("div");
     const title = this.getTitle({
       text: "Datum bekannt?",
-      subtext: "Monat/Jahr der Veränderung reicht aus"
+      subtext: "Monat/Jahr der Veränderung reicht aus",
+      i18nTitle: "popup.edit.datum.title",
+      i18nSubtitle: "popup.edit.datum.subtitle"
     });
     section.appendChild(title);
     const datePicker = this.getDatePicker({
@@ -734,7 +736,7 @@ class Crowdsourcing {
     const section = document.createElement("div");
     const title = this.getTitle({
       text: "Stimmt die Ausdehnung der Fläche? <span class='red'>*</span>",
-      i18n: "popup.edit.ausdehnung.title"
+      i18nTitle: "popup.edit.ausdehnung.title"
     });
     const correctSelectContainer = document.createElement("section");
     correctSelectContainer.classList.add("correctselect");
@@ -1103,7 +1105,13 @@ class Crowdsourcing {
    * @param {string} titleText - the text the title should diplay.
    * @returns {htmlElement} - html header element
    */
-  getTitle({ text, subtext = "", margin = "12px 0 0 0", i18n }) {
+  getTitle({
+    text,
+    subtext = "",
+    margin = "12px 0 0 0",
+    i18nTitle,
+    i18nSubtitle
+  }) {
     const titleContainer = document.createElement("section");
     titleContainer.style.paddingBottom = "8px";
     const title = document.createElement("h5");
@@ -1120,10 +1128,17 @@ class Crowdsourcing {
       subtextElement.style.paddingLeft = "2px";
       titleContainer.appendChild(subtextElement);
       title.style.marginBottom = 0;
+      if (i18nSubtitle) {
+        setI18nAttribute({
+          element: subtextElement,
+          attributeValue: i18nSubtitle
+        });
+      }
     }
-    if (i18n) {
-      setI18nAttribute({ element: title, attributeValue: i18n });
+    if (i18nTitle) {
+      setI18nAttribute({ element: title, attributeValue: i18nTitle });
     }
+
     return titleContainer;
   }
 
