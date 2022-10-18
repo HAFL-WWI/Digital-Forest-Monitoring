@@ -37,8 +37,10 @@ class VHMControl {
         const waiting = document.createElement("div");
         waiting.classList.add("vhmControl__waiting");
         waiting.style.paddingTop = "32px";
-        waiting.innerHTML = "Loading...<br /><br /> Bitte einen Moment Geduld.";
+        waiting.innerHTML =
+          '<div>Loading...</div><br /><span vanilla-i18n="sidebar.wait">Bitte einen Moment Geduld.</span>';
         openSidebar({ content: waiting });
+        window.translator.run();
         // populate the sidebar with content
         this.getVHMInfoContent().then(content => {
           clearSidebar();

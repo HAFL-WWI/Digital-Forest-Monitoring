@@ -290,6 +290,7 @@ body:after {
 .vhmControl__waiting {
   color: dimgray;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   text-align: center;
 }
