@@ -261,6 +261,10 @@ class Crowdsourcing {
       button.classList.add("tablinks");
       button.addEventListener("click", e => this.switchTab(e, tab));
       button.innerText = tab;
+      setI18nAttribute({
+        element: button,
+        attributeValue: `popup.edit.tab.${tab.toLowerCase()}`
+      });
       tabContainer.appendChild(button);
       // the content...
       const content = document.createElement("div");
