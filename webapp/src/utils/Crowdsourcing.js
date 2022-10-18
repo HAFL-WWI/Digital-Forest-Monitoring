@@ -405,17 +405,17 @@ class Crowdsourcing {
     if (!formValues.flaeche_korrekt && !formValues.email) {
       const text =
         "• Bitte beantworten sie die erste Frage. \n • Bitte EMail Kontaktadresse angeben.";
-      return text;
+      return { text, i18n: "popup.edit.mandatorymessage.both" };
     }
     if (!formValues.flaeche_korrekt && formValues.email) {
       const text = "• Bitte beantworten Sie die erste Frage.";
-      return text;
+      return { text, i18n: "popup.edit.mandatorymessage.ausdehnung" };
     }
     if (formValues.flaeche_korrekt && !formValues.email) {
       const text = "• Bitte EMail-Kontaktadresse angeben.";
-      return text;
+      return { text, i18n: "popup.edit.mandatorymessage.email" };
     }
-    return "ok";
+    return { text: "ok", i18n: "ok" };
   }
 
   /*
@@ -425,14 +425,18 @@ class Crowdsourcing {
    */
   updateMandatoryMessage(formValues) {
     const mandatoryMessage = document.getElementById("popup__mandatorymessage");
-    const mandatoryText = this.checkMandatoryFields(formValues);
-    if (mandatoryText === "ok") {
+    const mandatoryObject = this.checkMandatoryFields(formValues);
+    if (mandatoryObject.text === "ok") {
       this.saveButton.removeAttribute("disabled");
-      mandatoryMessage.innerText = "";
+      mandatoryMessage.innerHTML = "";
       mandatoryMessage.style.display = "none";
     } else {
       this.saveButton.setAttribute("disabled", "");
-      mandatoryMessage.innerText = mandatoryText;
+      mandatoryMessage.innerHTML = mandatoryObject.text;
+      setI18nAttribute({
+        element: mandatoryMessage,
+        attributeValue: `${mandatoryObject.i18n}`
+      });
       mandatoryMessage.style.display = "block";
     }
   }
