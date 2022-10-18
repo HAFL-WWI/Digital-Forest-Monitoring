@@ -958,7 +958,9 @@ class Crowdsourcing {
     const title = this.getTitle({
       text: "Forstlicher Eingriff?",
       subtext: "Auf Grossteil dieser Fläche",
-      margin: 0
+      margin: 0,
+      i18nTitle: "popup.edit.forstleingriff.title",
+      i18nSubtitle: "popup.edit.forstleingriff.subtitle"
     });
     section.appendChild(title);
     const radioContainer = document.createElement("div");
@@ -971,7 +973,8 @@ class Crowdsourcing {
           id: `forstlicher_eingriff_${option.value}`,
           value: option.value,
           labelText: option.value,
-          latestValue
+          latestValue,
+          i18n: `viewer.edit.forstleingriff.${option.value}`
         })
       );
     });
