@@ -6,7 +6,7 @@ import { getCenter } from "ol/extent";
 import { dialog } from "./init";
 
 export const GEO_ADMIN_WMS_INFO_URL =
-  "https://europe-west1-oereb-uri.cloudfunctions.net/getwmsinfo?";
+  "https://europe-west6-oereb-uri.cloudfunctions.net/getwmsinfo?";
 
 export const topAppBarRight = document.querySelector(
   ".top-app-bar__section--align-end"
