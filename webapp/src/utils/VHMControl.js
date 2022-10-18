@@ -104,8 +104,9 @@ class VHMControl {
     const title = document.createElement("h3");
     setI18nAttribute({ element: title, attributeValue: "viewer.layer.vhm" });
     try {
+      const lang = window.translator._getLanguage();
       const response = await fetch(
-        `${GEO_ADMIN_WMS_INFO_URL}layername=ch.bafu.landesforstinventar-vegetationshoehenmodell`
+        `${GEO_ADMIN_WMS_INFO_URL}layername=ch.bafu.landesforstinventar-vegetationshoehenmodell&lang=${lang}`
       );
       const json = await response.json();
       title.textContent = json.layer.title[0];
