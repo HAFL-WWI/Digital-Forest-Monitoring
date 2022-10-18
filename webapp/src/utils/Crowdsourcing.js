@@ -1343,7 +1343,9 @@ class Crowdsourcing {
     const section = document.createElement("section");
     const title = this.getTitle({
       text: `${radiotitle}`,
-      subtext: "Veränderung geschätzt"
+      subtext: "Veränderung geschätzt",
+      i18nTitle: `popup.edit.${radiotitle.split(" ").join(".").toLowerCase()}`,
+      i18nSubtitle: "popup.edit.deckungsgrad.subtitle"
     });
     section.appendChild(title);
     const radioContainer = document.createElement("div");
