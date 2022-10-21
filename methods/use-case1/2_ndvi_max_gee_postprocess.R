@@ -1,11 +1,11 @@
-############################################################
+#----------------------------------------------------------#
 # Mosaic and clip ndvi max exported from google earth engine 
 #
 # IMPORTANT: Forest mask must have same crs, dimension, extent, origin as mosaic
 # see scripts under Digital-Forest-Monitoring/misc
 #
 # by Dominique Weber, BFH-HAFL
-############################################################
+#----------------------------------------------------------#
 
 # load library
 library(raster)
@@ -16,19 +16,19 @@ setwd("~/Digital-Forest-Monitoring/methods")
 # source functions
 source("use-case1/mosaic.R")
 
-###########################################
+#-----------------------------------------#
 # define year and output directory here
-out_dir = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/NDVI_max_2021"
-###########################################
+out_dir = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/NDVI_max_2022"
+#-----------------------------------------#
 
-###########################################
+#-----------------------------------------#
 # DEFAULT SETTINGS
 ch_shp = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/general/swissBOUNDARIES3D/swissBOUNDARIES3D_1_1_TLM_LANDESGEBIET.shp"
 forest_mask = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/general/swissTLM3D_Wald/Wald_LV95_rs.tif" 
 mosaic_file = file.path(out_dir, "ndvi_max.tif")
 mosaic_ch_file = file.path(out_dir, "ndvi_max_ch.tif")
 mosaic_ch_forest_file = file.path(out_dir, "ndvi_max_ch_forest.tif")
-###########################################
+#-----------------------------------------#
 
 # START...
 start_time <- Sys.time()
@@ -46,3 +46,4 @@ system(paste("gdal_calc.py -A ", mosaic_ch_file," -B ", forest_mask, " --outfile
 
 # END ...
 print(Sys.time()- start_time)
+print("DONE with gee postprocessing.")
