@@ -751,7 +751,7 @@ class Crowdsourcing {
     const latestValue = this.activeFeature.feature.get("flaeche_korrekt");
     const section = document.createElement("div");
     const title = this.getTitle({
-      text: "Stimmt die Ausdehnung der Fläche? <span class='red'>*</span>",
+      text: "Ist hier eine Veränderung bekannt? <span class='red'>*</span>",
       i18nTitle: "popup.edit.ausdehnung.title"
     });
     const correctSelectContainer = document.createElement("section");
