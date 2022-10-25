@@ -21,22 +21,25 @@ BASE_CEPH = "P:/LFE" # HARA/Local
 # BASE_PATH = "P:/HAFL/7 WWI/74a FF WG/742a Aktuell/R.010499-52-FWWG-01_Wissenstransfer_Fernerkundung/Entwicklung/Digital_Forest_Monitoring_git/methods/use-case4" # on HARA
 # BASE_PATH = "C:/Users/hbh1/Projects/H06_Totholz/A_Tessin/Daten" # local dev
 # BASE_PATH = file.path(BASE_CEPH, "HAFL/WWI-Waldwildnis/DW_Tessin/Daten") 
-BASE_PATH = file.path(BASE_CEPH, "HAFL/WWI-Waldwildnis/LiDAR_CH")
+# BASE_PATH = file.path(BASE_CEPH, "HAFL/WWI-Waldwildnis/LiDAR_CH")
+# BASE_PATH = file.path("P:/HAFL/9 Share/PermanenteOrdner/Geodaten/Forst_Daten/waldmonitoring/UC4/data")
+BASE_PATH = file.path("//bfh.ch/data/HAFL/9 Share/PermanenteOrdner/Geodaten/Forst_Daten/waldmonitoring/UC4/data")
 
 # WD: Working Directory. Best, if you keep this script at this place 
 #     and all subfolders (data/shp, profiles, ...) in this folder
-WD = file.path(BASE_PATH, "data/uc4_wd")
+# WD = file.path(BASE_CEPH, "HAFL/WWI-Waldwildnis/LiDAR_CH/data/uc4_wd")
+WD = file.path(BASE_PATH, "")
 
 PATH_LAS_BASE = file.path(BASE_CEPH, "BFH/Geodata/swisstopo/meta/swissSURFACE3D/2056-LASzip") # Zentralschweiz (TI, LU, AG, ...)
 # PATH_LAS_BASE = file.path(BASE_CEPH, "BFH/Geodata/swisstopo/swissSURFACE3D/LAS") # Ost- / Westschweiz (FR, VD, ...)
 PATH_DTM = file.path(BASE_CEPH, "HAFL/WWI-Waldwildnis/Data_others/DTM/swissALTI3D") 
 
-DIR_BASE_OUTPUT = file.path(WD, "_output", gsub(" ", "_", gsub(":", "", Sys.time())))
+DIR_BASE_OUTPUT = file.path(WD, gsub(" ", "_", gsub(":", "", Sys.time())))
 # substr(gsub(" ", "_", gsub(":", "", Sys.time())),3,10) # extract only YYYY-MM-DD
 
 # should be a .shp. Implementations for .csv also possible, but needs a solution for mask (clip).
-FILE_TILE_LIST = file.path(BASE_CEPH, "HAFL/WWI-Waldwildnis/DW_Tessin/Daten/Waldmaske/Wald_LV95_ticino_tiles_test.shp")
-# FILE_TILE_LIST = file.path(BASE_CEPH, "HAFL/WWI-Waldwildnis/DW_Tessin/Daten/Waldmaske/Wald_LV95_ticino_tiles.shp")
+# FILE_TILE_LIST = file.path(BASE_CEPH, "HAFL/WWI-Waldwildnis/DW_Tessin/Daten/Waldmaske/Wald_LV95_ticino_tiles_test.shp")
+FILE_TILE_LIST = file.path(BASE_CEPH, "HAFL/WWI-Waldwildnis/DW_Tessin/Daten/Waldmaske/Wald_LV95_ticino_tiles.shp")
 # FILE_TILE_LIST = file.path(BASE_CEPH, "HAFL/WWI-Waldwildnis/DW_Tessin/Daten/Waldmaske/Wald_LV95_ticino_tiles_missing.shp")
 
 # generate output folder from filename of tile list
@@ -82,7 +85,8 @@ CNPY_HEIGHT_MAX = 99
 # coverage threshold to consider a cell "covered"
 THRESH_COVERED = 0.33
 
-
+# weight of coverage (influences, how strong relative point density under coverage is amplified based on coverage)
+FACTOR_COVERAGE_WEIGHT = 2
 
 ####_________________________####
 ####        PREP DATA        ####
@@ -100,7 +104,8 @@ if(!CONTINUE || is.null(tiles$processed)){
   
   #### >  output folder create new ####
   if(VERBOSE) print(paste0("--> create output folder: ", DIR_OUTPUT))
-  dir.create(DIR_OUTPUT, recursive = TRUE, showWarnings = FALSE)
+  # dir.create(DIR_OUTPUT, recursive = TRUE, showWarnings = FALSE)
+  dir.create(DIR_OUTPUT, recursive = FALSE, showWarnings = TRUE)
   
   # create processing file list 
   FILE_TILE_LIST = file.path(DIR_OUTPUT, paste0(tools::file_path_sans_ext(basename(FILE_TILE_LIST)), "_", gsub(" ", "_", gsub(":", "", time_start)), ".shp"))
@@ -172,25 +177,27 @@ for(tile_id in which(tiles$processed == FALSE)){
       ####*************************####
       ####     GENERATE GRIDS      ####
       #-------------------------------#
-      
-      #### > density grids ####
       if(VERBOSE) print(paste0("> ", tile_id, " generate grids | canopy coverage" ))
       
-      # #### > CHM           ####
+      
+      #### > CHM           ####
       # chm = grid_canopy(lasn, 1, pitfree(c(0,2,5,10,15), c(0, 1)))
       # plot(chm, main=paste(tiles$TileKey[tile_id], "chm"))
       
+      
+      #### > cnpy/all points grid ####
       # grid all points
       # r_dgrid_all = grid_density(lasp, res=ref_raster)
       r_npoints_all = grid_metrics(lasn, ~length(Z), res=ref_raster)
       plot(r_npoints_all, main=paste(tiles$TileKey[tile_id], "r_npoints_all"))
-      # plot(r_npoints_all<10, main=paste(tiles$TileKey[tile_id], "r_npoints_all"))
       
       # grid canopy points
-      lasp_cover = filter_poi(lasn, Z>=CNPY_HEIGHT_MIN , Z<CNPY_HEIGHT_MAX)
-      r_npoints_cov = grid_metrics(lasp_cover, ~length(Z), res=ref_raster)
-      plot(r_npoints_cov, main=paste(tiles$TileKey[tile_id], "r_npoints_cov"))
-      remove("lasp_cover") # clean up to save RAM
+      lasv = filter_poi(lasn, Classification != 2) # filter to vegetation pointcloud (remove ground classification)
+      lasv_cover = filter_poi(lasv, Z>=CNPY_HEIGHT_MIN , Z<CNPY_HEIGHT_MAX) # filter to canopy layer
+      r_npoints_cov = grid_metrics(lasv_cover, ~length(Z), res=ref_raster)
+      # plot(r_npoints_cov, main=paste(tiles$TileKey[tile_id], "r_npoints_cov"))
+      remove("lasv_cover") # clean up to save RAM
+      
       
       #### > coverage grid ####
       # e.g. 100 points total, 98 above = 98% canopy coverage (dense forest, no light on ground)
@@ -199,73 +206,77 @@ for(tile_id in which(tiles$processed == FALSE)){
       # canopy coverage is low (min 0), if cell has only points on ground (<5)
       # percentage covered for weighting lower points
       r_ccoverage = (r_npoints_cov/r_npoints_all)
-      plot(r_ccoverage, main=paste(tiles$TileKey[tile_id], "r_ccoverage"))
+      # plot(r_ccoverage, main=paste(tiles$TileKey[tile_id], "r_ccoverage"))
       
       # binary covered grid for vector creation
       r_ccovered = (r_ccoverage > THRESH_COVERED)
-      plot(r_ccovered, main=paste(tiles$TileKey[tile_id], "r_ccovered"))
+      # remove zeroes (otherwise they will be turned into polygons)
+      r_ccovered[r_ccovered==0] = NA
+      # plot(r_ccovered, main=paste(tiles$TileKey[tile_id], "r_ccovered"))
+      # vec_covered = rasterToPolygons(r_ccovered) # creates a polygon for each pixel
+      # vec_covered = aggregate(r_ccovered, dissolve=T) # merges pixel-polygons
       
       
-      #### > rejuvenation grids ####
-      # filter to vegetation pointcloud
-      lasv = filter_poi(lasn, Classification != 2) # remove ground classification
+      
+      #### > rejuvenation grid 2 ####
+      if(VERBOSE) print(paste0("> ", tile_id, " generate grids | rejuvenation" ))
+      
       lasv = filter_poi(lasv, Z>=0, Z<REJ_HEIGHT2) # remove points too close to ground
-      # lasv = filter_poi(lasv, ReturnNumber == NumberOfReturns) # only last
-      lasv = filter_poi(lasv, Intensity>20) # only above certain intensity
+      # lasv = filter_poi(lasv, Intensity>20) # only above certain intensity
       
-      # higher rejuvenation layer (filter top down to save computation)
-      # lasp_vrj2 = filter_poi(lasn, Z<REJ_HEIGHT2)
-      r_npoints_rej2 = grid_metrics(lasp_rej2, ~length(Z), res=ref_raster_ds)
-      plot(r_npoints_rej2, main=paste(tiles$TileKey[tile_id], "r_npoints_rej2"))
+      # higher rejuvenation layer (compute top down to subsequently reduce point cloud)
+      r_npoints_rej2 = grid_metrics(lasv, ~length(Z), res=ref_raster) # npoints
+      # plot(r_npoints_rej2, main=paste(tiles$TileKey[tile_id], "r_npoints_rej2"))
       
-      # lower rejuvenation layer (filter top down to save computation)
-      lasp_vrj1 = filter_poi(lasv, Z<REJ_HEIGHT1)
+      # calc density
+      r_reldens_rej2 = r_npoints_rej2/r_npoints_all
+      # plot(r_reldens_rej2, main=paste(tiles$TileKey[tile_id], "r_reldens_rej2"))
+      
+      # weight density with coverage
+      r_reldensweighted_rej2 = (r_reldens_rej2 + r_reldens_rej2 * r_ccoverage * FACTOR_COVERAGE_WEIGHT)
+      # r_reldensweighted_rej2 = min(r_reldensweighted_rej2,1) # cap values at 1 (= 100%)
+      # plot(r_reldensweighted_rej2, main=paste(tiles$TileKey[tile_id], "r_reldensweighted_rej2"))
+      # plot(r_reldensweighted_rej2 > 0.2, main=paste(tiles$TileKey[tile_id], "r_reldensweighted_rej2"))
+      
+      r_rej2_cov = r_reldensweighted_rej2
+      r_rej2_cov[is.na(r_ccovered)] = NA
+      r_rej2_open = r_reldensweighted_rej2
+      r_rej2_open[r_ccovered==1] = NA
+      # plot(r_rej2_cov, main=paste(tiles$TileKey[tile_id], "r_rej2_cov"))
+      # plot(r_rej2_open, main=paste(tiles$TileKey[tile_id], "r_rej2_open"))
+      
+      #### > high-res (deadwood canidates) grid ####
+      lasv = filter_poi(lasv, Z<REJ_HEIGHT1) # remove points of higher rejuvenation layer
+      
       # calc in high res for deadwood detection
-      r_npoints_vrj1_hs = grid_metrics(lasp_vrj1, ~length(Z), res=ref_raster_hs)
-      r_npoints_vrj1 = aggregate(r_npoints_vrj1_hs, RASTER_RES/RASTER_RES_HS, fun=mean)
-      plot(r_npoints_vrj1_hs, main=paste(tiles$TileKey[tile_id], "r_npoints_vrj1_hres"))
-      plot(r_npoints_vrj1, main=paste(tiles$TileKey[tile_id], "r_npoints_vrj1"))
-      
-      
-      #### ****** dw_tiles calc ****** ####
-      # consider points below
-      lasp_c = filter_poi(lasn, Z>=-0.5, Z<2)
-      r_npoints_low = grid_metrics(lasp_c, ~length(Z), res=ref_raster)
-      
-      #### > coverage grid ####
-      # e.g. 100 points total,  2 low = 98% canopy coverage (dense forest, no light on ground)
-      # e.g. 100 points total, 99 low =  1% canopy coverage (clearing, full view of ground)
-      # canopy coverage is high (max 1), if cell has only points in canopy (>2)
-      # canopy coverage is low (min 0), if cell has only points on ground (<2)
-      r_ccoverage = 1 - (r_npoints_low/r_npoints_all)
-      # plot(r_ccoverage)
-      
-      #### > deadwood candidate grid ####
-      if(VERBOSE) print(paste0("> ", tile_id, " generate grids | deadwood candidates" ))
-      # consider (intense) bottom points
-      lasp_c = filter_poi(lasp_c, Classification != 2) # remove ground classification
-      lasp_c = filter_poi(lasp_c, Z>=0.2, Z<2) # remove points
-      lasp_c = filter_poi(lasp_c, ReturnNumber == NumberOfReturns) # only last
-      lasp_c = filter_poi(lasp_c, Intensity>20) # only above certain intensity
-      r_npoints_bottom = grid_metrics(lasp_c, ~length(Z), res=ref_raster)
+      r_npoints_rej1_hs = grid_metrics(lasv, ~length(Z), res=ref_raster_hs)
+      remove("lasv") # clean up to save RAM
       
       # create mask and filter small spots
-      r_dwc = r_npoints_bottom>0
+      r_dwc = r_npoints_rej1_hs > 0 # more than one point
       r_dwc = patchFilter(r_dwc, area=5, directions=8)
       # CRS gets deleted by patchFilter
-      crs(r_dwc) = crs(r_npoints_bottom)
-      plot(r_dwc, main=paste(tiles$TileKey[tile_id]), "r_dwc")
+      crs(r_dwc) = crs(r_npoints_rej1_hs)
+      # plot(r_dwc, main=paste(tiles$TileKey[tile_id]), "r_dwc")
       
-      # r_chm_bottom = grid_canopy(lasp_c, res=ref_raster, p2r(0.5))
-      # r_chm_bottom = grid_metrics(lasp_c, ~max(Z), res=ref_raster)
-      # plot(r_chm_bottom)
+      #### > rejuvenation grid 1 ####
+      # create grid from high-res grid
+      r_npoints_rej1 = aggregate(r_npoints_rej1_hs, RASTER_RES/RASTER_RES_HS, fun=sum)
+      # plot(r_npoints_vrj1_hs, main=paste(tiles$TileKey[tile_id], "r_npoints_vrj1_hres"))
+      # plot(r_npoints_vrj1, main=paste(tiles$TileKey[tile_id], "r_npoints_vrj1"))
       
-      #### > downsample ####
-      if(VERBOSE) print(paste0("> ", tile_id, " generate grids | downsampling" ))
-      r_dwc_ds = aggregate(r_dwc, RASTER_RES_DS/RASTER_RES, fun=mean)
-      r_ccoverage_ds = aggregate(r_ccoverage, RASTER_RES_DS/RASTER_RES, fun=mean)
-      plot(r_dwc_ds, main=paste(tiles$TileKey[tile_id]), "r_dwc_ds")
-      plot(r_ccoverage_ds, main=paste(tiles$TileKey[tile_id]), "r_ccoverage_ds")
+      # calc density
+      r_reldens_rej1 = r_npoints_rej1/r_npoints_all
+      # plot(r_reldens_rej1, main=paste(tiles$TileKey[tile_id], "r_reldens_rej1"))
+      
+      # weight density with coverage
+      r_reldensweighted_rej1 = (r_reldens_rej1 + r_reldens_rej1 * r_ccoverage * FACTOR_COVERAGE_WEIGHT)
+      # plot(r_reldensweighted_rej2, main=paste(tiles$TileKey[tile_id], "r_reldensweighted_rej1"))
+      
+      r_rej1_cov = r_reldensweighted_rej1
+      r_rej1_cov[is.na(r_ccovered)] = NA
+      r_rej1_open = r_reldensweighted_rej1
+      r_rej1_open[r_ccovered==1] = NA
       
       
       ####*************************####
@@ -273,16 +284,43 @@ for(tile_id in which(tiles$processed == FALSE)){
       #-------------------------------#
       if(VERBOSE) print(paste0("> ", tile_id, " write output" ))
       #### > create dirs ####
+      # experimental
+      dir.create(file.path(DIR_OUTPUT, "r_reldens_rej1"), recursive = TRUE, showWarnings = FALSE)
+      # dir.create(file.path(DIR_OUTPUT, "r_reldensweighted_rej1"), recursive = TRUE, showWarnings = FALSE)
+      dir.create(file.path(DIR_OUTPUT, "r_reldens_rej2"), recursive = TRUE, showWarnings = FALSE)
+      # dir.create(file.path(DIR_OUTPUT, "r_reldensweighted_rej2"), recursive = TRUE, showWarnings = FALSE)
+      # main output
       dir.create(file.path(DIR_OUTPUT, "r_dwc_05m"), recursive = TRUE, showWarnings = FALSE)
-      dir.create(file.path(DIR_OUTPUT, "r_dwc_25m"), recursive = TRUE, showWarnings = FALSE)
-      dir.create(file.path(DIR_OUTPUT, "r_ccoverage_05m"), recursive = TRUE, showWarnings = FALSE)
-      dir.create(file.path(DIR_OUTPUT, "r_ccoverage_25m"), recursive = TRUE, showWarnings = FALSE)
+      dir.create(file.path(DIR_OUTPUT, "r_rej1_cov"), recursive = TRUE, showWarnings = FALSE)
+      dir.create(file.path(DIR_OUTPUT, "r_rej1_open"), recursive = TRUE, showWarnings = FALSE)
+      dir.create(file.path(DIR_OUTPUT, "r_rej2_cov"), recursive = TRUE, showWarnings = FALSE)
+      dir.create(file.path(DIR_OUTPUT, "r_rej2_open"), recursive = TRUE, showWarnings = FALSE)
+      dir.create(file.path(DIR_OUTPUT, "r_ccoverage"), recursive = TRUE, showWarnings = FALSE)
+      dir.create(file.path(DIR_OUTPUT, "r_ccovered"), recursive = TRUE, showWarnings = FALSE)
+      
+      #### > convert to int ####
+      r_reldens_rej1 = as.integer(r_reldens_rej1 * 100)
+      r_reldens_rej2 = as.integer(r_reldens_rej2 * 100)
+      
+      r_ccoverage = as.integer(r_ccoverage * 100)
+      r_rej1_cov = as.integer(r_rej1_cov * 100)
+      r_rej1_open = as.integer(r_rej1_open * 100)
+      r_rej2_cov = as.integer(r_rej2_cov * 100)
+      r_rej2_open = as.integer(r_rej2_open * 100)
       
       #### > write files ####
+      writeRaster(r_reldens_rej1, file.path(DIR_OUTPUT, "r_reldens_rej1", paste0(tiles$TileKey[tile_id], ".tif")), overwrite=T, datatype='INT1U')
+      # writeRaster(r_reldensweighted_rej1, file.path(DIR_OUTPUT, "r_reldensweighted_rej1", paste0(tiles$TileKey[tile_id], ".tif")), overwrite=T)
+      writeRaster(r_reldens_rej2, file.path(DIR_OUTPUT, "r_reldens_rej2", paste0(tiles$TileKey[tile_id], ".tif")), overwrite=T, datatype='INT1U')
+      # writeRaster(r_reldensweighted_rej2, file.path(DIR_OUTPUT, "r_reldensweighted_rej2", paste0(tiles$TileKey[tile_id], ".tif")), overwrite=T)
+      
       writeRaster(r_dwc, file.path(DIR_OUTPUT, "r_dwc_05m", paste0(tiles$TileKey[tile_id], ".tif")), overwrite=T)
-      writeRaster(r_dwc_ds, file.path(DIR_OUTPUT, "r_dwc_25m", paste0(tiles$TileKey[tile_id], ".tif")), overwrite=T)
-      writeRaster(r_ccoverage, file.path(DIR_OUTPUT, "r_ccoverage_05m", paste0(tiles$TileKey[tile_id], ".tif")), overwrite=T)
-      writeRaster(r_ccoverage_ds, file.path(DIR_OUTPUT, "r_ccoverage_25m", paste0(tiles$TileKey[tile_id], ".tif")), overwrite=T)
+      writeRaster(r_rej1_cov, file.path(DIR_OUTPUT, "r_rej1_cov", paste0(tiles$TileKey[tile_id], ".tif")), overwrite=T, datatype='INT1U')
+      writeRaster(r_rej1_open, file.path(DIR_OUTPUT, "r_rej1_open", paste0(tiles$TileKey[tile_id], ".tif")), overwrite=T, datatype='INT1U')
+      writeRaster(r_rej2_cov, file.path(DIR_OUTPUT, "r_rej2_cov", paste0(tiles$TileKey[tile_id], ".tif")), overwrite=T, datatype='INT1U')
+      writeRaster(r_rej2_open, file.path(DIR_OUTPUT, "r_rej2_open", paste0(tiles$TileKey[tile_id], ".tif")), overwrite=T, datatype='INT1U')
+      writeRaster(r_ccoverage, file.path(DIR_OUTPUT, "r_ccoverage", paste0(tiles$TileKey[tile_id], ".tif")), overwrite=T, datatype='INT1U')
+      writeRaster(r_ccovered, file.path(DIR_OUTPUT, "r_ccovered", paste0(tiles$TileKey[tile_id], ".tif")), overwrite=T)
       
       #### > set as processed ####
       # if everything ran without errors, set processed = TRUE
@@ -295,7 +333,7 @@ for(tile_id in which(tiles$processed == FALSE)){
       print(e)
       
       tiles$processed[tile_id] = FALSE
-      tiles$proc_comm[tile_id] = e
+      tiles$proc_comm[tile_id] = e$message
     }, finally = { } #trycatch-error close
   )#/endtry (processing tile)
   
