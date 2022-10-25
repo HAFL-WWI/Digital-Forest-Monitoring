@@ -14,8 +14,9 @@ source("use-case1/project.R")
 path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/"
 
 # filename pattern of files that are to be reprojected
+filename_pattern = "2016_2015_Int16.tif"
 # filename_pattern = "2021_2020_Int16.tif"
-filename_pattern = "2022_2021_Int16.tif"
+# filename_pattern = "2022_2021_Int16.tif"
 
 # crs to project into
 crs = "EPSG:3857"
