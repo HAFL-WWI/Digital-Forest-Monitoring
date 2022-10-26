@@ -6,7 +6,8 @@ import {
   sidebar,
   closeSidebar,
   clearSidebar,
-  GEO_ADMIN_WMS_INFO_URL
+  GEO_ADMIN_WMS_INFO_URL,
+  setI18nAttribute
 } from "./main_util";
 const vegetationImage = new URL(
   "../img/basemapVegetation.jpg",
@@ -36,11 +37,14 @@ class VHMControl {
         const waiting = document.createElement("div");
         waiting.classList.add("vhmControl__waiting");
         waiting.style.paddingTop = "32px";
-        waiting.innerHTML = "Loading...<br /><br /> Bitte einen Moment Geduld.";
+        waiting.innerHTML =
+          '<div>Loading...</div><br /><span vanilla-i18n="sidebar.wait">Bitte einen Moment Geduld.</span>';
         openSidebar({ content: waiting });
+        window.translator.run();
         // populate the sidebar with content
         this.getVHMInfoContent().then(content => {
           clearSidebar();
+          window.translator.run();
           openSidebar({ content });
         });
       } else {
@@ -100,9 +104,11 @@ class VHMControl {
   async getVHMInfoContent() {
     const info = document.createElement("div");
     const title = document.createElement("h3");
+    setI18nAttribute({ element: title, attributeValue: "viewer.layer.vhm" });
     try {
+      const lang = window.translator._getLanguage();
       const response = await fetch(
-        `${GEO_ADMIN_WMS_INFO_URL}layername=ch.bafu.landesforstinventar-vegetationshoehenmodell`
+        `${GEO_ADMIN_WMS_INFO_URL}layername=ch.bafu.landesforstinventar-vegetationshoehenmodell&lang=${lang}`
       );
       const json = await response.json();
       title.textContent = json.layer.title[0];
@@ -114,14 +120,17 @@ class VHMControl {
         "https://api.geo.admin.ch/static/images/legends/ch.bafu.landesforstinventar-vegetationshoehenmodell_de.png";
 
       const legend = document.createElement("h4");
-      legend.textContent = "Legende:";
+      setI18nAttribute({ element: legend, attributeValue: "sidebar.legende" });
       const legendImage = document.createElement("img");
       legendImage.src = legendUrl;
       legendImage.alt = "vhm legende";
       info.appendChild(legend);
       info.appendChild(legendImage);
       const description = document.createElement("h4");
-      description.textContent = "Beschreibung:";
+      setI18nAttribute({
+        element: description,
+        attributeValue: "sidebar.beschreibung"
+      });
       info.appendChild(description);
       const abstract = document.createElement("div");
       abstract.innerText = json?.layer?.abstract[0];

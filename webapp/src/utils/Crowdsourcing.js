@@ -1,4 +1,4 @@
-import { change_overlay_colors } from "./main_util";
+import { change_overlay_colors, setI18nAttribute } from "./main_util";
 import Overlay from "ol/Overlay";
 import { Stroke, Style, Fill } from "ol/style";
 import WfsTransationEngine from "./WfsTransactionEngine";
@@ -230,6 +230,7 @@ class Crowdsourcing {
       // display the overlay/popup on the clicked position on the map.
       this.overlay.setPosition(coordinate);
       this.map.addOverlay(this.overlay);
+      window.translator.run();
     }
   }
 
@@ -260,6 +261,10 @@ class Crowdsourcing {
       button.classList.add("tablinks");
       button.addEventListener("click", e => this.switchTab(e, tab));
       button.innerText = tab;
+      setI18nAttribute({
+        element: button,
+        attributeValue: `popup.edit.tab.${tab.toLowerCase()}`
+      });
       tabContainer.appendChild(button);
       // the content...
       const content = document.createElement("div");
@@ -340,6 +345,7 @@ class Crowdsourcing {
       const formValues = this.getFormDataAsObject();
       this.updateCompletionStatus(formValues);
       this.updateMandatoryMessage(formValues);
+      window.translator.run();
     });
     this.saveButton.addEventListener("click", e => {
       e.preventDefault();
@@ -358,9 +364,6 @@ class Crowdsourcing {
         // we can not save an empty string as a date.
         delete updatedProps.ereignisdatum;
       }
-      // no "bemerkung" needed when flaeche is korrekt.
-      if (updatedProps.flaeche_korrekt === "ja")
-        delete updatedProps.flaeche_korrekt_bemerkung;
       // create a new feature and give them the attributes from the form.
       const cloneFeature = this.activeFeature.feature.clone();
       // unset all editable properties in order to have no "old" values from the original feature.
@@ -402,17 +405,17 @@ class Crowdsourcing {
     if (!formValues.flaeche_korrekt && !formValues.email) {
       const text =
         "• Bitte beantworten sie die erste Frage. \n • Bitte EMail Kontaktadresse angeben.";
-      return text;
+      return { text, i18n: "popup.edit.mandatorymessage.both" };
     }
     if (!formValues.flaeche_korrekt && formValues.email) {
       const text = "• Bitte beantworten Sie die erste Frage.";
-      return text;
+      return { text, i18n: "popup.edit.mandatorymessage.ausdehnung" };
     }
     if (formValues.flaeche_korrekt && !formValues.email) {
       const text = "• Bitte EMail-Kontaktadresse angeben.";
-      return text;
+      return { text, i18n: "popup.edit.mandatorymessage.email" };
     }
-    return "ok";
+    return { text: "ok", i18n: "ok" };
   }
 
   /*
@@ -422,14 +425,18 @@ class Crowdsourcing {
    */
   updateMandatoryMessage(formValues) {
     const mandatoryMessage = document.getElementById("popup__mandatorymessage");
-    const mandatoryText = this.checkMandatoryFields(formValues);
-    if (mandatoryText === "ok") {
+    const mandatoryObject = this.checkMandatoryFields(formValues);
+    if (mandatoryObject.text === "ok") {
       this.saveButton.removeAttribute("disabled");
-      mandatoryMessage.innerText = "";
+      mandatoryMessage.innerHTML = "";
       mandatoryMessage.style.display = "none";
     } else {
       this.saveButton.setAttribute("disabled", "");
-      mandatoryMessage.innerText = mandatoryText;
+      mandatoryMessage.innerHTML = mandatoryObject.text;
+      setI18nAttribute({
+        element: mandatoryMessage,
+        attributeValue: `${mandatoryObject.i18n}`
+      });
       mandatoryMessage.style.display = "block";
     }
   }
@@ -567,10 +574,12 @@ class Crowdsourcing {
    */
   getDatumSection({ yearvon, yearbis }) {
     const section = document.createElement("div");
-    const title = this.getTitle(
-      "Datum bekannt?",
-      "Monat/Jahr der Veränderung reicht aus"
-    );
+    const title = this.getTitle({
+      text: "Datum bekannt?",
+      subtext: "Monat/Jahr der Veränderung reicht aus",
+      i18nTitle: "popup.edit.datum.title",
+      i18nSubtitle: "popup.edit.datum.subtitle"
+    });
     section.appendChild(title);
     const datePicker = this.getDatePicker({
       min: `${yearvon}-06-01`,
@@ -702,9 +711,17 @@ class Crowdsourcing {
     }
     const formCompleted = filled.length === editableFields.length;
     completionMessage.style.color = formCompleted ? "green" : "#f9aa33";
-    completionMessage.innerText = `${filled.length}/${editableFields.length} Felder sind ausgefüllt.`;
+    completionMessage.innerHTML = `${filled.length}/${editableFields.length} <span vanilla-i18n="popup.edit.completionmessage">Felder sind ausgefüllt.</span>`;
     const button = document.getElementById("button__save");
     button.lastChild.innerText = formCompleted ? "senden" : "trotzdem senden";
+    setI18nAttribute({
+      element: button,
+      attributeValue: `popup.edit.button.${button.lastChild.innerText
+        .split(" ")
+        .join("")
+        .toLowerCase()}`
+    });
+    window.translator.run();
   }
 
   getColoredTitle({ color, yearvon, yearbis }) {
@@ -716,6 +733,12 @@ class Crowdsourcing {
     coloredTitle.style.fontSize = "0.8em";
     coloredTitle.style.padding = "8px";
     coloredTitle.innerHTML = `Zeitraum Juni ${yearvon} - Juni ${yearbis}`;
+    setI18nAttribute({
+      element: coloredTitle,
+      attributeValue: `popup.edit.title.${coloredTitle.innerHTML
+        .split(" ")
+        .join("")}`
+    });
 
     return coloredTitle;
   }
@@ -727,18 +750,20 @@ class Crowdsourcing {
   getKorrektEditSection() {
     const latestValue = this.activeFeature.feature.get("flaeche_korrekt");
     const section = document.createElement("div");
-    const title = this.getTitle(
-      "Stimmt die Ausdehnung der Fläche? <span class='red'>*</span>"
-    );
+    const title = this.getTitle({
+      text: "Ist hier eine Veränderung bekannt? <span class='red'>*</span>",
+      i18nTitle: "popup.edit.ausdehnung.title"
+    });
     const correctSelectContainer = document.createElement("section");
     correctSelectContainer.classList.add("correctselect");
-    if (latestValue !== "nein") {
-      correctSelectContainer.classList.add("correctselect__hidden");
-    }
     const correctSelectLabel = document.createElement("label");
     correctSelectLabel.style.fontSize = "0.8em";
     correctSelectLabel.setAttribute("for", "flaeche_korrekt_bemerkung");
     correctSelectLabel.innerText = "Bitte wählen sie eine Option...";
+    setI18nAttribute({
+      element: correctSelectLabel,
+      attributeValue: "popup.edit.ausdehnung.options.label"
+    });
     const correctSelect = this.getCorrectSelect();
 
     correctSelectContainer.appendChild(correctSelectLabel);
@@ -750,27 +775,19 @@ class Crowdsourcing {
       id: "radiocorrect",
       value: "ja",
       labelText: "ja (+-)",
-      latestValue
+      latestValue,
+      i18n: "popup.edit.ausdehnung.yes"
     });
     const correctFalse = this.getRadio({
       name: "flaeche_korrekt",
       id: "radioincorrect",
       value: "nein",
       labelText: "nein",
-      latestValue
+      latestValue,
+      i18n: "popup.edit.ausdehnung.no"
     });
     radioContainer.appendChild(correctTrue);
     radioContainer.appendChild(correctFalse);
-    const input_yes = correctTrue.querySelector("input");
-    input_yes.addEventListener("click", () => {
-      correctSelectContainer.classList.remove("correctselect__visible");
-      correctSelectContainer.classList.add("correctselect__hidden");
-    });
-    const input_no = correctFalse.querySelector("input");
-    input_no.addEventListener("click", () => {
-      correctSelectContainer.classList.remove("correctselect__hidden");
-      correctSelectContainer.classList.add("correctselect__visible");
-    });
     section.appendChild(title);
     section.appendChild(radioContainer);
     section.appendChild(correctSelectContainer);
@@ -785,10 +802,12 @@ class Crowdsourcing {
     const selectedValue = this.activeFeature.feature.get("grund_veraenderung");
 
     const section = document.createElement("section");
-    const title = this.getTitle(
-      "Grund der Veränderung",
-      "Mehrfachnennungen möglich"
-    );
+    const title = this.getTitle({
+      text: "Grund der Veränderung",
+      subtext: "Mehrfachnennungen möglich",
+      i18nTitle: "popup.edit.grundveraenderung.title",
+      i18nSubtitle: "popup.edit.grundveraenderung.subtitle"
+    });
     section.appendChild(title);
     const categorieSelect = this.getCategoryCheckboxes(selectedValue);
     section.appendChild(categorieSelect);
@@ -811,6 +830,10 @@ class Crowdsourcing {
       const label = document.createElement("label");
       label.style.fontSize = "0.66em";
       label.innerText = category.text;
+      setI18nAttribute({
+        element: label,
+        attributeValue: `popup.edit.grundveraenderung.${category.value}`
+      });
 
       label.setAttribute("for", category.value);
       if (splitted.length > 0 && splitted.indexOf(category.value) !== -1) {
@@ -820,7 +843,6 @@ class Crowdsourcing {
       if (category.value === "sonstiges") {
         userInput = this.getInput({
           type: "text",
-          placeholder: "Grund eingeben",
           name: "grund_veraenderung_sonstiges"
         });
         userInput.classList.add("popup__checkboxcontainer_customreason");
@@ -868,17 +890,27 @@ class Crowdsourcing {
     select.name = "flaeche_korrekt_bemerkung";
     select.id = "flaeche_korrekt_bemerkung";
     const options = [
-      "--",
-      "Nein, es gibt hier keine Veränderung in diesem Jahr",
-      "Nein, sie ist zu klein",
-      "Nein, sie ist zu gross",
-      "Nein, die Form passt überhaupt nicht"
+      { text: "--", i18n: "--" },
+      {
+        text: "Nein, es gibt hier keine Veränderung in diesem Jahr",
+        i18n: "keine_veraenderung_in_diesem_jahr"
+      },
+      { text: "Nein, sie ist zu klein", i18n: "nein_zu_klein" },
+      { text: "Nein, sie ist zu gross", i18n: "nein_zu_gross" },
+      {
+        text: "Nein, die Form passt überhaupt nicht",
+        i18n: "nein_form_passt_nicht"
+      }
     ];
     for (let option of options) {
-      const selectOption = { value: option, text: option };
+      const selectOption = {
+        value: option.text,
+        text: option.text,
+        i18n: `popup.edit.ausdehnung.option.${option.i18n}`
+      };
       select.appendChild(this.createOption(selectOption));
     }
-    select.value = latestValue || options[0];
+    select.value = latestValue || options[0].text;
     return select;
   }
 
@@ -894,7 +926,10 @@ class Crowdsourcing {
       }
     ];
     const container = document.createElement("div");
-    const title = this.getTitle("E-Mail <span class='red'>*</span>", "", "0");
+    const title = this.getTitle({
+      text: "E-Mail <span class='red'>*</span>",
+      margin: "0"
+    });
     container.appendChild(title);
     for (let field of contactFields) {
       container.appendChild(this.getInput(field));
@@ -907,7 +942,6 @@ class Crowdsourcing {
     const textarea = document.createElement("textarea");
     textarea.name = "kommentar";
     textarea.rows = 5;
-    textarea.placeholder = "Kommentar...";
     textarea.style.width = "100%";
     textarea.addEventListener("input", () => {
       this.updateFormDataList();
@@ -917,7 +951,10 @@ class Crowdsourcing {
     if (value) {
       textarea.value = value;
     }
-    const title = this.getTitle("Kommentar");
+    const title = this.getTitle({
+      text: "Kommentar",
+      i18nTitle: "popup.edit.kommentar.title"
+    });
     container.appendChild(title);
     container.appendChild(textarea);
     return container;
@@ -929,11 +966,13 @@ class Crowdsourcing {
       this.activeFeature.feature.get("forstlicher_eingriff") || "kA";
     const section = document.createElement("section");
 
-    const title = this.getTitle(
-      "Forstlicher Eingriff?",
-      "Auf Grossteil dieser Fläche",
-      0
-    );
+    const title = this.getTitle({
+      text: "Forstlicher Eingriff?",
+      subtext: "Auf Grossteil dieser Fläche",
+      margin: 0,
+      i18nTitle: "popup.edit.forstleingriff.title",
+      i18nSubtitle: "popup.edit.forstleingriff.subtitle"
+    });
     section.appendChild(title);
     const radioContainer = document.createElement("div");
     radioContainer.classList.add("popup__radiocontainer");
@@ -945,7 +984,8 @@ class Crowdsourcing {
           id: `forstlicher_eingriff_${option.value}`,
           value: option.value,
           labelText: option.value,
-          latestValue
+          latestValue,
+          i18n: `viewer.edit.forstleingriff.${option.value}`
         })
       );
     });
@@ -1005,10 +1045,13 @@ class Crowdsourcing {
     return container;
   }
 
-  createOption({ value, text }) {
+  createOption({ value, text, i18n }) {
     const option = document.createElement("option");
     option.value = value;
     option.innerText = text;
+    if (i18n) {
+      setI18nAttribute({ element: option, attributeValue: i18n });
+    }
     return option;
   }
 
@@ -1057,9 +1100,10 @@ class Crowdsourcing {
    * @param {string} params.id - the id of the radio element.
    * @param {string} params.labelText - the text to label the radio.
    * @param {string} params.latestsValue - check the radio if latestValue === value.
+   * @param {string} params.i18n - the key for the translation.
    * @returns {documentFragment} - a documentFragment containing the radio.
    */
-  getRadio({ name, value, id, labelText, latestValue }) {
+  getRadio({ name, value, id, labelText, latestValue, i18n }) {
     const container = document.createElement("div");
     container.style.display = "flex";
     const radio = document.createElement("input");
@@ -1071,6 +1115,9 @@ class Crowdsourcing {
     radio.id = id;
     radio.name = name;
     radio.value = value;
+    if (i18n) {
+      setI18nAttribute({ element: label, attributeValue: i18n });
+    }
     if (latestValue && latestValue === value) {
       radio.checked = true;
     }
@@ -1084,14 +1131,20 @@ class Crowdsourcing {
    * @param {string} titleText - the text the title should diplay.
    * @returns {htmlElement} - html header element
    */
-  getTitle(titletext, subtext = "", margin = "12px 0 0 0") {
+  getTitle({
+    text,
+    subtext = "",
+    margin = "12px 0 0 0",
+    i18nTitle,
+    i18nSubtitle
+  }) {
     const titleContainer = document.createElement("section");
     titleContainer.style.paddingBottom = "8px";
     const title = document.createElement("h5");
     title.style.margin = margin;
     title.style.backgroundColor = "#f1f1f1";
     title.style.padding = "2px";
-    title.innerHTML = titletext;
+    title.innerHTML = text;
     titleContainer.appendChild(title);
     if (subtext.length > 0) {
       const subtextElement = document.createElement("span");
@@ -1101,7 +1154,17 @@ class Crowdsourcing {
       subtextElement.style.paddingLeft = "2px";
       titleContainer.appendChild(subtextElement);
       title.style.marginBottom = 0;
+      if (i18nSubtitle) {
+        setI18nAttribute({
+          element: subtextElement,
+          attributeValue: i18nSubtitle
+        });
+      }
     }
+    if (i18nTitle) {
+      setI18nAttribute({ element: title, attributeValue: i18nTitle });
+    }
+
     return titleContainer;
   }
 
@@ -1124,7 +1187,10 @@ class Crowdsourcing {
     const td = document.createElement("td");
     td.colSpan = 2;
     td.classList.add("popup__attributetable--title");
-    td.innerText = layer.title;
+    setI18nAttribute({
+      element: td,
+      attributeValue: `popup.info.title.${layer.title.split(" ").join(".")}`
+    });
     row.appendChild(td);
     table.appendChild(row);
     for (var i = 0; i < keys.length; i++) {
@@ -1134,10 +1200,13 @@ class Crowdsourcing {
       const backgrundColor = i < 6 ? "#d6d6d6" : "#f0f0f0";
       row.style.backgroundColor = backgrundColor;
       const tdKey = document.createElement("td");
+      setI18nAttribute({
+        element: tdKey,
+        attributeValue: `popup.info.${key}`
+      });
       const tdVal = document.createElement("td");
       tdKey.classList.add("popup__attributetable--td");
       tdVal.classList.add("popup__attributetable--td");
-      tdKey.innerHTML = this.fieldMappings[key]?.name || key;
       switch (key) {
         case "ereignisdatum":
           if (props[key] !== null) {
@@ -1298,7 +1367,12 @@ class Crowdsourcing {
   getDeckungsgradRadios({ radiotitle, radioname }) {
     const latestValue = this.activeFeature.feature.get(radioname) || "kA";
     const section = document.createElement("section");
-    const title = this.getTitle(`${radiotitle}`, "Veränderung geschätzt");
+    const title = this.getTitle({
+      text: `${radiotitle}`,
+      subtext: "Veränderung geschätzt",
+      i18nTitle: `popup.edit.${radiotitle.split(" ").join(".").toLowerCase()}`,
+      i18nSubtitle: "popup.edit.deckungsgrad.subtitle"
+    });
     section.appendChild(title);
     const radioContainer = document.createElement("div");
     radioContainer.classList.add("popup__radiocontainer");

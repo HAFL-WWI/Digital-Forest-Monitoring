@@ -1,7 +1,7 @@
 import TileLayer from "ol/layer/Tile";
 import XYZ from "ol/source/XYZ";
 export const attribution =
-  "© Geodaten: <a href='https://www.swisstopo.admin.ch/de/home.html'>Swisstopo</a> & <a href='https://www.bfh.ch/hafl/de/'>HAFL</a> | App & Services: <a href='https://karten-werk.ch'>Karten-Werk";
+  "© <span vanilla-i18n='viewer.attribution.geodaten'>Geodaten</span>: <a href='https://www.swisstopo.admin.ch/de/home.html'>Swisstopo</a> & <a href='https://www.bfh.ch/hafl/de/'>HAFL</a> | App & Services: <a href='https://karten-werk.ch'>Karten-Werk";
 /*
  * Orthophoto basemap from swisstopo
  */

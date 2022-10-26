@@ -52,6 +52,7 @@
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
     />
     <link rel="mask-icon" href="./img/safari-pinned-tab.svg" color="#5bbad5" />
+    <script src="https://cdn.jsdelivr.net/gh/thealphadollar/vanilla-i18n/src/vanilla-i18n.min.js"></script>
     <title>Digital-Forest-Monitoring</title>
   </head>
   <body>
@@ -62,7 +63,10 @@
           <i class="material-icons mdc-button__icon" aria-hidden="true"
             >close</i
           >
-          <span class="mdc-button__label">schliessen</span>
+          <span
+            class="mdc-button__label"
+            vanilla-i18n="sidebar.schliessen"
+          ></span>
         </button>
       </section>
       <section class="sidebar__content"></section>
@@ -70,14 +74,27 @@
     <header class="top-app-bar">
       <section class="top-app-bar__section top-app-bar__section--align-start">
         <!-- dynamically set based on screen size-->
-        <span class="top-app-bar__title">Waldmonitoring</span>
+        <span
+          id="top-app-bar__title-long"
+          vanilla-i18n="homepage.title.long"
+          class="top-app-bar__title"
+        ></span>
+        <span
+          id="top-app-bar__title-short"
+          vanilla-i18n="homepage.title.short"
+          class="top-app-bar__title"
+        ></span>
         <!-- search -->
         <div
           class="mdc-text-field mdc-text-field--with-trailing-icon mdc-text-field--with-leading-icon search"
         >
           <i class="material-icons mdc-text-field__icon">search</i>
           <input type="text" id="suche" class="mdc-text-field__input" />
-          <label class="mdc-floating-label" for="suche">Suche...</label>
+          <label
+            class="mdc-floating-label"
+            for="suche"
+            vanilla-i18n="viewer.search.placeholder"
+          ></label>
           <i
             class="material-icons mdc-text-field__icon text-field-clear__icon"
             tabindex="0"
@@ -102,6 +119,10 @@
         >
           info
         </button>
+        <select id="vanilla-i18n-toggler" class="top-app-bar__language-toggler">
+          <option>de</option>
+          <option>fr</option>
+        </select>
       </section>
     </header>
     <div class="autocomplete">
@@ -118,8 +139,16 @@
     >
       <div class="mdc-dialog__container">
         <div class="mdc-dialog__surface">
-          <h2 class="mdc-dialog__title" id="dialog-title"></h2>
-          <div class="mdc-dialog__content" id="dialog-content"></div>
+          <h2
+            class="mdc-dialog__title"
+            id="dialog-title"
+            vanilla-i18n="impressum.title"
+          ></h2>
+          <div
+            class="mdc-dialog__content"
+            id="dialog-content"
+            vanilla-i18n="impressum.content"
+          ></div>
           <footer class="mdc-dialog__actions">
             <button
               type="button"
@@ -136,5 +165,19 @@
     </div>
     <!-- end impressum Dialog -->
     <script type="module" src="./index.js" async defer></script>
+    <script>
+      const languages = ["de", "fr"];
+      window.translator = new vanilla_i18n(
+        languages,
+        (opts = {
+          path: "i18n",
+          debug: true,
+          i18n_attr_name: "vanilla-i18n",
+          toggler_id: "vanilla-i18n-toggler",
+          default_language: languages[0]
+        })
+      );
+      window.translator.run();
+    </script>
   </body>
 </html>

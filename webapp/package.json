@@ -24,7 +24,7 @@
     "postbuild": "cp -r static/ dist/",
     "winPrebuild": "rd /s /q dist .parcel-cache>nul 2>&1|echo.>nul",
     "winBuild": "parcel build src/index.html",
-    "winPostbuild": "@powershell Copy-Item -Path static/* -Destination dist -PassThru",
+    "winPostbuild": "@powershell Copy-Item -Path static/* -Destination dist -Recurse -PassThru",
     "buildOnWin": "npm run winPrebuild && npm run winBuild && npm run winPostbuild"
   },
   "dependencies": {

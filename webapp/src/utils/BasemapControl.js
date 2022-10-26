@@ -1,5 +1,6 @@
 import { Control } from "ol/control";
 import { orthoBasemap, swBasemap } from "./basemap_util";
+import { setI18nAttribute } from "./main_util";
 import { updateUrl } from "./url_util";
 const orthoImage = new URL("../img/basemapOrtho.jpg", import.meta.url);
 const sw = new URL("../img/sw.jpg", import.meta.url);
@@ -46,6 +47,13 @@ class BasemapControl {
     const basemapTitle = document.createElement("div");
     basemapTitle.classList.add("basemapControl__title");
     basemapTitle.innerHTML = basemapObject.name;
+    setI18nAttribute({
+      element: basemapTitle,
+      attributeValue: `viewer.basemap.${basemapObject.name
+        .split(" ")
+        .join("")
+        .toLowerCase()}`
+    });
     basemap.appendChild(basemapTitle);
     basemap.addEventListener(
       "click",
@@ -67,6 +75,7 @@ class BasemapControl {
         this.basemapControl.appendChild(this.createBasemap(iconBasemap));
         iconBasemap.layer.setVisible(false);
         newBasemap.layer.setVisible(true);
+        window.translator.run();
       },
       false
     );

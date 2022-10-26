@@ -6,12 +6,14 @@ import { getCenter } from "ol/extent";
 import { dialog } from "./init";
 
 export const GEO_ADMIN_WMS_INFO_URL =
-  "https://europe-west1-oereb-uri.cloudfunctions.net/getwmsinfo?";
+  "https://europe-west6-oereb-uri.cloudfunctions.net/getwmsinfo?";
 
 export const topAppBarRight = document.querySelector(
   ".top-app-bar__section--align-end"
 );
-const appBarTitle = document.getElementsByClassName("top-app-bar__title")[0];
+const appBarTitleShort = document.getElementById("top-app-bar__title-short");
+const appBarTitleLong = document.getElementById("top-app-bar__title-long");
+const homeButton = document.getElementById("home-button");
 const sidebarContent = document.querySelector(".sidebar__content");
 export const sidebar = document.querySelector(".sidebar");
 export const content = document.getElementsByClassName("content")[0];
@@ -21,6 +23,13 @@ export const content = document.getElementsByClassName("content")[0];
  */
 export const removeContent = () => {
   content.innerHTML = "";
+};
+
+export const hideHomeButton = () => {
+  homeButton.style.display = "none";
+};
+export const showHomeButton = () => {
+  homeButton.style.display = "inline-block";
 };
 
 /*
@@ -37,19 +46,6 @@ export const createGrid = () => {
 };
 
 /*
- * changes the top appbar title.
- * @param {string} title - the new title to display.
- * @returns {boolean} - true if title changed successfully, false otherwise.
- */
-export const setTitle = title => {
-  if (!title) {
-    return false;
-  }
-  appBarTitle.innerHTML = title;
-  return true;
-};
-
-/*
  * remove old video links from the top-app-bar and add add a new one.
  * @param {object} params - function parameter object.
  * @param {string} params.title - the video title.
@@ -61,7 +57,11 @@ export const addVideoLink = ({ title, videoId } = {}) => {
     return false;
   }
   removeVideoLink();
-  topAppBarRight.appendChild(getVideoLink({ title, videoId }));
+  topAppBarRight.insertBefore(
+    getVideoLink({ title, videoId }),
+    topAppBarRight.children[2]
+  );
+  //topAppBarRight.appendChild(getVideoLink({ title, videoId }));
   return true;
 };
 
@@ -69,7 +69,7 @@ export const addVideoLink = ({ title, videoId } = {}) => {
  * remove the video link from the top-app-bar
  */
 export const removeVideoLink = () => {
-  if (topAppBarRight.children.length === 3) {
+  if (topAppBarRight.children.length === 4) {
     topAppBarRight.removeChild(topAppBarRight.children[2]);
   }
 };
@@ -105,54 +105,44 @@ export const getVideoLink = ({ title, videoId } = {}) => {
 export const getVideoElement = videoId =>
   `<div class="videoWrapper"><iframe width="560" height="349" src="https://www.youtube.com/embed/${videoId}?rel=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
 
-/*
- * calculates the title based on the window.width.
- * @returns {string} title - title to use based on the current window.width.
- */
-export const getTitle = () => {
-  const width = window.innerWidth;
-  const title =
-    width <= 550 ? "Waldmonitoring" : "Waldmonitoring mit Fernerkundungsdaten";
-  return title;
+export const updateTitle = () => {
+  const path = window.location.pathname;
+  if (path === "/" || path === "/services") {
+    const width = window.innerWidth;
+    if (width <= 700) {
+      appBarTitleShort.style.display = "initial";
+      appBarTitleLong.style.display = "none";
+    } else {
+      appBarTitleShort.style.display = "none";
+      appBarTitleLong.style.display = "initial";
+    }
+  }
 };
 
 /*
  * hide the appBar title
  */
 export const hideTitle = () => {
-  appBarTitle.style.display = "none";
-};
-/*
- * show the appBar title
- */
-export const showTitle = () => {
-  appBarTitle.style.display = "block";
-};
-
-export const impressum = {
-  tite: "IMRESSUM",
-  content: `Dies ist ein Forschungsprojekt der BFH-HAFL im Auftrag bzw. 
-  mit Unterstützung des BAFU. Im Rahmen dieses Projektes sollen vorhandene, 
-  möglichst schweizweit flächendeckende und frei verfügbare Fernerkundungsdaten 
-  für konkrete Use-Cases und mit einem klaren Mehrwert für die Praxis eingesetzt werden. 
-  Das Hauptziel dieses Projektes ist die Implementierung von Kartenviewern sowie 
-  Geodiensten zu den entsprechenden Use-Cases.
-<br /></br />
-<strong>Zur Zeit sind die bereitgestellten Daten und Services ausschliesslich für Testzwecke gedacht.</strong>
-<br />
-<h4 style="margin-bottom:8px">Ansprechpersonen:</h4>
-<strong>BFH-HAFL:</strong> Alexandra Erbach (+41 31 910 22 75,
-<a href="mailto:alexandra.erbach@bfh.ch">alexandra.erbach@bfh.ch</a>)<br />
-<strong>Website/Geodienste:</strong> Karten-Werk GmbH, Hanskaspar Frei, (+41 79 360 72 83,
-  <a href="mailto:hkfrei@karten-werk.ch">hkfrei@karten-werk.ch</a>)</p>`
+  appBarTitleLong.style.display = "none";
+  appBarTitleShort.style.display = "none";
 };
 
 export const getLayerInfo = overlay => {
+  let i18n = overlay.displayName.split(" ").join("").toLowerCase();
+  if (overlay.layername.indexOf(":nbr") !== -1) {
+    i18n = "nbr";
+  }
+  if (overlay.layername.indexOf(":ndvi_decrease") !== -1) {
+    i18n = "ndvi_decrease";
+  }
+  if (overlay.layername.indexOf(":ndvi_anomaly") !== -1) {
+    i18n = "ndvi_anomaly";
+  }
   return `<div>
-  <h4>Legende:</h4>
+  <h4 vanilla-i18n="sidebar.legende">Legende:</h4>
   <img src="https://geoserver.karten-werk.ch//wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&height=15&LAYER=${overlay.layername}&legend_options=forceLabels:on"  alt="legende"/>
-  <h4>Beschreibung:</h4>
-  <section>${overlay.description}</section>
+  <h4 vanilla-i18n="sidebar.beschreibung">Beschreibung:</h4>
+  <section vanilla-i18n="sidebar.layer.${i18n}.description"></section>
   </div>`;
 };
 
@@ -374,4 +364,16 @@ export const change_overlay_colors = {
   ndvi_decrease_crowd_2018_2017: changeLayerColors.mantis,
   ndvi_decrease_2017_2016: changeLayerColors.yellow_pantone,
   ndvi_decrease_crowd_2017_2016: changeLayerColors.yellow_pantone
+};
+
+/*
+ * adds a i18n attribute to a specific element.
+ * @param {object} params - function parameter object.
+ * @param {htmlElement} params.element - the html element to add the attribute.
+ * @param {string} params.attributeValue - the attribute value to set.
+ * @returns {void}
+ */
+export const setI18nAttribute = ({ element, attributeValue } = {}) => {
+  if (!element || !attributeValue) return;
+  element.setAttribute("vanilla-i18n", attributeValue);
 };

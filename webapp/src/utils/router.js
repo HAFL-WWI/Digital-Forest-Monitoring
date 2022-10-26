@@ -3,15 +3,15 @@ import homepageUtil from "./homepage_util";
 import viewerUtil from "./viewer_util";
 import servicesUtil from "./services_util";
 import {
-  setTitle,
-  getTitle,
-  showTitle,
   hideTitle,
   positionSearchResultContainer,
   closeSidebar,
   sidebar,
   addVideoLink,
-  removeVideoLink
+  removeVideoLink,
+  updateTitle,
+  hideHomeButton,
+  showHomeButton
 } from "./main_util";
 export const router = new Navigo(null, false, "#");
 export const initRouter = () => {
@@ -20,15 +20,16 @@ export const initRouter = () => {
       "/": () => {
         textField.style.display = "none";
         homepageUtil.controller.init();
-        setTitle(getTitle());
-        showTitle();
+        updateTitle();
         removeVideoLink();
+        hideHomeButton();
       },
       "/veraenderung": () => {
         // we dont't want a short sidebar transition on startup
         // that's why we add it here, after the app has loaded.
         sidebar.style.transition = "transform 0.3s";
         hideTitle();
+        showHomeButton();
         textField.style.display = "inline-flex";
         addVideoLink({
           title: "jährliche Veränderung",
@@ -42,6 +43,7 @@ export const initRouter = () => {
         // that's why we add it here, after the app has loaded.
         sidebar.style.transition = "transform 0.3s";
         hideTitle();
+        showHomeButton();
         textField.style.display = "inline-flex";
         addVideoLink({ title: "natürliche Störungen", videoId: "aamvbhKXoNU" });
         viewerUtil.controller.init({ title: "Natürliche Störungen" });
@@ -52,6 +54,7 @@ export const initRouter = () => {
         // that's why we add it here, after the app has loaded.
         sidebar.style.transition = "transform 0.3s";
         hideTitle();
+        showHomeButton();
         textField.style.display = "inline-flex";
         addVideoLink({
           title: "Hinweiskarten zur Vitalität",
@@ -65,14 +68,16 @@ export const initRouter = () => {
         // that's why we add it here, after the app has loaded.
         sidebar.style.transition = "transform 0.3s";
         hideTitle();
+        showHomeButton();
         textField.style.display = "inline-flex";
         viewerUtil.controller.init({ title: "Hinweiskarten Verjüngung" });
         positionSearchResultContainer();
       },
       "/services": () => {
         removeVideoLink();
+        showHomeButton();
         servicesUtil.controller.init();
-        setTitle("Geodienste");
+        updateTitle();
       }
     })
     .resolve();

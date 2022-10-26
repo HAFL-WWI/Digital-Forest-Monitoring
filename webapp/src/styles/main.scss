@@ -88,10 +88,15 @@ body:after {
 .top-app-bar__section--align-start {
   justify-content: flex-start;
   flex-grow: 1;
-  max-width: 500px;
+  max-width: 100%;
 }
 .top-app-bar__section--align-end {
   justify-content: flex-end;
+  align-items: center;
+}
+.top-app-bar__language-toggler {
+  max-height: 24px;
+  margin: 12px 0 12px 12px;
 }
 .top-app-bar__title {
   font-family: Roboto, sans-serif;
@@ -210,6 +215,7 @@ body:after {
   @include mdc-text-field-height(40px);
   display: none;
   width: 100%;
+  max-width: 500px;
 }
 #map {
   background-size: 20px 20px;
@@ -284,6 +290,7 @@ body:after {
 .vhmControl__waiting {
   color: dimgray;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   text-align: center;
 }
@@ -304,6 +311,14 @@ body:after {
   min-width: 245px;
   max-width: 245px;
   position: absolute;
+}
+.viewerControl__title-text {
+  flex-grow: 1;
+  font-size: 17px;
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .viewerControl__controls-control {
   display: flex;
@@ -483,16 +498,8 @@ body:after {
 .button__fullwidth {
   width: 100%;
 }
-.correctselect__hidden {
-  height: 0;
-  overflow: hidden;
-  transition: height 0.3s ease-out;
-}
-.correctselect__visible {
-  height: 58px;
-  overflow: hidden;
+.correctselect {
   padding-top: 8px;
-  transition: height 0.3s ease-out;
 }
 .popup__radiocontainer {
   display: grid;
@@ -507,15 +514,19 @@ body:after {
   row-gap: 8px;
 }
 .popup__checkboxcontainer_customreason {
+  background-color: gainsboro;
   border: none;
   border-bottom: 1px dashed black;
 }
 .popup__checkboxcontainer_customreason:focus {
-  background-color: gainsboro;
   outline: none;
 }
 .red {
   color: red;
+}
+.page__title {
+  font-size: 3em;
+  padding-bottom: 0;
 }
 /*
 * position button animation
