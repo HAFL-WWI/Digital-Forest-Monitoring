@@ -206,7 +206,7 @@ print("calculate mean change per polygon...")
 diff_raster = raster(in_path)
 meandiff = exact_extract(diff_raster, diffmask_sf, 'mean')
 # prettify values (raster values were multiplied by 10000 to be stored as int)
-diffmask_sf$meandiff <- round(meandiff/10000, 2)
+diffmask_sf$meandiff <- round(meandiff/10000, 3)
 
 # drop first column
 diffmask_sf = diffmask_sf[,-1]
@@ -217,7 +217,7 @@ diffmask_sf = diffmask_sf[,-1]
 # st_write(diffmask_sf, file.path(out_path, paste0(lyr, ".shp")), delete_dsn = T )
 
 print("save geopackage...")
-st_write(diffmask_sf, file.path(out_path, paste0(lyr, ".gpkg")) )
+st_write(diffmask_sf, file.path(out_path, paste0(lyr, ".gpkg")), delete_dsn = T )
 
 print(Sys.time() - start_time) 
 print("Finished vectorization")
