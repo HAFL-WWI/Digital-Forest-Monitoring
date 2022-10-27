@@ -346,17 +346,17 @@ export const clearSidebar = () => {
 };
 
 const changeLayerColors = {
-  dark_orchid: { hex: "#a444d6ff", name: "Dark-Orchid" },
-  iris: { hex: "#4545d9ff", name: "Iris" },
-  medium_turqoise: { hex: "#46d8d5ff", name: "Medium-Turquoise" },
-  mantis: { hex: "#80c757ff", name: "Mantis" },
-  yellow_pantone: { hex: "#f8e025ff", name: "Yellow-Pantone" },
-  red: { hex: "#cf2d2d", name: "red" },
-  brown: { hex: "#d68227", name: "brown" }
+  dark_orchid: { hex: "#a444d6", name: "Dark-Orchid" },
+  iris: { hex: "#4545d9", name: "Iris" },
+  medium_turqoise: { hex: "#46d8d5", name: "Medium-Turquoise" },
+  mantis: { hex: "#80c757", name: "Mantis" },
+  yellow_pantone: { hex: "#f8e025", name: "Yellow-Pantone" },
+  cg_red: { hex: "#eb3333", name: "CG-Red" },
+  deep_saffron: { hex: "#f3942c", name: "Deep-Saffron" }
 };
 
 export const change_overlay_colors = {
-  ndvi_decrease_2022_2021: changeLayerColors.red,
+  ndvi_decrease_2022_2021: changeLayerColors.cg_red,
   ndvi_decrease_2021_2020: changeLayerColors.dark_orchid,
   ndvi_decrease_crowd_2021_2020: changeLayerColors.dark_orchid,
   ndvi_decrease_2020_2019: changeLayerColors.iris,
@@ -367,7 +367,7 @@ export const change_overlay_colors = {
   ndvi_decrease_crowd_2018_2017: changeLayerColors.mantis,
   ndvi_decrease_2017_2016: changeLayerColors.yellow_pantone,
   ndvi_decrease_crowd_2017_2016: changeLayerColors.yellow_pantone,
-  ndvi_decrease_2016_2015: changeLayerColors.brown
+  ndvi_decrease_2016_2015: changeLayerColors.deep_saffron
 };
 
 /*
