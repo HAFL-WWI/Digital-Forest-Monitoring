@@ -15,22 +15,30 @@ library(doParallel)
 # parameters
 minsize = units::set_units(399, m^2) # default is >399 (>= 400), but may be increased as threshold is lowered (e.g. 499 for thr=-600)
 minsize_pixels = round(units::drop_units(minsize) / 100) # 1 pixel = 100 m^2 
-thrvalue = -600 # threshold was -1000, but -600 seems more appropriate. 
-out_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/temp"
-years = c("2022_2021")
+# threshold used to be -1000 (until Oct 2022).
+# For raster generation we now use a much less restrictive threshold (-200) to allow threshold adjustements via styling
+# For polygonization, the threshold was updated to -600.
+thrvalue = -200 
+out_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1"
+years = c("2022_2021","2021_2020","2020_2019","2019_2018","2018_2017","2017_2016", "2016_2015") # all years
+# years = c("2016_2015") # process single year
 previous_suffix = "_Int16_EPSG3857"
 add_suffix = paste0("_NA-", abs(thrvalue))
 
 # use gdal_sieve to remove patches smaller than threshhold before polygonization 
 # (achieving the same result with usually faster computation time!)
-GDAL_SIEVE = TRUE  
+GDAL_SIEVE = TRUE
+GDAL_SIEVE_OutputRaster = TRUE
 # use morphological image operations to remove spots, noise, thin lines, extrusions and close gaps 
 # --- EXPERIMENTAL! --- 
 # also messes up CRS with writeRaster (CRS needs to be manually reassigned on older R versions)
 MORPH = FALSE
 
-# init in_path (will be overwritten if parallelization is "activated" by uncommenting below lines)
-in_path = paste0("//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/ndvi_diff_", years[1], previous_suffix, ".tif")
+# skip polygonize
+SKIP_POLYGONIZE = TRUE
+
+# init i (will be overwritten if parallelization is "activated" by uncommenting below lines)
+i = 1
 #------------------------------------------------#
 ####              PARALLELIZATION             ####
 #------------------------------------------------#
@@ -38,16 +46,16 @@ in_path = paste0("//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/ndvi
 # uncomment the following lines if you want to activate parallelization
 # DON'T FORGET TO UNCOMMENT THE TWO LINES AT THE END OF THE PARALLELIZATION BLOCK
 #------------------------------------------------#
-# cl = makeCluster(detectCores() -1)
-# registerDoParallel(cl)
-# foreach(i=1:length(years), .packages=c("raster", "rgdal", "sf", "exactextractr")) %dopar% {
-#   year = years[i]
-#   in_path = paste0("//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/ndvi_diff_", year, "_Int16_EPSG3857.tif")
-#------------------------------------------------#
+cl = makeCluster(detectCores() -1)
+registerDoParallel(cl)
+foreach(i=1:length(years), .packages=c("raster", "rgdal", "sf", "exactextractr")) %dopar% {
+  #------------------------------------------------#
+  year = years[i]
+  in_path = paste0("//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/ndvi_diff_", year, previous_suffix, ".tif")
   start_time <- Sys.time()
   
   # out shp layer & raster
-  lyr = paste0("ndvi_diff_", years, previous_suffix, add_suffix)
+  lyr = paste0("ndvi_diff_", year, previous_suffix, add_suffix)
   # out_shp = paste0(out_path, "/", lyr, ".shp")
   out_gpkg = paste0(out_path, "/", lyr, ".gpkg")
   out_ras_name = paste0(lyr,  ".tif")
@@ -56,9 +64,11 @@ in_path = paste0("//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/ndvi
   out_mask = file.path(out_path,"temp",out_mask_name)
   
   # create binary mask & raster for WMS publication (values > thrvalue auf NA)
-  print("create binary mask...")
+  print(paste0("raster for WMS/WCS publication (values < ", thrvalue, " => NA)..."))
   system(paste("gdal_calc.py -A ", in_path,  " --outfile=", out_ras, " --calc=\"(A<=", thrvalue, ")*A\" --co=\"COMPRESS=LZW\" --type='Int16' --NoDataValue=0 --overwrite", sep=""))
+  print("create binary mask...")
   system(paste("gdal_calc.py -A ", out_ras,  " --outfile=", out_mask, " --calc=\"A<0\" --co=\"COMPRESS=LZW\" --type='Byte' --NoDataValue=0 --overwrite", sep=""))
+  print(Sys.time() - start_time) 
   
   if(GDAL_SIEVE){
     print("filter raster with gdal_sieve...")
@@ -80,12 +90,20 @@ in_path = paste0("//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/ndvi
     print(" - cleanup")
     file.remove(out_mask_sieved) # mask sieved is an unnecessary, uncompressed Int16-raster with probably >1GB
     
+    if(GDAL_SIEVE_OutputRaster) {
+      print(" - create sieved raster with sieved mask")
+      out_raster_sieved_name = paste0(lyr,"_sieved.tif")
+      out_raster_sieved = file.path(out_path,out_raster_sieved_name)
+      system(paste("gdal_calc.py -A ", out_ras, " -B ", out_mask_sieved_b, " --outfile=", out_raster_sieved, " --calc=\"A*B\" --co=\"COMPRESS=LZW\" --type='Int16' --NoDataValue=0 --overwrite", sep=""))
+    }
+    
     # continue further processing with sieved raster
     print(" - continue with sieved mask")
     out_mask = out_mask_sieved_b
   }
   print(Sys.time() - start_time) 
-
+  
+  # optional morphological operations to further "clean up" the mask
   if(MORPH){
     # raster to polygon
     print("run morphological processing...")
@@ -118,42 +136,66 @@ in_path = paste0("//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/ndvi
     out_mask = out_mask_morph
   }
   
-  # raster to polygon
-  print("raster to polygon...")
-  # system(paste("gdal_polygonize.py", out_mask, out_shp, sep=" "))
-  system(paste("gdal_polygonize.py", out_mask, out_gpkg, sep=" "))
+  # polygonization may take really long (several hours)
+  if(!SKIP_POLYGONIZE){
+    # raster to polygon
+    print("raster to polygon...")
+    # system(paste("gdal_polygonize.py", out_mask, out_shp, sep=" "))
+    system(paste("gdal_polygonize.py", out_mask, out_gpkg, sep=" "))
+    
+    print(paste0("calculate area and filter polygons smaller than minsize = ", minsize, " m^2"))
+    # diffmask_sf = read_sf(out_shp)
+    diffmask_sf = read_sf(out_gpkg)
+    # calculate area
+    diffmask_sf$area = diffmask_sf$area <- round(st_area(diffmask_sf))
+    #filter out surfaces smaller than min. size
+    diffmask_sf = diffmask_sf[which(diffmask_sf$area > minsize),]
+    
+    # calculate mean change per polygon
+    # this was implemented using R-package velox, which no longer is maintained (https://github.com/hunzikp/velox/issues/43)
+    # switched to exact_extract in Oct 2022
+    print("calculate attributes per polygon...")
+    diff_raster = raster(in_path)
+    print(Sys.time() - start_time)
+    
+    print("calculate meandiff per polygon...")
+    meandiff = exact_extract(diff_raster, diffmask_sf, 'mean')
+    # prettify values (raster values were multiplied by 10000 to be stored as int)
+    diffmask_sf$meandiff <- round(meandiff/10000, 3)
+    print(Sys.time() - start_time)
+    
+    print("calculate sumdiff per polygon...")
+    sumdiff = exact_extract(diff_raster, diffmask_sf, 'sum')
+    diffmask_sf$sumdiff <- round(sumdiff/10000, 3)
+    print(Sys.time() - start_time)
+    
+    print("calculate maxdiff per polygon...")
+    maxdiff = exact_extract(diff_raster, diffmask_sf, 'max')
+    diffmask_sf$maxdiff <- round(maxdiff/10000, 3)
+    print(Sys.time() - start_time)
+    
+    print("count diff pixels per polygon...")
+    countdiff = exact_extract(diff_raster, diffmask_sf, 'count')
+    diffmask_sf$countdiff <- round(countdiff, 3)
+    print(Sys.time() - start_time)
+    
+    # drop first column
+    diffmask_sf = diffmask_sf[,-1]
+    
+    ## shape deprecated, use geopackage instead (for better performance and an overall better format :])
+    ## save shapefile > careful, CRS might not be correctly set. Check with GIS.
+    # print("save shapefile...")
+    # st_write(diffmask_sf, file.path(out_path, paste0(lyr, ".shp")), delete_dsn = T )
+    
+    print("save geopackage...")
+    st_write(diffmask_sf, file.path(out_path, paste0(lyr, ".gpkg")) )
+  }
   
-  print(paste0("calculate area and filter polygons smaller than minsize = ", minsize, " m^2"))
-  # diffmask_sf = read_sf(out_shp)
-  diffmask_sf = read_sf(out_gpkg)
-  # calculate area
-  diffmask_sf$area = diffmask_sf$area <- round(st_area(diffmask_sf))
-  #filter out surfaces smaller than min. size
-  diffmask_sf = diffmask_sf[which(diffmask_sf$area > minsize),]
-
-  # calculate mean change per polygon
-  # this was implemented using R-package velox, which no longer is maintained (https://github.com/hunzikp/velox/issues/43)
-  # switched to exact_extract in Oct 2022
-  print("calculate mean change per polygon...")
-  diff_raster = raster(in_path)
-  meandiff = exact_extract(diff_raster, diffmask_sf, 'mean')
-  # prettify values (raster values were multiplied by 10000 to be stored as int)
-  diffmask_sf$meandiff <- round(meandiff/10000, 3)
-  
-  # drop first column
-  diffmask_sf = diffmask_sf[,-1]
-  
-  ## shape deprecated, use geopackage instead (for better performance and an overall better format :])
-  ## save shapefile > careful, CRS might not be correctly set. Check with GIS.
-  # print("save shapefile...")
-  # st_write(diffmask_sf, file.path(out_path, paste0(lyr, ".shp")), delete_dsn = T )
-  
-  print("save geopackage...")
-  st_write(diffmask_sf, file.path(out_path, paste0(lyr, ".gpkg")) )
-           
+  print("DONE")
   print(Sys.time() - start_time) 
-
-#------------------------------------------------#
-# }
-# stopCluster(cl)
+  
+  #------------------------------------------------#
+  # uncomment the following two lines for parallelization (closes loop)
+}
+stopCluster(cl)
 #------------------------------------------------#
