@@ -12,7 +12,7 @@ library(doParallel)
 # defaults to crs (without :, e.g. EPSG:3857 -> EPSG3857)
 project <- function(path, crs, pattern, suffix = NULL) {
   # set suffix to default value
-  if(is.null(suffix)) suffix = gsub(":", "", crs) 
+  if(is.null(suffix)) suffix = paste0("_", gsub(":", "", crs))
   
   # get files
   files = list.files(path, pattern = pattern, full.names = T)

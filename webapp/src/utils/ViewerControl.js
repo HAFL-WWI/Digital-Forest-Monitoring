@@ -29,10 +29,18 @@ class ViewerControl {
     this.urlParams = urlParams;
     this.changeOverlays = [
       {
+        layername: "karten-werk:ndvi_decrease_2022_2021",
+        displayName: "Juni 2021 - Juni 2022",
+        visible: true,
+        opacity: 0.9,
+        toc: false,
+        color: change_overlay_colors["ndvi_decrease_2022_2021"]
+      },
+      {
         layername: "karten-werk:ndvi_decrease_2021_2020",
         displayName: "Juni 2020 - Juni 2021",
-        visible: true,
-        opacity: 1,
+        visible: false,
+        opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2021_2020"],
         wfs: "karten-werk:ndvi_decrease_crowd_2021_2020"
@@ -41,7 +49,7 @@ class ViewerControl {
         layername: "karten-werk:ndvi_decrease_2020_2019",
         displayName: "Juni 2019 - Juni 2020",
         visible: false,
-        opacity: 1,
+        opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2020_2019"],
         wfs: "karten-werk:ndvi_decrease_crowd_2020_2019"
@@ -50,7 +58,7 @@ class ViewerControl {
         layername: "karten-werk:ndvi_decrease_2019_2018",
         displayName: "Juni 2018 - Juni 2019",
         visible: false,
-        opacity: 1,
+        opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2019_2018"],
         wfs: "karten-werk:ndvi_decrease_crowd_2019_2018"
@@ -59,7 +67,7 @@ class ViewerControl {
         layername: "karten-werk:ndvi_decrease_2018_2017",
         displayName: "Juni 2017 - Juni 2018",
         visible: false,
-        opacity: 1,
+        opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2018_2017"],
         wfs: "karten-werk:ndvi_decrease_crowd_2018_2017"
@@ -68,10 +76,18 @@ class ViewerControl {
         layername: "karten-werk:ndvi_decrease_2017_2016",
         displayName: "Juni 2016 - Juni 2017",
         visible: false,
-        opacity: 1,
+        opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2017_2016"],
         wfs: "karten-werk:ndvi_decrease_crowd_2017_2016"
+      },
+      {
+        layername: "karten-werk:ndvi_decrease_2016_2015",
+        displayName: "Juni 2015 - Juni 2016",
+        visible: false,
+        opacity: 0.9,
+        toc: false,
+        color: change_overlay_colors["ndvi_decrease_2016_2015"]
       }
     ];
     this.disorderOverlays = [

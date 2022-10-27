@@ -463,6 +463,15 @@ body:after {
 .ol-popup-closer:after {
   content: "✖";
 }
+.ol-scale-line {
+  background: rgba(214, 214, 214, 0.7) !important;
+}
+.ol-scale-line-inner {
+  border: 1.25px solid black !important;
+  border-top: none !important;
+  color: black !important;
+  font-weight: bold !important;
+}
 #popup__completionmessage {
   font-size: 0.8em;
   padding: 8px 0 8px 0;

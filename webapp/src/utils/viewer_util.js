@@ -1,5 +1,10 @@
 import { Map, View } from "ol";
-import { defaults as defaultControls, Control, Zoom } from "ol/control";
+import {
+  defaults as defaultControls,
+  Control,
+  Zoom,
+  ScaleLine
+} from "ol/control";
 import { MDCList } from "@material/list";
 import "ol/ol.css";
 import { orthoBasemap, swBasemap, vegetationBasemap } from "./basemap_util";
@@ -118,6 +123,7 @@ const viewerUtil = {
         );
         viewerUtil.model.map.addControl(basemapSwitch.createBasemapControl());
         viewerUtil.model.map.addControl(vhmControl.createVHMControl());
+        viewerUtil.model.map.addControl(new ScaleLine({ units: "metric" }));
         // add the positioning control
         viewerUtil.model.positioning = new GpsPosition(viewerUtil.model.map);
         const positioning = new Control({
