@@ -24,6 +24,7 @@ source("general/dir_exists_create_func.R")
 # main path
 main_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case3"
 # dirs = dir(main_path, full.names=T, pattern="NDVI_Anomaly") # process all folders
+dirs_name = dir(main_path, pattern="NDVI_Anomaly_2022") # process specific year
 dirs = dir(main_path, full.names=T, pattern="NDVI_Anomaly_2022") # process specific year
 
 #-----------------------------------------#
@@ -38,14 +39,20 @@ thr_valid = 5
 tmp_name ="tmp_thr5"
 #-----------------------------------------#
 
-
-
+# init i (will be overwritten if parallelization is "activated" by uncommenting below lines)
+i = 1
 #------------------------------------------------#
-# loop over folders
+####              PARALLELIZATION             ####
+#------------------------------------------------#
+# parallelization makes only sense when processing multiple rasters
+# uncomment the following lines if you want to activate parallelization
+# DON'T FORGET TO UNCOMMENT THE TWO LINES AT THE END OF THE PARALLELIZATION BLOCK
+#------------------------------------------------#
 cl = makeCluster(detectCores() -1)
 registerDoParallel(cl)
 
 foreach(i=1:length(dirs), .packages=c("raster")) %dopar% {
+#------------------------------------------------#
   
   # source functions
   source("use-case1/mosaic.R")
@@ -61,7 +68,7 @@ foreach(i=1:length(dirs), .packages=c("raster")) %dopar% {
   mosaic_ch_file = file.path(paste0(out_dir, tmp_name), "ndvi_anomaly_ch.tif")
   mosaic_ch_forest_file = file.path(paste0(out_dir, tmp_name), "ndvi_anomaly_ch_forest.tif")
   mosaic_ch_forest_filtered = file.path(paste0(out_dir, tmp_name), "ndvi_anomaly_ch_forest_filtered.tif")
-  out_file_final = paste0(dir(main_path, pattern="NDVI_Anomaly")[i],".tif")
+  out_file_final = paste0(dirs_name[i],".tif") # name file like the subdir
   mosaic_ch_forest_filtered_3857 = file.path(out_dir, out_file_final)
   #-----------------------------------------#
   
@@ -87,6 +94,11 @@ foreach(i=1:length(dirs), .packages=c("raster")) %dopar% {
   
   # END ...
   print(Sys.time()- start_time)
+  
+#------------------------------------------------#
+# un/comment the following two lines (together with lines in parallelization block) 
+# to toggle parallelization (closes loop)
 }
 stopCluster(cl)
+#------------------------------------------------#
 
