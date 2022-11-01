@@ -4,7 +4,7 @@
 # IMPORTANT: Forest mask must have same crs, dimension, extent, origin as mosaic
 # see scripts under Digital-Forest-Monitoring/misc
 #
-# by Dominique Weber & Alexandra Erbach, BFH-HAFL
+# by Dominique Weber, Alexandra Erbach, Hannes Horneber, BFH-HAFL
 #-------------------------------------------------------------------------------#
 
 # load library
