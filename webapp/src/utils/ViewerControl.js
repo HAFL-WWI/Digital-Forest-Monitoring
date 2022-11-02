@@ -158,6 +158,7 @@ class ViewerControl {
       { number: "12-01", text: "Dez/Jan" }
     ];
     this.vitalityLayers = [
+      { year: "2022", month: this.month.slice(5, 8), layers: [] },
       { year: "2021", month: this.month.slice(5, 8), layers: [] },
       { year: "2020", month: this.month.slice(5, 8), layers: [] },
       {
