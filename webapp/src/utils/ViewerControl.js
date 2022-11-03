@@ -3,7 +3,7 @@ import { WMSCapabilities, GeoJSON } from "ol/format";
 import { transform } from "ol/proj";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
-import { TileWMS, Vector as VectorSource } from "ol/source";
+import { TileWMS, XYZ, Vector as VectorSource } from "ol/source";
 import { bbox as bboxStrategy } from "ol/loadingstrategy";
 import { MDCSlider } from "@material/slider";
 import { MDCSwitch } from "@material/switch";
@@ -34,7 +34,8 @@ class ViewerControl {
         visible: true,
         opacity: 0.9,
         toc: false,
-        color: change_overlay_colors["ndvi_decrease_2022_2021"]
+        color: change_overlay_colors["ndvi_decrease_2022_2021"],
+        cached: true
       },
       {
         layername: "karten-werk:ndvi_decrease_2021_2020",
@@ -87,7 +88,8 @@ class ViewerControl {
         visible: false,
         opacity: 0.9,
         toc: false,
-        color: change_overlay_colors["ndvi_decrease_2016_2015"]
+        color: change_overlay_colors["ndvi_decrease_2016_2015"],
+        cached: true
       }
     ];
     this.disorderOverlays = [
@@ -711,7 +713,9 @@ class ViewerControl {
     layer.toc = true;
     this.activeLayers.push(layer);
     if (!layer.wmsLayer) {
-      layer.wmsLayer = this.createWmsLayer(layer);
+      layer.wmsLayer = layer.cached
+        ? this.createCachedLayer(layer)
+        : this.createWmsLayer(layer);
     }
     if (layer.wfs) {
       layer.wfsLayer = this.createWfsLayer(layer);
@@ -1006,8 +1010,21 @@ class ViewerControl {
       })
     });
     wmsLayer.name = `${overlay.layername}`;
-    wmsLayer.setVisible(overlay.visible);
     return wmsLayer;
+  }
+  /*
+   * creates a ol wmts overlay for a GeoWebCache layer.
+   * @param {object} overlay - overlay object like stored in the model.
+   * @returns {object} TileLayer - ol.TileLayer instance.
+   */
+  createCachedLayer(overlay) {
+    const cachedLayer = new TileLayer({
+      source: new XYZ({
+        url: `http://gwc.hosting.karten-werk.ch/gwc/service/tms/1.0.0/${overlay.layername}/{z}/{x}/{y}.png?flipY=true`
+      })
+    });
+    cachedLayer.name = `${overlay.layername}`;
+    return cachedLayer;
   }
 
   /*
