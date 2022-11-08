@@ -357,6 +357,7 @@ const changeLayerColors = {
 
 export const change_overlay_colors = {
   ndvi_decrease_2022_2021: changeLayerColors.cg_red,
+  ndvi_decrease_crowd_2022_2021: changeLayerColors.cg_red,
   ndvi_decrease_2021_2020: changeLayerColors.dark_orchid,
   ndvi_decrease_crowd_2021_2020: changeLayerColors.dark_orchid,
   ndvi_decrease_2020_2019: changeLayerColors.iris,
@@ -367,7 +368,8 @@ export const change_overlay_colors = {
   ndvi_decrease_crowd_2018_2017: changeLayerColors.mantis,
   ndvi_decrease_2017_2016: changeLayerColors.yellow_pantone,
   ndvi_decrease_crowd_2017_2016: changeLayerColors.yellow_pantone,
-  ndvi_decrease_2016_2015: changeLayerColors.deep_saffron
+  ndvi_decrease_2016_2015: changeLayerColors.deep_saffron,
+  ndvi_decrease_crowd_2016_2015: changeLayerColors.deep_saffron
 };
 
 /*
