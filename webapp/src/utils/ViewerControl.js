@@ -35,7 +35,8 @@ class ViewerControl {
         opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2022_2021"],
-        cached: true
+        wfs: "karten-werk:ndvi_decrease_crowd_2022_2021",
+        cached: false
       },
       {
         layername: "karten-werk:ndvi_decrease_2021_2020",
@@ -89,7 +90,8 @@ class ViewerControl {
         opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2016_2015"],
-        cached: true
+        wfs: "karten-werk:ndvi_decrease_crowd_2016_2015",
+        cached: false
       }
     ];
     this.disorderOverlays = [
