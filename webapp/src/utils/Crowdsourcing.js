@@ -1025,6 +1025,7 @@ class Crowdsourcing {
       selectedFeature.feature.setStyle(this.highlightStyle);
       // make the selected feature the new activeFeature
       this.activeFeature = selectedFeature;
+      window.translator.run();
     });
     return select;
   }
@@ -1177,7 +1178,16 @@ class Crowdsourcing {
    * @returns {htmlElement} - html table.
    */
   createFeaturePropsTable({ props, layer } = {}) {
-    const hiddenAttributes = ["geometry", "id", "fid", "kommentar", "email"];
+    const hiddenAttributes = [
+      "geometry",
+      "id",
+      "fid",
+      "kommentar",
+      "email",
+      "sumdiff",
+      "meandiff",
+      "countdiff"
+    ];
     const keys = Object.keys(props);
     const table = document.createElement("table");
     table.style.borderColor = layer.color;
