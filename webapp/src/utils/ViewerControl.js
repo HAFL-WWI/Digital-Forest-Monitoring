@@ -36,7 +36,7 @@ class ViewerControl {
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2022_2021"],
         wfs: "karten-werk:ndvi_decrease_crowd_2022_2021",
-        cached: false
+        cached: true
       },
       {
         layername: "karten-werk:ndvi_decrease_2021_2020",
@@ -45,7 +45,8 @@ class ViewerControl {
         opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2021_2020"],
-        wfs: "karten-werk:ndvi_decrease_crowd_2021_2020"
+        wfs: "karten-werk:ndvi_decrease_crowd_2021_2020",
+        cached: true
       },
       {
         layername: "karten-werk:ndvi_decrease_2020_2019",
@@ -54,7 +55,8 @@ class ViewerControl {
         opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2020_2019"],
-        wfs: "karten-werk:ndvi_decrease_crowd_2020_2019"
+        wfs: "karten-werk:ndvi_decrease_crowd_2020_2019",
+        cached: true
       },
       {
         layername: "karten-werk:ndvi_decrease_2019_2018",
@@ -63,7 +65,8 @@ class ViewerControl {
         opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2019_2018"],
-        wfs: "karten-werk:ndvi_decrease_crowd_2019_2018"
+        wfs: "karten-werk:ndvi_decrease_crowd_2019_2018",
+        cached: true
       },
       {
         layername: "karten-werk:ndvi_decrease_2018_2017",
@@ -72,7 +75,8 @@ class ViewerControl {
         opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2018_2017"],
-        wfs: "karten-werk:ndvi_decrease_crowd_2018_2017"
+        wfs: "karten-werk:ndvi_decrease_crowd_2018_2017",
+        cached: true
       },
       {
         layername: "karten-werk:ndvi_decrease_2017_2016",
@@ -81,7 +85,8 @@ class ViewerControl {
         opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2017_2016"],
-        wfs: "karten-werk:ndvi_decrease_crowd_2017_2016"
+        wfs: "karten-werk:ndvi_decrease_crowd_2017_2016",
+        cached: true
       },
       {
         layername: "karten-werk:ndvi_decrease_2016_2015",
@@ -91,7 +96,7 @@ class ViewerControl {
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2016_2015"],
         wfs: "karten-werk:ndvi_decrease_crowd_2016_2015",
-        cached: false
+        cached: true
       }
     ];
     this.disorderOverlays = [
