@@ -1027,7 +1027,7 @@ class ViewerControl {
   createCachedLayer(overlay) {
     const cachedLayer = new TileLayer({
       source: new XYZ({
-        url: `http://gwc.hosting.karten-werk.ch/gwc/service/tms/1.0.0/${overlay.layername}/{z}/{x}/{y}.png?flipY=true`
+        url: `https://gwc.hosting.karten-werk.ch/gwc/service/tms/1.0.0/${overlay.layername}/{z}/{x}/{y}.png?flipY=true`
       })
     });
     cachedLayer.name = `${overlay.layername}`;
