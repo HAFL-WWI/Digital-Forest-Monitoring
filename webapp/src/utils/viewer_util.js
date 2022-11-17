@@ -126,7 +126,12 @@ const viewerUtil = {
         );
         viewerUtil.model.map.addControl(basemapSwitch.createBasemapControl());
         viewerUtil.model.map.addControl(vhmControl.createVHMControl());
-        viewerUtil.model.map.addControl(new ScaleLine({ units: "metric" }));
+        viewerUtil.model.map.addControl(
+          new ScaleLine({
+            units: "metric",
+            target: document.getElementsByClassName("ol-attribution")[0]
+          })
+        );
         // add the positioning control
         viewerUtil.model.positioning = new GpsPosition(viewerUtil.model.map);
         const positioning = new Control({

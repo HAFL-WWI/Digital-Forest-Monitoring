@@ -390,7 +390,8 @@ body:after {
   background-color: none;
 }
 .ol-attribution {
-  font-size: 11px;
+  justify-content: space-between !important;
+  min-width: 100%;
 }
 .ol-zoom {
   bottom: 2.1em !important;
@@ -464,7 +465,10 @@ body:after {
   content: "✖";
 }
 .ol-scale-line {
-  background: rgba(214, 214, 214, 0.7) !important;
+  background: none !important;
+  position: unset !important;
+  bottom: unset !important;
+  left: unset !important;
 }
 .ol-scale-line-inner {
   border: 1.25px solid black !important;
