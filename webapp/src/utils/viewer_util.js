@@ -101,8 +101,11 @@ const viewerUtil = {
       if (viewerUtil.model.map === undefined) {
         viewerUtil.model.map = new Map({
           view: new View({
-            center: [urlParams.x || 829300, urlParams.y || 5933555], //defaults to Bern
-            zoom: urlParams.zoom || 13,
+            center: [
+              parseInt(urlParams.x) || 829300,
+              parseInt(urlParams.y) || 5933555
+            ], //defaults to Bern
+            zoom: parseInt(urlParams.zoom) || 13,
             minZoom: 9,
             maxZoom: 20,
             rotation: parseFloat(urlParams.rotation) || 0
