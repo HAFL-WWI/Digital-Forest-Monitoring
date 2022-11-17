@@ -8,13 +8,13 @@
     ]
   },
   "devDependencies": {
-    "@parcel/packager-raw-url": "^2.0.0",
-    "@parcel/transformer-sass": "^2.0.0",
-    "@parcel/transformer-webmanifest": "^2.0.0",
+    "@parcel/packager-raw-url": "^2.8.0",
+    "@parcel/transformer-sass": "^2.8.0",
+    "@parcel/transformer-webmanifest": "^2.8.0",
     "eslint": "^8.0.1",
-    "parcel": "^2.0.0",
+    "parcel": "^2.8.0",
     "prettier": "^2.4.1",
-    "sass": "^1.43.2"
+    "sass": "^1.56.1"
   },
   "scripts": {
     "lint": "eslint src/**/*.js",
@@ -42,9 +42,9 @@
     "@material/top-app-bar": "^4.0.0",
     "@material/typography": "^4.0.0",
     "navigo": "^7.1.2",
-    "ol": "^6.4.3",
-    "proj4": "^2.6.2",
-    "query-string": "^6.13.1"
+    "ol": "^7.1.0",
+    "proj4": "^2.8.0",
+    "query-string": "^7.1.1"
   },
   "comments": {
     "sass": {
