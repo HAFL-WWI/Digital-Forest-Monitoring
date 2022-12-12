@@ -93,10 +93,24 @@ textFieldIcon.listen("click", () => {
 /*
  * init and handle events for the modal dialog
  */
-export const dialog = new MDCDialog(document.querySelector(".mdc-dialog"));
+export const dialog = new MDCDialog(document.getElementById("dialog"));
 document.getElementById("impressum-button").addEventListener("click", () => {
   dialog.open();
   window.translator.run();
+});
+
+export const crowdsourcingdialog = new MDCDialog(
+  document.getElementById("crowdsourcingdialog")
+);
+const crowdsourcingdialogCheckbox = document.getElementById(
+  "crowdsourcingdialog__checkbox"
+);
+crowdsourcingdialogCheckbox.addEventListener("change", () => {
+  if (crowdsourcingdialogCheckbox.checked) {
+    localStorage.setItem("showCrowdsourcingModal", false);
+  } else {
+    localStorage.setItem("showCrowdsourcingModal", true);
+  }
 });
 
 /* event listener to set the map height when browser gets resized.

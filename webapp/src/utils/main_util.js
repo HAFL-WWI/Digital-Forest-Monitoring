@@ -149,6 +149,12 @@ export const getLayerInfo = overlay => {
 export const dialogTitle = document.querySelector("#dialog-title");
 export const dialogContent = document.querySelector("#dialog-content");
 export const searchResults = document.querySelector(".autocomplete");
+export const crowdsourcingdialogTitle = document.querySelector(
+  "#crowdsourcingdialog__title"
+);
+export const crowdsourcingdialogContent = document.querySelector(
+  "#crowdsourcingdialog__content"
+);
 
 /*
  *  set the position of the search result box below the search input.
