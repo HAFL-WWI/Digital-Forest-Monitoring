@@ -11,8 +11,11 @@ import {
   removeVideoLink,
   updateTitle,
   hideHomeButton,
-  showHomeButton
+  showHomeButton,
+  crowdsourcingdialogTitle,
+  crowdsourcingdialogContent
 } from "./main_util";
+import { crowdsourcingdialog } from "./init";
 export const router = new Navigo(null, false, "#");
 export const initRouter = () => {
   router
@@ -37,6 +40,14 @@ export const initRouter = () => {
         });
         viewerUtil.controller.init({ title: "Jährliche Veränderung" });
         positionSearchResultContainer();
+        const showCrowdsourcingModal = localStorage.getItem(
+          "showCrowdsourcingModal"
+        );
+        if (showCrowdsourcingModal !== "false") {
+          crowdsourcingdialogTitle.innerHTML = "Crowdsourcing Info";
+          crowdsourcingdialogContent.innerHTML = "Crowdsourcing Content";
+          crowdsourcingdialog.open();
+        }
       },
       "/stoerungen": () => {
         // we dont't want a short sidebar transition on startup
