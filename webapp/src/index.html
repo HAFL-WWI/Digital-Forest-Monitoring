@@ -131,6 +131,7 @@
     <div class="content"></div>
     <!-- start impressum Dialog -->
     <div
+      id="dialog"
       class="mdc-dialog"
       role="impressum"
       aria-modal="true"
@@ -164,6 +165,56 @@
       <div class="mdc-dialog__scrim"></div>
     </div>
     <!-- end impressum Dialog -->
+    <!-- start crowdsourcing Dialog -->
+    <div
+      id="crowdsourcingdialog"
+      class="mdc-dialog"
+      role="crowdsourcing"
+      aria-modal="true"
+      aria-labelledby="crowdsourcingdialog__title"
+      aria-describedby="crowdsourcingdialog__content"
+    >
+      <div class="mdc-dialog__container">
+        <div class="mdc-dialog__surface">
+          <h2
+            class="mdc-dialog__title"
+            id="crowdsourcingdialog__title"
+            vanilla-i18n="crowdsourcingdialog.title"
+          ></h2>
+          <div
+            class="mdc-dialog__content"
+            id="crowdsourcingdialog__content"
+            vanilla-i18n="crowdsourcingdialog.content"
+          ></div>
+          <section class="crowdsourcingdialog__checkbox mdc-dialog__content">
+            <div>
+              <input
+                type="checkbox"
+                id="crowdsourcingdialog__checkbox"
+                name="crowdsourcingdialog__checkbox"
+              />
+              <label
+                for="crowdsourcingdialog__checkbox"
+                vanilla-i18n="crowdsourcingdialog.checkboxlabel"
+              ></label>
+            </div>
+          </section>
+
+          <footer class="mdc-dialog__actions">
+            <button
+              type="button"
+              class="mdc-button mdc-button--outlined mdc-dialog__button mdc-button-primary"
+              data-mdc-dialog-action="yes"
+              data-mdc-dialog-button-default
+            >
+              <span class="mdc-button__label">OK</span>
+            </button>
+          </footer>
+        </div>
+      </div>
+      <div class="mdc-dialog__scrim"></div>
+    </div>
+    <!-- end crowdsourcing Dialog -->
     <script type="module" src="./index.js" async defer></script>
     <script>
       const languages = ["de", "fr"];
