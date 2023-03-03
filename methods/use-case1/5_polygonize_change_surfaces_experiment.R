@@ -18,12 +18,12 @@ minsize_pixels = round(units::drop_units(minsize) / 100) # 1 pixel = 100 m^2
 # threshold used to be -1000 (until Oct 2022).
 # For raster generation we now use a much less restrictive threshold (-200) to allow threshold adjustements via styling
 # For polygonization, the threshold was updated to -600.
-thrvalue = -200 
+thrvalue = -600
 out_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1"
-years = c("2022_2021","2021_2020","2020_2019","2019_2018","2018_2017","2017_2016", "2016_2015") # all years
-# years = c("2016_2015") # process single year
+# years = c("2022_2021","2021_2020","2020_2019","2019_2018","2018_2017","2017_2016", "2016_2015") # all years
+years = c("2021_2020") # process single year
 previous_suffix = "_Int16_EPSG3857"
-add_suffix = paste0("_NA-", abs(thrvalue))
+add_suffix = paste0("_NA-", abs(thrvalue), "_test")
 
 # use gdal_sieve to remove patches smaller than threshhold before polygonization 
 # (achieving the same result with usually faster computation time!)
@@ -35,7 +35,7 @@ GDAL_SIEVE_OutputRaster = TRUE
 MORPH = FALSE
 
 # skip polygonize
-SKIP_POLYGONIZE = TRUE
+SKIP_POLYGONIZE = FALSE
 
 # init i (will be overwritten if parallelization is "activated" by uncommenting below lines)
 i = 1
@@ -46,9 +46,9 @@ i = 1
 # uncomment the following lines if you want to activate parallelization
 # DON'T FORGET TO UNCOMMENT THE TWO LINES AT THE END OF THE PARALLELIZATION BLOCK
 #------------------------------------------------#
-cl = makeCluster(detectCores() -1)
-registerDoParallel(cl)
-foreach(i=1:length(years), .packages=c("raster", "rgdal", "sf", "exactextractr")) %dopar% {
+# cl = makeCluster(detectCores() -1)
+# registerDoParallel(cl)
+# foreach(i=1:length(years), .packages=c("raster", "rgdal", "sf", "exactextractr")) %dopar% {
   #------------------------------------------------#
   year = years[i]
   in_path = paste0("//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/ndvi_diff_", year, previous_suffix, ".tif")
@@ -57,7 +57,8 @@ foreach(i=1:length(years), .packages=c("raster", "rgdal", "sf", "exactextractr")
   # out shp layer & raster
   lyr = paste0("ndvi_diff_", year, previous_suffix, add_suffix)
   # out_shp = paste0(out_path, "/", lyr, ".shp")
-  out_gpkg = paste0(out_path, "/", lyr, ".gpkg")
+  out_unfiltered_gpkg = file.path(out_path, "temp", paste0(lyr, "_temp.gpkg")) # output of polygonize
+  out_filtered_gpkg = file.path(out_path, paste0(lyr, ".gpkg")) # output after filtering and adding attributes 
   out_ras_name = paste0(lyr,  ".tif")
   out_ras = paste0(out_path,"/",out_ras_name)
   out_mask_name = paste0(lyr,"_mask.tif")
@@ -141,11 +142,11 @@ foreach(i=1:length(years), .packages=c("raster", "rgdal", "sf", "exactextractr")
     # raster to polygon
     print("raster to polygon...")
     # system(paste("gdal_polygonize.py", out_mask, out_shp, sep=" "))
-    system(paste("gdal_polygonize.py", out_mask, out_gpkg, sep=" "))
+    system(paste("gdal_polygonize.py", out_mask, out_unfiltered_gpkg, sep=" "))
     
     print(paste0("calculate area and filter polygons smaller than minsize = ", minsize, " m^2"))
     # diffmask_sf = read_sf(out_shp)
-    diffmask_sf = read_sf(out_gpkg)
+    diffmask_sf = read_sf(out_unfiltered_gpkg)
     # calculate area
     diffmask_sf$area = diffmask_sf$area <- round(st_area(diffmask_sf))
     #filter out surfaces smaller than min. size
@@ -157,27 +158,37 @@ foreach(i=1:length(years), .packages=c("raster", "rgdal", "sf", "exactextractr")
     print("calculate attributes per polygon...")
     diff_raster = raster(in_path)
     print(Sys.time() - start_time)
-    
+      
     print("calculate meandiff per polygon...")
+    start_time_attr = Sys.time()
     meandiff = exact_extract(diff_raster, diffmask_sf, 'mean')
     # prettify values (raster values were multiplied by 10000 to be stored as int)
     diffmask_sf$meandiff <- round(meandiff/10000, 3)
-    print(Sys.time() - start_time)
+    print(Sys.time() - start_time_attr)
     
     print("calculate sumdiff per polygon...")
+    start_time_attr = Sys.time()
     sumdiff = exact_extract(diff_raster, diffmask_sf, 'sum')
     diffmask_sf$sumdiff <- round(sumdiff/10000, 3)
-    print(Sys.time() - start_time)
+    print(Sys.time() - start_time_attr)
+    
+    print("calculate mindiff per polygon...")
+    start_time_attr = Sys.time()
+    mindiff = exact_extract(diff_raster, diffmask_sf, 'min')
+    diffmask_sf$mindiff <- round(mindiff/10000, 3)
+    print(Sys.time() - start_time_attr)
     
     print("calculate maxdiff per polygon...")
+    start_time_attr = Sys.time()
     maxdiff = exact_extract(diff_raster, diffmask_sf, 'max')
     diffmask_sf$maxdiff <- round(maxdiff/10000, 3)
-    print(Sys.time() - start_time)
+    print(Sys.time() - start_time_attr)
     
     print("count diff pixels per polygon...")
+    start_time_attr = Sys.time()
     countdiff = exact_extract(diff_raster, diffmask_sf, 'count')
     diffmask_sf$countdiff <- round(countdiff, 3)
-    print(Sys.time() - start_time)
+    print(Sys.time() - start_time_attr)
     
     # drop first column
     diffmask_sf = diffmask_sf[,-1]
@@ -188,7 +199,7 @@ foreach(i=1:length(years), .packages=c("raster", "rgdal", "sf", "exactextractr")
     # st_write(diffmask_sf, file.path(out_path, paste0(lyr, ".shp")), delete_dsn = T )
     
     print("save geopackage...")
-    st_write(diffmask_sf, file.path(out_path, paste0(lyr, ".gpkg")) )
+    st_write(diffmask_sf, out_filtered_gpkg)
   }
   
   print("DONE")
@@ -196,6 +207,6 @@ foreach(i=1:length(years), .packages=c("raster", "rgdal", "sf", "exactextractr")
   
   #------------------------------------------------#
   # uncomment the following two lines for parallelization (closes loop)
-}
-stopCluster(cl)
+# }
+# stopCluster(cl)
 #------------------------------------------------#
