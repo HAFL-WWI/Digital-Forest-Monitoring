@@ -16,8 +16,8 @@ source("use-case2/build_polygons.R")
 # P:\LFE\HAFL\WWI-Sentinel-2\Use-Cases\Use-Case2\2023-02_Sturm_VD\S2data\sen2R_output
 # P:\LFE\HAFL\WWI-Sentinel-2\Use-Cases\Use-Case2\2023-02_Sturm_VD\S2data
 # P:\LFE\HAFL\WWI-Sentinel-2\Use-Cases\Use-Case2\2023-02_Sturm_VD\S2data
-# BASE_PATH = "/mnt/smb.hdd.rbd/" # on bfh-science cluster
-BASE_PATH = "P:/LFE" # on HARA/Windows
+BASE_PATH = "/mnt/smb.hdd.rbd/" # on bfh-science cluster
+# BASE_PATH = "P:/LFE" # on HARA/Windows
 
 
 # define paths
@@ -37,8 +37,10 @@ comp_path = dir_exist_create(out_path,"nbr_comp/")
 diff_path = dir_exist_create(out_path,"nbr_diff/")
 
 # parameters
-tile = "T31TGm"
+tile = "T31TGM"
+tile = "T32TLS"
 thr = 0.99
+# for scene classification SCL
 cloud_vec = c(3,7:10)
 cloud_value = -999
 nodata_vec = c(0:2,5,6,11)
@@ -46,14 +48,16 @@ nodata_value = -555
 
 # get dates
 stack_path = main_path
-B8Names = list.files(stack_path, pattern="B08_10m", recursive=T)
+B8Names = list.files(stack_path, pattern=paste0("(", tile, ").*(B08_10m)"), recursive=T)
 dates_all = as.Date(substring(lapply(strsplit(B8Names,"_"), "[[", 3),1,8), format = "%Y%m%d")
-dates_for_comp = dates_all[1:12]
+# take all dates except for the last one
+# this assumes that only one image is after the storm (!)
+dates_for_comp = dates_all[1:(length(dates_all)-1)]
 
 # build stacks
-b8 = list.files(stack_path, pattern="B08_10m", recursive=T, full.names=T)[1:12]
-b12 = list.files(stack_path, pattern="B12_20m", recursive=T, full.names=T)[1:12]
-b4 = list.files(stack_path, pattern="B04_10m", recursive=T, full.names=T)[1:12]
+b8 = list.files(stack_path, pattern=paste0("(", tile, ").*(B08_10m)"), recursive=T, full.names=T)[1:(length(dates_all)-1)]
+b12 = list.files(stack_path, pattern=paste0("(", tile, ").*(B12_20m)"), recursive=T, full.names=T)[1:(length(dates_all)-1)]
+b4 = list.files(stack_path, pattern=paste0("(", tile, ").*(B04_10m)"), recursive=T, full.names=T)[1:(length(dates_all)-1)]
 stk_b8 = stack(b8)
 stk_b4 = stack(b4)
 
@@ -70,13 +74,13 @@ writeRaster(comp_tmp, paste(comp_path,comp_tmp_name,".tif",sep=""), overwrite=T,
 
 ###################################################################################################
 # calc NBR of image after storm
-B8Names = list.files(stack_path, pattern="B08_10m", recursive=T, full.names = T)[13]
-B12Names = list.files(stack_path, pattern="B12_20m", recursive=T, full.names = T)[13]
-sclNames = list.files(stack_path, pattern="SCL_20m", recursive=T, full.names = T)[13]
+B8Names = list.files(stack_path, pattern=paste0("(", tile, ").*(B08_10m)"), recursive=T, full.names = T)[length(dates_all)]
+B12Names = list.files(stack_path, pattern=paste0("(", tile, ").*(B12_20m)"), recursive=T, full.names = T)[length(dates_all)]
+sclNames = list.files(stack_path, pattern=paste0("(", tile, ").*(SCL_20m)"), recursive=T, full.names = T)[length(dates_all)]
 
-filesB8 = list.files(stack_path, pattern="B08_10m", recursive=T, full.names = F)[13]
+filesB8 = list.files(stack_path, pattern=paste0("(", tile, ").*(B08_10m)"), recursive=T, full.names = F)[length(dates_all)]
 
-# calculate indices
+# load rasters (upsample 20 m to 10 m raster)
 b8 = raster(B8Names)
 b12 = disaggregate(raster(B12Names),2)
 scl = disaggregate(raster(sclNames),2)
