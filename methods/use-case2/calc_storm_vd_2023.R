@@ -1,3 +1,4 @@
+# configured for use on bfh.science R container
 setwd("~/Digital-Forest-Monitoring/methods")
 
 # load packages
@@ -11,13 +12,24 @@ source("general/calc_veg_indices.R")
 source("general/calc_max_composite.R")
 source("use-case2/build_polygons.R")
 
+
+# P:\LFE\HAFL\WWI-Sentinel-2\Use-Cases\Use-Case2\2023-02_Sturm_VD\S2data\sen2R_output
+# P:\LFE\HAFL\WWI-Sentinel-2\Use-Cases\Use-Case2\2023-02_Sturm_VD\S2data
+# P:\LFE\HAFL\WWI-Sentinel-2\Use-Cases\Use-Case2\2023-02_Sturm_VD\S2data
+# BASE_PATH = "/mnt/smb.hdd.rbd/" # on bfh-science cluster
+BASE_PATH = "P:/LFE" # on HARA/Windows
+
+
 # define paths
-main_path = "/mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Sturm_ZG"
-main_path = "/mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Sturm_ZG"
-out_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case2/Sturm_ZG_2021/"
-mask_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/general/swissTLM3D_Wald/Wald_wgs84.tif"
+# main_path = "/mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Sturm_ZG"
+main_path = file.path(BASE_PATH, "HAFL/WWI-Sentinel-2/Use-Cases/Use-Case2/2023-02_Sturm_VD/S2data")
+# out_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case2/Sturm_ZG_2021/"
+out_path = file.path(BASE_PATH, "HAFL/WWI-Sentinel-2/Use-Cases/Use-Case2/2023-02_Sturm_VD/results")
+# mask_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/general/swissTLM3D_Wald/Wald_wgs84.tif"
+mask_path = file.path(BASE_PATH, "HAFL/WWI-Sentinel-2/Use-Cases/general/swissTLM3D_Wald/Wald_wgs84.tif")
 shp_path = out_path
 
+# create folders
 nbr_path = dir_exist_create(out_path,"nbr/")
 nbr_raw_path = dir_exist_create(out_path,"nbr_raw/")
 ndvi_raw_path = dir_exist_create(out_path,"ndvi_raw/")
@@ -25,7 +37,7 @@ comp_path = dir_exist_create(out_path,"nbr_comp/")
 diff_path = dir_exist_create(out_path,"nbr_diff/")
 
 # parameters
-tile = "T32TMT"
+tile = "T31TGm"
 thr = 0.99
 cloud_vec = c(3,7:10)
 cloud_value = -999
