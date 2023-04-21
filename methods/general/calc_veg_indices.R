@@ -9,6 +9,7 @@ calc_veg_indices <- function(stk_1, stk_2, out_path, dates, veg_ind="NDVI", tile
   
   # load packages
   library(raster)
+  # library(terra)
   library(doParallel)
   
   # filter bands and dates
