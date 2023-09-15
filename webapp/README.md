@@ -30,6 +30,12 @@ Under windows you can do this like so:
 - add an entry: `127.0.0.1 app.karten-werk.ch`
 - Select File > Save to save your changes.
 
+### Translations
+
+This site is available in german and french. Translation texts can be managed [here](https://docs.google.com/spreadsheets/d/1ouSogLBySSER3bi8pEuHVdi3-ODx-K1GzYSIp57EmmU/edit?usp=sharing)
+
+If you change the translation texts in the google sheet, you have to recreate the corresponding json files. This can be done with this service. [https://github.com/thealphadollar/vanilla-i18n/blob/master/csv_to_vanilla-i18n/csv_to_vanilla_i18.py](https://github.com/thealphadollar/vanilla-i18n/blob/master/csv_to_vanilla-i18n/csv_to_vanilla_i18.py)
+
 ### Installing
 
 While in the newly created folder, install all the dependencies.
