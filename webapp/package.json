@@ -19,9 +19,9 @@
   "scripts": {
     "lint": "eslint src/**/*.js",
     "start": "parcel serve ./src/index.html --open",
-    "prebuild": "rm -rf ./dist && rm -rf ./.parcel-cache",
+    "prebuild": "rm -rf ./dist & rm -rf ./.parcel-cache",
     "build": "parcel build src/index.html",
-    "postbuild": "cp -r static/ dist/",
+    "postbuild": "cp -a static/. dist/",
     "winPrebuild": "rd /s /q dist .parcel-cache>nul 2>&1|echo.>nul",
     "winBuild": "parcel build src/index.html",
     "winPostbuild": "@powershell Copy-Item -Path static/* -Destination dist -Recurse -PassThru",
