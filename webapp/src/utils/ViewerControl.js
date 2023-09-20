@@ -29,6 +29,16 @@ class ViewerControl {
     this.urlParams = urlParams;
     this.changeOverlays = [
       {
+        layername: "karten-werk:ndvi_decrease_2023_2022",
+        displayName: "Juni 2022 - Juni 2023",
+        visible: true,
+        opacity: 0.9,
+        toc: false,
+        color: change_overlay_colors["ndvi_decrease_2016_2015"],
+        wfs: "karten-werk:ndvi_decrease_crowd_2023_2022",
+        cached: true
+      },
+      {
         layername: "karten-werk:ndvi_decrease_2022_2021",
         displayName: "Juni 2021 - Juni 2022",
         visible: true,
@@ -167,6 +177,7 @@ class ViewerControl {
       { number: "12-01", text: "Dez/Jan" }
     ];
     this.vitalityLayers = [
+      { year: "2023", month: this.month.slice(5, 8), layers: [] },
       { year: "2022", month: this.month.slice(5, 8), layers: [] },
       { year: "2021", month: this.month.slice(5, 8), layers: [] },
       { year: "2020", month: this.month.slice(5, 8), layers: [] },
@@ -619,9 +630,8 @@ class ViewerControl {
    * @returns {htmlElement} - dropdown menu with layers to choose.
    */
   createLayerDropdown({ tocLayers, callback }) {
-    const { dropdownContainer, mdcSelect } = this.createMDCDropdown(
-      "Layer hinzufügen"
-    );
+    const { dropdownContainer, mdcSelect } =
+      this.createMDCDropdown("Layer hinzufügen");
     if (!callback) {
       callback = event => {
         const layer = tocLayers.filter(
@@ -655,9 +665,8 @@ class ViewerControl {
    * @returns {domElement} dropdown menu with years to choose.
    */
   createVitalityDropdown(years, chipsetEl) {
-    const { dropdownContainer, mdcSelect } = this.createMDCDropdown(
-      "Jahr wählen"
-    );
+    const { dropdownContainer, mdcSelect } =
+      this.createMDCDropdown("Jahr wählen");
     // create all potential layers
     this.vitalityLayers.forEach(element => {
       element.month.forEach(month => {

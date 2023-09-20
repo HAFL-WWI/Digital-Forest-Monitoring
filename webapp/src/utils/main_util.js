@@ -362,6 +362,8 @@ const changeLayerColors = {
 };
 
 export const change_overlay_colors = {
+  ndvi_decrease_2023_2022: changeLayerColors.deep_saffron,
+  ndvi_decrease_crowd_2023_2022: changeLayerColors.deep_saffron,
   ndvi_decrease_2022_2021: changeLayerColors.cg_red,
   ndvi_decrease_crowd_2022_2021: changeLayerColors.cg_red,
   ndvi_decrease_2021_2020: changeLayerColors.dark_orchid,
