@@ -38,37 +38,42 @@ const homepageUtil = {
         image: useCase1Image,
         imageWebp: useCase1ImageWebp,
         title: "Jährliche Veränderung",
+        state: "productive",
         route: "/veraenderung"
       },
       stoerung: {
         image: useCase2Image,
         imageWebp: useCase2ImageWebp,
         title: "Test Sommersturmschäden",
+        state: "test",
         route: "/stoerungen"
       },
       vitalitaet: {
         image: useCase3Image,
         imageWebp: useCase3ImageWebp,
         title: "Hinweiskarten zur Vitalität",
+        state: "productive",
         route: "/vitalitaet"
       },
       verjuengung: {
         image: useCase4Image,
         imageWebp: useCase4ImageWebp,
         title: "Hinweiskarten zur Verjüngung",
-
+        state: "test",
         route: "/verjuengung"
       },
       geodienste: {
         image: geoservices,
         imageWebp: geoservicesWebp,
         title: "Geodienste",
+        state: "productive",
         route: "/services"
       },
       wiki: {
         image: wikiImage,
         imageWebp: wikiImageWebp,
         title: "Waldmonitoring Wiki",
+        state: "productive",
         route: "https://wiki.waldmonitoring.ch/index.php/Hauptseite"
       }
     }
@@ -164,9 +169,18 @@ const homepageUtil = {
      @returns {HTMLElement} cell - a single grid cell containing a card Element.
     */
     createCard: ({ key, attributes }) => {
-      const { image, imageWebp, title, route } = attributes;
+      const { image, imageWebp, title, state, route } = attributes;
       const cell = document.createElement("div");
       const card = document.createElement("div");
+      if (state === "test") {
+        card.classList.add("test");
+        const ribbon = document.createElement("div");
+        ribbon.classList.add("ribbon");
+        const ribbonText = document.createElement("span");
+        ribbonText.innerText = "test";
+        ribbon.appendChild(ribbonText);
+        card.appendChild(ribbon);
+      }
       const cardPrimaryAction = document.createElement("div");
       const cardMedia = document.createElement("div");
       const picture = document.createElement("picture");

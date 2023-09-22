@@ -49,23 +49,57 @@ body {
 i.mdc-text-field__icon:focus {
   outline-width: 0;
 }
-body:after {
-  content: "Test";
-  z-index: 10;
-  position: fixed;
-  width: 80px;
-  height: 25px;
-  background: red;
-  top: 7px;
-  left: -20px;
-  text-align: center;
-  font-size: 14px;
-  font-family: sans-serif;
-  text-transform: uppercase;
+.test {
+  position: relative;
+}
+.ribbon {
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  z-index: 1;
+  overflow: hidden;
+  width: 75px;
+  height: 75px;
+}
+.ribbon span {
+  font-size: 12px;
   font-weight: bold;
   color: #fff;
-  line-height: 27px;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 20px;
   transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+  width: 100px;
+  display: block;
+  background: #8f0808;
+  background: linear-gradient(#f70505 0%, #8f0808 100%);
+  box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+  position: absolute;
+  top: 19px;
+  left: -21px;
+}
+.ribbon span::before {
+  content: "";
+  position: absolute;
+  left: 0px;
+  top: 100%;
+  z-index: -1;
+  border-left: 3px solid #8f0808;
+  border-right: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  border-top: 3px solid #8f0808;
+}
+.ribbon span::after {
+  content: "";
+  position: absolute;
+  right: 0px;
+  top: 100%;
+  z-index: -1;
+  border-left: 3px solid transparent;
+  border-right: 3px solid #8f0808;
+  border-bottom: 3px solid transparent;
+  border-top: 3px solid #8f0808;
 }
 .top-app-bar {
   align-items: center;
