@@ -53,53 +53,30 @@ i.mdc-text-field__icon:focus {
   position: relative;
 }
 .ribbon {
-  position: absolute;
-  left: -5px;
-  top: -5px;
-  z-index: 1;
+  width: 150px;
+  height: 150px;
   overflow: hidden;
-  width: 75px;
-  height: 75px;
+  position: absolute;
+  z-index: 1;
 }
 .ribbon span {
-  font-size: 12px;
+  position: absolute;
+  display: block;
+  width: 225px;
+  padding: 8px 0;
+  background-color: #f9aa33;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  color: #000;
   font-weight: bold;
-  color: #fff;
+  font-size: 16px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
   text-transform: uppercase;
   text-align: center;
-  line-height: 20px;
+}
+.ribbon-top-left span {
+  right: -25px;
+  top: 45px;
   transform: rotate(-45deg);
-  -webkit-transform: rotate(-45deg);
-  width: 100px;
-  display: block;
-  background: #8f0808;
-  background: linear-gradient(#f70505 0%, #8f0808 100%);
-  box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
-  position: absolute;
-  top: 19px;
-  left: -21px;
-}
-.ribbon span::before {
-  content: "";
-  position: absolute;
-  left: 0px;
-  top: 100%;
-  z-index: -1;
-  border-left: 3px solid #8f0808;
-  border-right: 3px solid transparent;
-  border-bottom: 3px solid transparent;
-  border-top: 3px solid #8f0808;
-}
-.ribbon span::after {
-  content: "";
-  position: absolute;
-  right: 0px;
-  top: 100%;
-  z-index: -1;
-  border-left: 3px solid transparent;
-  border-right: 3px solid #8f0808;
-  border-bottom: 3px solid transparent;
-  border-top: 3px solid #8f0808;
 }
 .top-app-bar {
   align-items: center;

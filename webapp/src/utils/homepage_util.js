@@ -175,7 +175,7 @@ const homepageUtil = {
       if (state === "test") {
         card.classList.add("test");
         const ribbon = document.createElement("div");
-        ribbon.classList.add("ribbon");
+        ribbon.classList.add("ribbon", "ribbon-top-left");
         const ribbonText = document.createElement("span");
         ribbonText.innerText = "test";
         ribbon.appendChild(ribbonText);
