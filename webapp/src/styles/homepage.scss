@@ -11,6 +11,56 @@
   font-size: 0.8em;
   padding: 28px;
 }
+.cookiedisclaimer {
+  transform-origin: bottom;
+  transition: transform 0.3s ease-out;
+  background-color: #344955;
+  bottom: 0;
+  color: white;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 50px;
+  left: 0;
+  padding: 8px;
+  position: fixed;
+  width: 100%;
+  z-index: 5;
+}
+.cookiedisclaimer__text {
+  max-width: 1300px;
+}
+.cookiedisclaimer__link {
+  color: #f9aa33;
+}
+.mdc-secondary--button {
+  @include mdc-button-filled-accessible($mdc-theme-secondary);
+}
+.cookiedisclaimer {
+  transform-origin: bottom;
+  transition: transform 0.3s ease-out;
+  background-color: #344955;
+  bottom: 0;
+  color: white;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 50px;
+  left: 0;
+  padding: 8px;
+  position: fixed;
+  width: 100%;
+  z-index: 5;
+}
+.cookiedisclaimer__text {
+  max-width: 1300px;
+}
+.cookiedisclaimer__link {
+  color: #f9aa33;
+}
+
 /*
  * Media Queries
  * Extra small devices (portrait phones, less than 576px)
@@ -46,5 +96,12 @@
   .jumbotron__text {
     font-size: 1.8em;
     padding: 60px;
+  }
+}
+
+// Extra large devices (large desktops, 1200px and up)
+@media (max-width: 1358px) {
+  .cookiedisclaimer__text {
+    padding-bottom: 12px;
   }
 }

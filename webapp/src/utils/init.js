@@ -125,3 +125,14 @@ window.addEventListener("resize", () => {
  */
 const sidebarClose = document.querySelector(".sidebar__close");
 sidebarClose.addEventListener("click", closeSidebar);
+
+/*
+ * event listener to close the cookie disclaimer
+ */
+const cookiedisclaimerButton = document.getElementById(
+  "cookiedisclaimer__button"
+);
+const cookiedisclaimer = document.querySelector(".cookiedisclaimer");
+cookiedisclaimerButton.addEventListener("click", e => {
+  cookiedisclaimer.style.transform = "scaleY(0)";
+});
