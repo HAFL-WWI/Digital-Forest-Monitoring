@@ -12,16 +12,35 @@ library(exactextractr) # replaces velox (fast raster extraction)
 library(foreach)
 library(doParallel)
 
+
+#-----------------------------------------#
+####               SETTINGS            ####
+#-----------------------------------------#
+# define years here
+prevyear = "2022"
+curryear = "2023"
+
+# years = c("2022_2021","2021_2020","2020_2019","2019_2018","2018_2017","2017_2016", "2016_2015") # all years
+years = c(paste0(curryear, "_", prevyear)) # process single year
+
+#-----------------------------------------#
+####           DEFAULT SETTINGS        ####
+#-----------------------------------------#
+basepath = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1"
+ch_shp = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/general/swissBOUNDARIES3D/swissBOUNDARIES3D_1_1_TLM_LANDESGEBIET.shp"
+forest_mask = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/general/swissTLM3D_Wald/Wald_LV95_rs.tif" 
+
+# crs to project into
+crs = "EPSG:3857"
+
 # parameters
 minsize = units::set_units(399, m^2) # default is >399 (>= 400), but may be increased as threshold is lowered (e.g. 499 for thr=-600)
 minsize_pixels = round(units::drop_units(minsize) / 100) # 1 pixel = 100 m^2 
 # threshold used to be -1000 (until Oct 2022).
 # For raster generation we now use a much less restrictive threshold (-200) to allow threshold adjustements via styling
 # For polygonization, the threshold was updated to -600.
-thrvalue = -200 
-out_path = "//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1"
-years = c("2022_2021","2021_2020","2020_2019","2019_2018","2018_2017","2017_2016", "2016_2015") # all years
-# years = c("2016_2015") # process single year
+thrvalue = -250 
+out_path = basepath
 previous_suffix = "_Int16_EPSG3857"
 add_suffix = paste0("_NA-", abs(thrvalue))
 
@@ -46,12 +65,14 @@ i = 1
 # uncomment the following lines if you want to activate parallelization
 # DON'T FORGET TO UNCOMMENT THE TWO LINES AT THE END OF THE PARALLELIZATION BLOCK
 #------------------------------------------------#
-cl = makeCluster(detectCores() -1)
-registerDoParallel(cl)
-foreach(i=1:length(years), .packages=c("raster", "rgdal", "sf", "exactextractr")) %dopar% {
+# cl = makeCluster(detectCores() -1)
+# registerDoParallel(cl)
+# foreach(i=1:length(years), .packages=c("raster", "rgdal", "sf", "exactextractr")) %dopar% {
 #------------------------------------------------#
+
+  #### >> generate paths ####
   year = years[i]
-  in_path = paste0("//mnt/smb.hdd.rbd/HAFL/WWI-Sentinel-2/Use-Cases/Use-Case1/ndvi_diff_", year, previous_suffix, ".tif")
+  in_path = file.path(basepath, paste0("ndvi_diff_", year, previous_suffix, ".tif"))
   start_time <- Sys.time()
   
   # out shp layer & raster
@@ -62,6 +83,8 @@ foreach(i=1:length(years), .packages=c("raster", "rgdal", "sf", "exactextractr")
   out_ras = paste0(out_path,"/",out_ras_name)
   out_mask_name = paste0(lyr,"_mask.tif")
   out_mask = file.path(out_path,"temp",out_mask_name)
+  
+  #### >> processing ####
   
   # create binary mask & raster for WMS publication (values > thrvalue auf NA)
   print(paste0("raster for WMS/WCS publication (values < ", thrvalue, " => NA)..."))
@@ -196,6 +219,6 @@ foreach(i=1:length(years), .packages=c("raster", "rgdal", "sf", "exactextractr")
 
 #------------------------------------------------#
 # uncomment the following two lines for parallelization (closes loop)
-}
-stopCluster(cl)
+# }
+# stopCluster(cl)
 #------------------------------------------------#
