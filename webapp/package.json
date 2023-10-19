@@ -8,13 +8,13 @@
     ]
   },
   "devDependencies": {
-    "@parcel/packager-raw-url": "^2.8.0",
-    "@parcel/transformer-sass": "^2.8.0",
-    "@parcel/transformer-webmanifest": "^2.8.0",
-    "eslint": "^8.0.1",
-    "parcel": "^2.8.0",
+    "@parcel/packager-raw-url": "^2.10.0",
+    "@parcel/transformer-sass": "^2.10.0",
+    "@parcel/transformer-webmanifest": "^2.10.0",
+    "eslint": "^8.51.0",
+    "parcel": "^2.10.0",
     "prettier": "^2.4.1",
-    "sass": "^1.56.1"
+    "sass": "^1.69.4"
   },
   "scripts": {
     "lint": "eslint src/**/*.js",
