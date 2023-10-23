@@ -27,7 +27,7 @@ const servicesUtil = {
       wmts: {
         title: "Web Map Tile Service (WMTS)",
         serviceUrl:
-          "https://geoserver.karten-werk.ch/gwc/service/wmts?request=getCapabilities",
+          "https://gwc.hosting.karten-werk.ch/gwc/service/wmts?REQUEST=getCapabilities",
         videoUrl: "https://www.youtube.com/embed/g7t_tz2OJpg"
       },
       wfs: {
