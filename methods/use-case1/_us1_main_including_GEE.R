@@ -300,14 +300,14 @@ input[-1] %>% setNames(lapply(., function(x) dim(get(x))), .)
 
 # for each geodata input xyz make bounding box as sfc object bb_xyz
 for(i in input){
-  assign(paste0("bb_", i), get(i) %>% st_bbox() %>% st_as_sfc())
+  assign(paste0("bb_", i), get(i) %>% st_bbox() %>% st_as_sfc() %>% st_sf())
 }
 
 # map swiss boundaries + all bb_xyz
 m_poly_ch_boundaries <- mapview(ch_boundaries, lwd = 0.5, layer.name = "polygon ch_boundaries", native.crs = TRUE)
-m_bb_ch_boundaries   <- mapview(bb_ch_boundaries, lwd = 5, color = "cyan", alpha.regions = 0, layer.name = "bb ch_boundaries", native.crs = TRUE)
-m_bb_forest_mask     <- mapview(bb_forest_mask, lwd = 2, color = "yellow", alpha.regions = 0, layer.name = "bb forest_mask", native.crs = TRUE)
-m_bb_ndvi_max_diff   <- mapview(bb_ndvi_max_diff, lwd = 2, color = "magenta", alpha.regions = 0, layer.name = "bb ndvi_max_diff", native.crs = TRUE)
+m_bb_ch_boundaries   <- mapview(bb_ch_boundaries, lwd = 5, color = "cyan", col.region = "cyan", alpha.regions = 0, layer.name = "bb ch_boundaries", native.crs = TRUE)
+m_bb_forest_mask     <- mapview(bb_forest_mask, lwd = 2, color = "yellow", col.region = "yellow",alpha.regions = 0, layer.name = "bb forest_mask", native.crs = TRUE)
+m_bb_ndvi_max_diff   <- mapview(bb_ndvi_max_diff, lwd = 2, color = "magenta", col.region = "magenta", alpha.regions = 0, layer.name = "bb ndvi_max_diff", native.crs = TRUE)
 m_poly_ch_boundaries + m_bb_ch_boundaries + m_bb_forest_mask + m_bb_ndvi_max_diff
 
 #-------------------------------------------------------------------------------#
