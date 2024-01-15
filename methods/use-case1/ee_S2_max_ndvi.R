@@ -18,8 +18,10 @@ ee_S2_max_ndvi <- function(year, ee_aoi = aoi, path_base = path_use_case_1){
   date_start <- paste0(year, '-06-01')
   date_end   <- paste0(year, '-09-01')
   
-  # Sentine-2 imagery --> S2 for L1C, S2_SR for L2A
-  S2 <- ee$ImageCollection('COPERNICUS/S2')$
+  # Sentine-2 imagery --> S2 (for L1C), S2_SR (for L2A)
+  # data after 25.01.2022 is incompatible due to the processing baseline update 04.00
+  # use S2_HARMONIZED (L1C) or S2_SR_HARMONIZED (L2A), which remove the baseline offset
+  S2 <- ee$ImageCollection('COPERNICUS/S2_HARMONIZED')$
     filterDate(date_start, date_end)$
     filterBounds(ee_aoi)
   
