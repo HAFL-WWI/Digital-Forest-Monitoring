@@ -41,6 +41,20 @@ const servicesUtil = {
         serviceUrl:
           "https://geoserver.karten-werk.ch/wcs?request=GetCapabilities",
         videoUrl: "https://www.youtube.com/embed/0nzgaLhqFGU"
+      },
+      cog: {
+        title: "Cloud Optimized GeoTIFF (COG)",
+        serviceUrl: [
+          "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2016_2015_Int16.tif",
+          "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2017_2016_Int16.tif",
+          "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2018_2017_Int16.tif",
+          "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2019_2018_Int16.tif",
+          "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2020_2019_Int16.tif",
+          "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2021_2020_Int16.tif",
+          "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2022_2021_Int16.tif",
+          "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2023_2022_Int16.tif"
+        ],
+        videoUrl: "https://www.youtube.com/embed/0nzgaLhqFGU"
       }
     }
   },
@@ -120,6 +134,35 @@ const servicesUtil = {
       return jumbotron;
     },
     /*
+     * creates the service link.
+     * @param {object} params - object with function parameters.
+     * @param {string} params.title - the title of the service.
+     * @param {string} params.serviceUrl - the url of the service.
+     * @returns {HTMLElement} serviceLink - a textarea containing the service url.
+     */
+    createServiceLink: ({ title, serviceUrl }) => {
+      const serviceLink = document.createElement("textarea");
+      serviceLink.id = `${title}_textarea`;
+      serviceLink.value = serviceUrl;
+      serviceLink.style.fontSize = "14px";
+      serviceLink.style.width = "100%";
+      return serviceLink;
+    },
+    /*
+     * creates a cog link.
+     * @param {string} url - the url to display.
+     * @returns {HTMLElement} listItem - a list item containing the url.
+     */
+    createCogLink: url => {
+      const listItem = document.createElement("li");
+      listItem.style.padding = "4px 0";
+      const link = document.createElement("a");
+      link.href = url;
+      link.innerHTML = url;
+      listItem.appendChild(link);
+      return listItem;
+    },
+    /*
      creates a html card element.
      @param {object} params - object with function parameters.
      @param {string} params.image - path to the card image.
@@ -158,11 +201,28 @@ const servicesUtil = {
       serviceTitle.setAttribute("for", `${title}_textarea`);
       serviceTitle.style.margin = "0 0 8px 0";
       serviceTitle.innerHTML = "URL:";
-      const serviceLink = document.createElement("textarea");
-      serviceLink.id = `${title}_textarea`;
-      serviceLink.value = serviceUrl;
-      serviceLink.style.fontSize = "14px";
-      serviceLink.style.width = "100%";
+      let serviceLink;
+      switch (key) {
+        case "cog":
+          serviceLink = document.createElement("ul");
+          serviceLink.style.fontSize = "12px";
+          serviceLink.style.margin = "0";
+          serviceLink.style.padding = "0 0 0 16px";
+          serviceLink.style.wordBreak = "break-all";
+          serviceUrl.forEach(url => {
+            const link = servicesUtil.view.createCogLink(url);
+            serviceLink.appendChild(link);
+          });
+
+          break;
+        default:
+          serviceLink = servicesUtil.view.createServiceLink({
+            title,
+            serviceUrl
+          });
+          break;
+      }
+
       cardActions.appendChild(serviceTitle);
       cardActions.appendChild(serviceLink);
       const cardActionButtons = document.createElement("div");
