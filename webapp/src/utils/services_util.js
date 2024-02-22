@@ -54,7 +54,7 @@ const servicesUtil = {
           "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2022_2021_Int16.tif",
           "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2023_2022_Int16.tif"
         ],
-        videoUrl: "https://www.youtube.com/embed/0nzgaLhqFGU"
+        videoUrl: "https://www.youtube.com/embed/xWGaXfUNhv4"
       }
     }
   },
