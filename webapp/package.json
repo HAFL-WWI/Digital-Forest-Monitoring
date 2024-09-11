@@ -44,7 +44,7 @@
     "navigo": "^7.1.2",
     "ol": "^7.1.0",
     "proj4": "^2.12.1",
-    "query-string": "^7.1.1"
+    "query-string": "^9.1.0"
   },
   "comments": {
     "sass": {
