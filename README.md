@@ -15,7 +15,7 @@ This is a research project of the BFH-HAFL on behalf of or with the support of t
 ## Authors (in alphabetical order)
 
 - Alexandra Erbach (HAFL)
-- Attilio Benini(HAFL)
+- Attilio Benini (HAFL)
 - Christian Rosset (HAFL)
 - Dominique Weber (WSL)
 - Hannes Horneber (HAFL)
