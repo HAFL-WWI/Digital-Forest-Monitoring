@@ -1,7 +1,7 @@
 # Digital-Forest-Monitoring
 
 ### Forest monitoring remote sensing methods.
-Contact: Dominique Weber and Alexandra Erbach (BFH-HAFL)
+Contact: Hannes Horneber (BFH-HAFL)
 
 ## Data sources
 
