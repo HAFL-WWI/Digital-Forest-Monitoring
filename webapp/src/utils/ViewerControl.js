@@ -29,6 +29,16 @@ class ViewerControl {
     this.urlParams = urlParams;
     this.changeOverlays = [
       {
+        layername: "karten-werk:ndvi_decrease_2024_2023",
+        displayName: "Juni 2023 - Juni 2024",
+        visible: true,
+        opacity: 0.9,
+        toc: false,
+        color: change_overlay_colors["ndvi_decrease_2017_2016"],
+        wfs: "karten-werk:ndvi_decrease_crowd_2024_2023",
+        cached: true
+      },
+      {
         layername: "karten-werk:ndvi_decrease_2023_2022",
         displayName: "Juni 2022 - Juni 2023",
         visible: true,
