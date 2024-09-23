@@ -45,14 +45,9 @@ const servicesUtil = {
       cog: {
         title: "Cloud Optimized GeoTIFF (COG)",
         serviceUrl: [
-          "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2016_2015_Int16.tif",
-          "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2017_2016_Int16.tif",
-          "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2018_2017_Int16.tif",
-          "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2019_2018_Int16.tif",
-          "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2020_2019_Int16.tif",
-          "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2021_2020_Int16.tif",
-          "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2022_2021_Int16.tif",
-          "https://waldmonitoring.ch/raster/yearly_diff/cog_ndvi_diff_2023_2022_Int16.tif"
+          "https://waldmonitoring.ch/raster/ndvi_anomalies",
+          "https://waldmonitoring.ch/raster/vegetation_under_canopy",
+          "https://waldmonitoring.ch/raster/yearly_diff"
         ],
         videoUrl: "https://www.youtube.com/embed/xWGaXfUNhv4"
       }
