@@ -12,7 +12,8 @@ import {
   getLayerInfo,
   openSidebar,
   change_overlay_colors,
-  setI18nAttribute
+  setI18nAttribute,
+  GEOSERVER_BASE_URL
 } from "./main_util";
 import Crowdsourcing from "./Crowdsourcing";
 import {
@@ -29,106 +30,106 @@ class ViewerControl {
     this.urlParams = urlParams;
     this.changeOverlays = [
       {
-        layername: "karten-werk:ndvi_decrease_2024_2023",
+        layername: "waldmonitoring:ndvi_decrease_2024_2023",
         displayName: "Juni 2023 - Juni 2024",
         visible: true,
         opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2017_2016"],
-        wfs: "karten-werk:ndvi_decrease_crowd_2024_2023",
+        wfs: "waldmonitoring:ndvi_decrease_crowd_2024_2023",
         cached: true
       },
       {
-        layername: "karten-werk:ndvi_decrease_2023_2022",
+        layername: "waldmonitoring:ndvi_decrease_2023_2022",
         displayName: "Juni 2022 - Juni 2023",
         visible: true,
         opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2016_2015"],
-        wfs: "karten-werk:ndvi_decrease_crowd_2023_2022",
+        wfs: "waldmonitoring:ndvi_decrease_crowd_2023_2022",
         cached: true
       },
       {
-        layername: "karten-werk:ndvi_decrease_2022_2021",
+        layername: "waldmonitoring:ndvi_decrease_2022_2021",
         displayName: "Juni 2021 - Juni 2022",
         visible: true,
         opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2022_2021"],
-        wfs: "karten-werk:ndvi_decrease_crowd_2022_2021",
+        wfs: "waldmonitoring:ndvi_decrease_crowd_2022_2021",
         cached: true
       },
       {
-        layername: "karten-werk:ndvi_decrease_2021_2020",
+        layername: "waldmonitoring:ndvi_decrease_2021_2020",
         displayName: "Juni 2020 - Juni 2021",
         visible: false,
         opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2021_2020"],
-        wfs: "karten-werk:ndvi_decrease_crowd_2021_2020",
+        wfs: "waldmonitoring:ndvi_decrease_crowd_2021_2020",
         cached: true
       },
       {
-        layername: "karten-werk:ndvi_decrease_2020_2019",
+        layername: "waldmonitoring:ndvi_decrease_2020_2019",
         displayName: "Juni 2019 - Juni 2020",
         visible: false,
         opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2020_2019"],
-        wfs: "karten-werk:ndvi_decrease_crowd_2020_2019",
+        wfs: "waldmonitoring:ndvi_decrease_crowd_2020_2019",
         cached: true
       },
       {
-        layername: "karten-werk:ndvi_decrease_2019_2018",
+        layername: "waldmonitoring:ndvi_decrease_2019_2018",
         displayName: "Juni 2018 - Juni 2019",
         visible: false,
         opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2019_2018"],
-        wfs: "karten-werk:ndvi_decrease_crowd_2019_2018",
+        wfs: "waldmonitoring:ndvi_decrease_crowd_2019_2018",
         cached: true
       },
       {
-        layername: "karten-werk:ndvi_decrease_2018_2017",
+        layername: "waldmonitoring:ndvi_decrease_2018_2017",
         displayName: "Juni 2017 - Juni 2018",
         visible: false,
         opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2018_2017"],
-        wfs: "karten-werk:ndvi_decrease_crowd_2018_2017",
+        wfs: "waldmonitoring:ndvi_decrease_crowd_2018_2017",
         cached: true
       },
       {
-        layername: "karten-werk:ndvi_decrease_2017_2016",
+        layername: "waldmonitoring:ndvi_decrease_2017_2016",
         displayName: "Juni 2016 - Juni 2017",
         visible: false,
         opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2017_2016"],
-        wfs: "karten-werk:ndvi_decrease_crowd_2017_2016",
+        wfs: "waldmonitoring:ndvi_decrease_crowd_2017_2016",
         cached: true
       },
       {
-        layername: "karten-werk:ndvi_decrease_2016_2015",
+        layername: "waldmonitoring:ndvi_decrease_2016_2015",
         displayName: "Juni 2015 - Juni 2016",
         visible: false,
         opacity: 0.9,
         toc: false,
         color: change_overlay_colors["ndvi_decrease_2016_2015"],
-        wfs: "karten-werk:ndvi_decrease_crowd_2016_2015",
+        wfs: "waldmonitoring:ndvi_decrease_crowd_2016_2015",
         cached: true
       }
     ];
     this.disorderOverlays = [
       {
-        layername: "karten-werk:nbr_ch_2017",
+        layername: "waldmonitoring:nbr_ch_2017",
         displayName: "Sommersturm 2017",
         visible: false,
         opacity: 1,
         toc: false
       },
       {
-        layername: "karten-werk:nbr_ch_2021",
+        layername: "waldmonitoring:nbr_ch_2021",
         displayName: "Sommersturm 2021 Kt. Zug",
         visible: false,
         opacity: 1,
@@ -137,35 +138,35 @@ class ViewerControl {
     ];
     this.verjuengungOverlays = [
       {
-        layername: "karten-werk:verj_blaetterdach_groesser_12m",
+        layername: "waldmonitoring:verj_blaetterdach_groesser_12m",
         displayName: "Blätterdach (>12 m)",
         visible: false,
         opacity: 1,
         toc: false
       },
       {
-        layername: "karten-werk:verj_0-2m_unter_schirm",
+        layername: "waldmonitoring:verj_0-2m_unter_schirm",
         displayName: "Verj. 0-2 m unter Schirm",
         visible: true,
         opacity: 1,
         toc: false
       },
       {
-        layername: "karten-werk:verj_0-2m_frei",
+        layername: "waldmonitoring:verj_0-2m_frei",
         displayName: "Verj. 0-2 m frei",
         visible: false,
         opacity: 1,
         toc: false
       },
       {
-        layername: "karten-werk:verj_0-5m_unter_schirm",
+        layername: "waldmonitoring:verj_0-5m_unter_schirm",
         displayName: "Verj. 0-5 m unter Schirm",
         visible: false,
         opacity: 1,
         toc: false
       },
       {
-        layername: "karten-werk:verj_0-5m_frei",
+        layername: "waldmonitoring:verj_0-5m_frei",
         displayName: "Verj. 0-5 m frei",
         visible: false,
         opacity: 1,
@@ -237,7 +238,7 @@ class ViewerControl {
    */
   getVitalityLayerObject({ year, month, visibility = true, opacity = 1 }) {
     return {
-      layername: `karten-werk:ndvi_anomaly_${year}_${month.number}`,
+      layername: `waldmonitoring:ndvi_anomaly_${year}_${month.number}`,
       displayName: `NDVI Anomalien ${month.number} ${year}`,
       description: this.uc3description,
       visible: visibility,
@@ -940,7 +941,7 @@ class ViewerControl {
    * @returns {promise} - promise with all the available time strings.
    */
   getDimensions(layername) {
-    const url = "https://geoserver.karten-werk.ch/wms?request=getCapabilities";
+    const url = `${GEOSERVER_BASE_URL}/wms?request=getCapabilities`;
     const parser = new WMSCapabilities();
     return fetch(url)
       .then(response => response.text())
@@ -1017,7 +1018,7 @@ class ViewerControl {
    * @returns {object} TileLayer - ol.TileLayer instance.
    */
   createWmsLayer(overlay) {
-    const url = "https://geoserver.karten-werk.ch/wms";
+    const url = `${GEOSERVER_BASE_URL}/wms`;
     const params = {
       LAYERS: `${overlay.layername}`,
       FORMAT: "image/png",
@@ -1060,7 +1061,7 @@ class ViewerControl {
    * @returns {object} VectorLayer - ol.Layer.Vector instance.
    */
   createWfsLayer(overlay) {
-    const host = "https://geoserver.karten-werk.ch/wfs?";
+    const host = `${GEOSERVER_BASE_URL}/`;
     const vectorSource = new VectorSource({
       format: new GeoJSON(),
       url: function (extent) {
