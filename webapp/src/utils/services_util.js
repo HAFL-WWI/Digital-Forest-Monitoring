@@ -2,7 +2,8 @@ import {
   content,
   removeContent,
   createGrid,
-  setI18nAttribute
+  setI18nAttribute,
+  GEOSERVER_BASE_URL
 } from "./main_util";
 const servicesUtil = {
   model: {
@@ -20,8 +21,7 @@ const servicesUtil = {
     cards: {
       wms: {
         title: "Web Map Service (WMS)",
-        serviceUrl:
-          "https://geoserver.karten-werk.ch/wms?request=GetCapabilities",
+        serviceUrl: `${GEOSERVER_BASE_URL}/wms?request=GetCapabilities`,
         videoUrl: "https://www.youtube.com/embed/g7t_tz2OJpg"
       },
       wmts: {
@@ -32,14 +32,12 @@ const servicesUtil = {
       },
       wfs: {
         title: "Web Feature Service (WFS)",
-        serviceUrl:
-          "https://geoserver.karten-werk.ch/wfs?request=GetCapabilities",
+        serviceUrl: `${GEOSERVER_BASE_URL}/wfs?request=GetCapabilities`,
         videoUrl: "https://www.youtube.com/embed/aZbNjFLe884"
       },
       wcs: {
         title: "Web Coverage Service (WCS)",
-        serviceUrl:
-          "https://geoserver.karten-werk.ch/wcs?request=GetCapabilities",
+        serviceUrl: `${GEOSERVER_BASE_URL}/wcs?request=GetCapabilities`,
         videoUrl: "https://www.youtube.com/embed/0nzgaLhqFGU"
       },
       cog: {

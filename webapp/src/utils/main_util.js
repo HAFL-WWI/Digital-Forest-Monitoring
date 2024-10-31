@@ -8,6 +8,9 @@ import { dialog } from "./init";
 export const GEO_ADMIN_WMS_INFO_URL =
   "https://europe-west6-oereb-uri.cloudfunctions.net/getwmsinfo?";
 
+export const GEOSERVER_BASE_URL =
+  "https://geoserver-hafl.hosting.karten-werk.ch";
+
 export const topAppBarRight = document.querySelector(
   ".top-app-bar__section--align-end"
 );
@@ -140,7 +143,7 @@ export const getLayerInfo = overlay => {
   }
   return `<div>
   <h4 vanilla-i18n="sidebar.legende">Legende:</h4>
-  <img src="https://geoserver.karten-werk.ch//wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&height=15&LAYER=${overlay.layername}&legend_options=forceLabels:on"  alt="legende"/>
+  <img src=${GEOSERVER_BASE_URL}/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&height=15&LAYER=${overlay.layername}&legend_options=forceLabels:on  alt="legende"/>
   <h4 vanilla-i18n="sidebar.beschreibung">Beschreibung:</h4>
   <section vanilla-i18n="sidebar.layer.${i18n}.description"></section>
   </div>`;

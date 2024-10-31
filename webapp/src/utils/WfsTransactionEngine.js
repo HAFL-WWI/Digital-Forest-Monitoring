@@ -1,5 +1,6 @@
 import { WFS, GML } from "ol/format";
 import VectorSource from "ol/source/Vector";
+import { GEOSERVER_BASE_URL } from "../utils/main_util";
 
 class WfsTransationEngine {
   constructor(map) {
@@ -10,8 +11,8 @@ class WfsTransationEngine {
 
   setGMLFormat(wfsName) {
     this.formatGML = new GML({
-      featureNS: "https://geoserver.karten-werk.ch/wfs/karten-werk",
-      featurePrefix: "karten-werk",
+      featureNS: `${GEOSERVER_BASE_URL}/waldmonitoring`,
+      featurePrefix: "waldmonitoring",
       featureType: wfsName,
       srsName: "EPSG:3857"
     });
@@ -63,7 +64,7 @@ class WfsTransationEngine {
         break;
     }
     const payload = this.xs.serializeToString(node);
-    const url = "https://geoserver.karten-werk.ch/wfs/ows";
+    const url = `${GEOSERVER_BASE_URL}/wfs/ows`;
     return fetch(url, {
       method: "POST",
       body: payload
