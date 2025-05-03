@@ -6,7 +6,7 @@ import { getCenter } from "ol/extent";
 import { dialog } from "./init";
 
 export const GEO_ADMIN_WMS_INFO_URL =
-  "https://europe-west6-oereb-uri.cloudfunctions.net/getwmsinfo?";
+  "https://europe-west6-oereb-uri.cloudfunctions.net/getwmsinfo_v2?";
 
 export const GEOSERVER_BASE_URL =
   "https://geoserver-hafl.hosting.karten-werk.ch";
