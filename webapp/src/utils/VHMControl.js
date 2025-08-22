@@ -7,12 +7,14 @@ import {
   closeSidebar,
   clearSidebar,
   GEO_ADMIN_WMS_INFO_URL,
+  GEO_ADMIN_LEGEND_URL,
   setI18nAttribute
 } from "./main_util";
 const vegetationImage = new URL(
   "../img/basemapVegetation.jpg",
   import.meta.url
 );
+const layername = "ch.bafu.landesforstinventar-vegetationshoehenmodell";
 const infoIcon = new URL("../img/info_black_24dp.svg", import.meta.url);
 class VHMControl {
   constructor(map = null, showVegetation = false) {
@@ -108,16 +110,12 @@ class VHMControl {
     try {
       const lang = window.translator._getLanguage();
       const response = await fetch(
-        `${GEO_ADMIN_WMS_INFO_URL}layername=ch.bafu.landesforstinventar-vegetationshoehenmodell&lang=${lang}`
+        `${GEO_ADMIN_WMS_INFO_URL}layername=${layername}&lang=${lang}`
       );
       const json = await response.json();
       title.textContent = json.layer.title[0];
       info.appendChild(title);
-      const legendUrl =
-        json?.layer?.style[0]?.LegendURL[0]?.OnlineResource[0]?.$[
-          "xlink:href"
-        ] ||
-        "https://api.geo.admin.ch/static/images/legends/ch.bafu.landesforstinventar-vegetationshoehenmodell_de.png";
+      const legendUrl = `${GEO_ADMIN_LEGEND_URL}${layername}_de.png`;
 
       const legend = document.createElement("h4");
       setI18nAttribute({ element: legend, attributeValue: "sidebar.legende" });
