@@ -8,6 +8,9 @@ import { dialog } from "./init";
 export const GEO_ADMIN_WMS_INFO_URL =
   "https://europe-west6-oereb-uri.cloudfunctions.net/getwmsinfo_v2?";
 
+export const GEO_ADMIN_LEGEND_URL =
+  "https://api.geo.admin.ch/static/images/legends/";
+
 export const GEOSERVER_BASE_URL =
   "https://geoserver-hafl.hosting.karten-werk.ch";
 
