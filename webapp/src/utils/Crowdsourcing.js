@@ -1218,11 +1218,12 @@ class Crowdsourcing {
       tdKey.classList.add("popup__attributetable--td");
       tdVal.classList.add("popup__attributetable--td");
       switch (key) {
-        case "area":
+        case "area": {
           const areaHectares = (props[key] / 10000).toLocaleString("de-ch");
           tdVal.innerText = areaHectares + " ha";
           break;
-        case "ereignisdatum":
+        }
+        case "ereignisdatum": {
           if (props[key] !== null) {
             tdVal.innerText = new Date(
               props[key].slice(0, props[key].length - 1)
@@ -1233,7 +1234,8 @@ class Crowdsourcing {
             }
           }
           break;
-        case "validiert":
+        }
+        case "validiert": {
           row.style.color = "grey";
           row.style.fontStyle = "italic";
           tdVal.innerText =
@@ -1241,7 +1243,8 @@ class Crowdsourcing {
               ? "nein"
               : new Date(props[key]).toLocaleDateString("de-ch");
           break;
-        case "grund_veraenderung":
+        }
+        case "grund_veraenderung": {
           // add a blankspace between the items,
           //otherwise the table owerflows the popup.d
           if (props[key]) {
@@ -1255,7 +1258,8 @@ class Crowdsourcing {
             }
           }
           break;
-        case "flaeche_korrekt":
+        }
+        case "flaeche_korrekt": {
           if (props[key] === "ja") {
             tdVal.style.color = "#228b22";
           }
@@ -1264,15 +1268,19 @@ class Crowdsourcing {
           }
           tdVal.innerText = props[key];
           break;
-        case "flaeche_korrekt_bemerkung":
+        }
+        case "flaeche_korrekt_bemerkung": {
           if (!props[key]) continue;
           tdVal.innerText = props[key];
           tdVal.style.color = "#ff0000";
           break;
-        default:
+        }
+        default: {
           tdVal.innerText = props[key];
           break;
+        }
       }
+
       row.appendChild(tdKey);
       row.appendChild(tdVal);
       table.appendChild(row);
