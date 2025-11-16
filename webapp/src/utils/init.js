@@ -133,6 +133,6 @@ const cookiedisclaimerButton = document.getElementById(
   "cookiedisclaimer__button"
 );
 const cookiedisclaimer = document.querySelector(".cookiedisclaimer");
-cookiedisclaimerButton.addEventListener("click", e => {
+cookiedisclaimerButton.addEventListener("click", () => {
   cookiedisclaimer.style.transform = "scaleY(0)";
 });
